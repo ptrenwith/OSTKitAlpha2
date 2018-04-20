@@ -86,4 +86,25 @@ public class cUserManagement
     }
     return oResponse;
   }
+
+  public cResponse sendAirdropTo(String sAirdropTo, int iAmount)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put(g_sPATH_USERS_AIRDROP_DROP, sAirdropTo);
+      oParameters.put(g_sPARAM_AMOUNT, iAmount);
+      
+      String sResponse = cAPIClient.post(g_sPATH_USERS_AIRDROP_DROP, oParameters);
+      ObjectMapper oMapper = new ObjectMapper(m_oJsonFactory);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
 }

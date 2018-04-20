@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.digitalpassport.ui;
 
 import java.beans.PropertyChangeEvent;
@@ -24,7 +20,7 @@ import org.digitalpassport.deserialize.json.users.lists.cListUsersJson;
 
 /**
  *
- * @author Philip
+ * @author Philip M. Trenwith
  */
 public class cMainPanel extends javax.swing.JPanel
 {
@@ -70,6 +66,8 @@ public class cMainPanel extends javax.swing.JPanel
         }
 	  }
 	});
+    
+    spnAirdropAmount.setModel(new SpinnerNumberModel(10,1,Integer.MAX_VALUE,1));
     
     m_oTableModel = new cTableModel();
     TableModel model = oUserTable.getModel();
@@ -133,6 +131,11 @@ public class cMainPanel extends javax.swing.JPanel
     jLabel4 = new javax.swing.JLabel();
     txtName = new javax.swing.JTextField();
     btnCreateUser = new javax.swing.JButton();
+    jLabel5 = new javax.swing.JLabel();
+    cmbAirdropTo = new javax.swing.JComboBox<>();
+    btnAirdrop = new javax.swing.JButton();
+    spnAirdropAmount = new javax.swing.JSpinner();
+    jLabel6 = new javax.swing.JLabel();
 
     jLabel3.setText("Filter:");
 
@@ -219,22 +222,30 @@ public class cMainPanel extends javax.swing.JPanel
       }
     });
 
+    jLabel5.setText("Airdrop tokens to users:");
+
+    cmbAirdropTo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "never airdropped" }));
+
+    btnAirdrop.setText("Airdrop");
+    btnAirdrop.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnAirdropActionPerformed(evt);
+      }
+    });
+
+    jLabel6.setText("Amount:");
+
     javax.swing.GroupLayout oUsersPanelLayout = new javax.swing.GroupLayout(oUsersPanel);
     oUsersPanel.setLayout(oUsersPanelLayout);
     oUsersPanelLayout.setHorizontalGroup(
       oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(oUsersPanelLayout.createSequentialGroup()
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(oUsersPanelLayout.createSequentialGroup()
-            .addContainerGap()
-            .addComponent(jLabel4)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(txtName)
-            .addGap(18, 18, 18)
-            .addComponent(btnCreateUser, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(jScrollPane2)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
-            .addGap(0, 75, Short.MAX_VALUE)
+            .addGap(0, 82, Short.MAX_VALUE)
             .addComponent(jLabel3)
             .addGap(18, 18, 18)
             .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -249,7 +260,25 @@ public class cMainPanel extends javax.swing.JPanel
             .addGap(18, 18, 18)
             .addComponent(spnPage, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(18, 18, 18)
-            .addComponent(btnListUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addComponent(btnListUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
+            .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addGroup(oUsersPanelLayout.createSequentialGroup()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmbAirdropTo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addGroup(oUsersPanelLayout.createSequentialGroup()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtName)))
+            .addGap(18, 18, 18)
+            .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(btnCreateUser, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+              .addComponent(btnAirdrop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         .addContainerGap())
     );
     oUsersPanelLayout.setVerticalGroup(
@@ -280,13 +309,20 @@ public class cMainPanel extends javax.swing.JPanel
             .addComponent(spnPage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnListUsers))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnCreateUser)
           .addComponent(jLabel4))
-        .addContainerGap())
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(jLabel5)
+          .addComponent(cmbAirdropTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnAirdrop)
+          .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jLabel6))
+        .addContainerGap(71, Short.MAX_VALUE))
     );
 
     oUsersTabScrollTab.setViewportView(oUsersPanel);
@@ -297,11 +333,11 @@ public class cMainPanel extends javax.swing.JPanel
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane)
+      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane)
+      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -362,6 +398,19 @@ public class cMainPanel extends javax.swing.JPanel
 		}
 	  }).start();
     }//GEN-LAST:event_btnCreateUserActionPerformed
+
+  private void btnAirdropActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAirdropActionPerformed
+  {//GEN-HEADEREND:event_btnAirdropActionPerformed
+    new Thread(new Runnable() 
+    {
+      @Override
+      public void run()
+      {
+        String sAirdropTo = (cmbAirdropTo.getSelectedItem()+"").replace(" ", "_");
+        m_oUserManagement.sendAirdropTo(sAirdropTo, Integer.parseInt(spnAirdropAmount.getValue()+""));
+      }
+    }).start();
+  }//GEN-LAST:event_btnAirdropActionPerformed
 
   public void loadUsers()
   {
@@ -454,8 +503,10 @@ public class cMainPanel extends javax.swing.JPanel
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton btnAirdrop;
   private javax.swing.JButton btnCreateUser;
   private javax.swing.JButton btnListUsers;
+  private javax.swing.JComboBox<String> cmbAirdropTo;
   private javax.swing.JComboBox<String> cmbFilter;
   private javax.swing.JComboBox<String> cmbOrder;
   private javax.swing.JComboBox<String> cmbOrderBy;
@@ -463,12 +514,15 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel5;
+  private javax.swing.JLabel jLabel6;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JTabbedPane oMainTabPane;
   private javax.swing.JTable oUserTable;
   private javax.swing.JPanel oUsersPanel;
   private javax.swing.JScrollPane oUsersTabScrollTab;
+  private javax.swing.JSpinner spnAirdropAmount;
   private javax.swing.JSpinner spnPage;
   private javax.swing.JTextField txtName;
   // End of variables declaration//GEN-END:variables

@@ -15,6 +15,8 @@ public class cError
   private String code;
   @JsonIgnore private String msg;
   @JsonIgnore private cErrorData[] error_data;
+  @JsonIgnore private String display_text;
+  @JsonIgnore private String display_heading;
   
   @JsonCreator
   public static cError of(@JsonProperty(g_sPARAM_CODE) String code,
