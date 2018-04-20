@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import org.digitalpassport.ui.cWindowBounds;
 import org.digitalpassport.serialization.cSerializationFactory;
-import org.digitalpassport.ui.cMainUI;
+import org.digitalpassport.ui.cMainPanel;
 
 /**
  *
@@ -89,7 +89,7 @@ public class OSTKitAlpha
 
     });
     
-    oFrame.add(new cMainUI());
+    oFrame.add(new cMainPanel());
     
     oFrame.setVisible(true);
   }
