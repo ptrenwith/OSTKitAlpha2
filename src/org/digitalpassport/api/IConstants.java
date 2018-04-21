@@ -14,6 +14,8 @@ public interface IConstants
   public static final String g_sPARAM_SUCCESS               = "success";
   public static final String g_sPARAM_DATA                  = "data";
   public static final String g_sPARAM_ERROR                 = "err";
+  public static final String g_sPARAM_DISPLAY_TEXT          = "display_text";
+  public static final String g_sPARAM_DISPLAY_HEADING       = "display_heading";
    
   public static final String g_sPATH_USERS_LIST             = "/users/list";
   public static final String g_sPATH_USERS_EDIT             = "/users/edit";

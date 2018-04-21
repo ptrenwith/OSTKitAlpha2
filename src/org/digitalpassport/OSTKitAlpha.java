@@ -18,7 +18,7 @@ import org.digitalpassport.ui.cMainPanel;
  */
 public class OSTKitAlpha
 {
-  private JFrame oFrame;
+  public static JFrame oFrame;
   private cWindowBounds oWindowBounds;
   private File fBounds;
   private cSerializationFactory oSerializationFactory = new cSerializationFactory();

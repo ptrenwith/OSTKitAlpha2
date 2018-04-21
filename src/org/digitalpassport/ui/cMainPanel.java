@@ -10,6 +10,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import org.digitalpassport.OSTKitAlpha;
 import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.cUserManagement;
 import org.digitalpassport.deserialize.json.cError;
@@ -136,6 +137,7 @@ public class cMainPanel extends javax.swing.JPanel
     btnAirdrop = new javax.swing.JButton();
     spnAirdropAmount = new javax.swing.JSpinner();
     jLabel6 = new javax.swing.JLabel();
+    jScrollPane1 = new javax.swing.JScrollPane();
 
     jLabel3.setText("Filter:");
 
@@ -245,7 +247,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane2)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
-            .addGap(0, 82, Short.MAX_VALUE)
+            .addGap(0, 120, Short.MAX_VALUE)
             .addComponent(jLabel3)
             .addGap(18, 18, 18)
             .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -322,22 +324,23 @@ public class cMainPanel extends javax.swing.JPanel
           .addComponent(btnAirdrop)
           .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(jLabel6))
-        .addContainerGap(71, Short.MAX_VALUE))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
 
     oUsersTabScrollTab.setViewportView(oUsersPanel);
 
     oMainTabPane.addTab("Users", oUsersTabScrollTab);
+    oMainTabPane.addTab("Transactions", jScrollPane1);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
+      .addComponent(oMainTabPane)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
+      .addComponent(oMainTabPane)
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -407,7 +410,15 @@ public class cMainPanel extends javax.swing.JPanel
       public void run()
       {
         String sAirdropTo = (cmbAirdropTo.getSelectedItem()+"").replace(" ", "_");
-        m_oUserManagement.sendAirdropTo(sAirdropTo, Integer.parseInt(spnAirdropAmount.getValue()+""));
+        cResponse oResponse = m_oUserManagement.sendAirdropTo(sAirdropTo, Integer.parseInt(spnAirdropAmount.getValue()+""));
+        if (oResponse.getsuccess())
+		{
+          loadUsers();
+        }
+		else
+		{
+		  showError(oResponse.geterr(), "Failed to retrieve users");
+		}
       }
     }).start();
   }//GEN-LAST:event_btnAirdropActionPerformed
@@ -497,7 +508,7 @@ public class cMainPanel extends javax.swing.JPanel
 
   private void showError(cError oError, String sMessage)
   {
-	JOptionPane.showMessageDialog(oUserTable, sMessage
+	JOptionPane.showMessageDialog(OSTKitAlpha.oFrame, sMessage
 			+ "\nCode: " + oError.getcode()
 			+ "\nMessage: " + oError.getmsg());
   }
