@@ -5,7 +5,6 @@ import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import static org.digitalpassport.api.IConstants.*;
-import org.digitalpassport.deserialize.json.users.lists.cListUsersJson;
 
 /**
  *
@@ -14,12 +13,12 @@ import org.digitalpassport.deserialize.json.users.lists.cListUsersJson;
 public class cResponse
 {
   private boolean success;
-  @JsonIgnore private cListUsersJson data;
+  @JsonIgnore private cData data;
   @JsonIgnore private cError err;
   
   @JsonCreator
   public static cResponse of(@JsonProperty(g_sPARAM_SUCCESS) boolean success,
-          @JsonProperty(g_sPARAM_DATA) cListUsersJson data,
+          @JsonProperty(g_sPARAM_DATA) cData data,
           @JsonProperty(g_sPARAM_ERROR) cError err)
   {
     return new cResponse(success, data, err);
@@ -31,7 +30,7 @@ public class cResponse
     return success;
   }
   @JsonProperty(g_sPARAM_DATA)
-  public cListUsersJson getdata()
+  public cData getdata()
   {
     return data;
   }
@@ -41,7 +40,7 @@ public class cResponse
     return err;
   }
 
-  public cResponse(boolean success, cListUsersJson data, cError err)
+  public cResponse(boolean success, cData data, cError err)
   {
     this.success = success;
     this.data = data;

@@ -9,7 +9,7 @@ import static org.digitalpassport.api.IConstants.*;
  *
  * @author Philip M. Trenwith
  */
-public class cNextPagePayloadJson
+public class cNextPagePayload
 {
   private String order_by;
   private String order;
@@ -17,11 +17,11 @@ public class cNextPagePayloadJson
   private String page_no;
   
   @JsonCreator
-  public static cNextPagePayloadJson of(@JsonProperty(g_sPARAM_ORDER_BY) String order_by,
+  public static cNextPagePayload of(@JsonProperty(g_sPARAM_ORDER_BY) String order_by,
           @JsonProperty(g_sPARAM_ORDER) String order, @JsonProperty(g_sPARAM_FILTER) String filter,
           @JsonProperty(g_sPARAM_PAGE_NO) String page_no)
   {
-    return new cNextPagePayloadJson(order_by, order, filter, page_no);
+    return new cNextPagePayload(order_by, order, filter, page_no);
   }
 
   @JsonProperty(g_sPARAM_ORDER_BY)
@@ -48,11 +48,11 @@ public class cNextPagePayloadJson
   @Override
   public String toString()
   {
-    return "cNextPagePayloadJson{" + g_sPARAM_ORDER_BY + "=" + order_by + ", " + g_sPARAM_ORDER + "=" + order + 
+    return "cNextPagePayload{" + g_sPARAM_ORDER_BY + "=" + order_by + ", " + g_sPARAM_ORDER + "=" + order + 
             ", " + g_sPARAM_FILTER + "=" + filter + ", " + g_sPARAM_PAGE_NO + "=" + page_no + '}';
   }
 
-  public cNextPagePayloadJson(String order_by, String order, String filter, String page_no)
+  public cNextPagePayload(String order_by, String order, String filter, String page_no)
   {
     this.order_by = order_by;
     this.order = order;

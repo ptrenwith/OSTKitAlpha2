@@ -2,7 +2,6 @@
 package org.digitalpassport.api.commands;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.logging.Level;

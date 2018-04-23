@@ -9,18 +9,18 @@ import static org.digitalpassport.api.IConstants.*;
  *
  * @author Philip M. Trenwith
  */
-public class cMetaJson
+public class cMeta
 {
-  private cNextPagePayloadJson oNextPagePayload;
+  private cNextPagePayload oNextPagePayload;
   
   @JsonCreator
-  public static cMetaJson of(
-          @JsonProperty(g_sPARAM_NEXT_PAGE) cNextPagePayloadJson oNextPagePayload)
+  public static cMeta of(
+          @JsonProperty(g_sPARAM_NEXT_PAGE) cNextPagePayload oNextPagePayload)
   {
-    return new cMetaJson(oNextPagePayload);
+    return new cMeta(oNextPagePayload);
   }
   @JsonProperty(g_sPARAM_NEXT_PAGE)
-  public cNextPagePayloadJson getoNextPagePayload()
+  public cNextPagePayload getoNextPagePayload()
   {
     return oNextPagePayload;
   }
@@ -28,10 +28,10 @@ public class cMetaJson
   @Override
   public String toString()
   {
-    return "cMetaJson{" + g_sPARAM_NEXT_PAGE + "=" + oNextPagePayload.toString() + '}';
+    return "cMeta{" + g_sPARAM_NEXT_PAGE + "=" + oNextPagePayload.toString() + '}';
   }
   
-  public cMetaJson(cNextPagePayloadJson oNextPagePayload)
+  public cMeta(cNextPagePayload oNextPagePayload)
   {
     this.oNextPagePayload = oNextPagePayload;
   }

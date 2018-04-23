@@ -1,16 +1,9 @@
 
 package org.digitalpassport.deserialize.json;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Optional;
-import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.MappingJsonFactory;
-import org.codehaus.jackson.map.ObjectMapper;
 import static org.digitalpassport.api.IConstants.*;
 
 /**
@@ -19,9 +12,6 @@ import static org.digitalpassport.api.IConstants.*;
  */
 public class cError 
 {
-  private static final JsonFactory m_oJsonFactory = new MappingJsonFactory();
-  private static final ObjectMapper oMapper = new ObjectMapper(m_oJsonFactory);
-  
   private String code;
   private String msg;
   @JsonIgnore private String display_text;
@@ -76,8 +66,7 @@ public class cError
   @Override
   public String toString()
   {
-    return "cError{" + "code=" + code + ", msg=" + msg + ", display_text=" + display_text + ", display_heading=" + display_heading + ", error_data=" + error_data + '}';
+    return "cError{" + "code=" + code + ", msg=" + msg + ", display_text=" + 
+            display_text + ", display_heading=" + display_heading + ", error_data=" + error_data + '}';
   }
-
-  
 }

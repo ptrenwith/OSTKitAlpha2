@@ -13,11 +13,11 @@ import javax.swing.table.TableModel;
 import org.digitalpassport.OSTKitAlpha;
 import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.cUserManagement;
+import org.digitalpassport.deserialize.json.cData;
 import org.digitalpassport.deserialize.json.cError;
 import org.digitalpassport.deserialize.json.cErrorData;
 import org.digitalpassport.deserialize.json.cResponse;
-import org.digitalpassport.deserialize.json.users.lists.cEconomyUserJson;
-import org.digitalpassport.deserialize.json.users.lists.cListUsersJson;
+import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
 
 /**
  *
@@ -443,8 +443,8 @@ public class cMainPanel extends javax.swing.JPanel
 
 		if (oResponse.getsuccess())
 		{
-		  cListUsersJson oUserData = oResponse.getdata();
-		  cEconomyUserJson[] lsUsers = oUserData.geteconomy_users();
+		  cData oUserData = oResponse.getdata();
+		  cEconomyUser[] lsUsers = oUserData.geteconomy_users();
 
 		  String sPage_no = oUserData.getmeta().getoNextPagePayload().getPage_no();
 		  if (sPage_no != null)
@@ -459,7 +459,7 @@ public class cMainPanel extends javax.swing.JPanel
 		  }
 
 		  DefaultTableModel oUserModel = (DefaultTableModel) oUserTable.getModel();
-		  for (cEconomyUserJson oUser : lsUsers)
+		  for (cEconomyUser oUser : lsUsers)
 		  {
 			Vector<Object> vRow = new Vector<Object>();
 			int iRowNumber = oUserModel.getRowCount();
