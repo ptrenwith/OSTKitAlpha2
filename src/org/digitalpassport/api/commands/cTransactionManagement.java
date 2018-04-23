@@ -31,6 +31,99 @@ public class cTransactionManagement
     oMapper.configure(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
   }
   
+  public cResponse createTransaction(String sName, eTransactionKind eKind, eCurrencyType eType,
+          float value, float percent)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put(g_sPARAM_NAME, sName);
+      oParameters.put(g_sPARAM_KIND, eKind);
+      oParameters.put(g_sPARAM_CURRENCY_TYPE, eType);
+      oParameters.put(g_sPARAM_CURRENCY_VALUE, value);
+      oParameters.put(g_sPARAM_COMMISSION_PERCENT, percent);
+      
+      String sResponse = cAPIClient.post(g_sPATH_TRANSACTION_TYPES_CREATE, oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
+  public cResponse editTransaction(String client_transaction_id, 
+          String sName, eTransactionKind eKind, eCurrencyType eType,
+          float value, float percent)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put(g_sPARAM_CLIENT_TRANSACTION_ID, client_transaction_id);
+      oParameters.put(g_sPARAM_NAME, sName);
+      oParameters.put(g_sPARAM_KIND, eKind);
+      oParameters.put(g_sPARAM_CURRENCY_TYPE, eType);
+      oParameters.put(g_sPARAM_CURRENCY_VALUE, value);
+      oParameters.put(g_sPARAM_COMMISSION_PERCENT, percent);
+      
+      String sResponse = cAPIClient.post(g_sPATH_TRANSACTION_TYPES_EDIT, oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
+  public cResponse listTransactions()
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      String sResponse = cAPIClient.get(g_sPATH_TRANSACTION_TYPES_LIST, oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
+  public cResponse executeTransaction(String from_uuid, 
+          String to_uuid, String transaction_kind)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put(g_sPARAM_TRANSACTION_FROM_UUID, from_uuid);
+      oParameters.put(g_sPARAM_TRANSACTION_TO_UUID, to_uuid);
+      oParameters.put(g_sPARAM_TRANSACTION_KIND, transaction_kind);
+      
+      String sResponse = cAPIClient.post(g_sPATH_TRANSACTION_TYPES_EXECUTE, oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
   public cResponse getTransactionStatus(String sTransactionId)
   {
     cResponse oResponse = null;

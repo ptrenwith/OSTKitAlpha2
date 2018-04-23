@@ -1,8 +1,9 @@
-
 package org.digitalpassport.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
@@ -18,6 +19,7 @@ import org.digitalpassport.deserialize.json.cError;
 import org.digitalpassport.deserialize.json.cErrorData;
 import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
+import org.digitalpassport.serialization.cSerializationFactory;
 
 /**
  *
@@ -25,11 +27,15 @@ import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
  */
 public class cMainPanel extends javax.swing.JPanel
 {
+
+  private cSerializationFactory m_oSerializationFactory = new cSerializationFactory();
+  private cAirdropList m_oAirdrops = new cAirdropList();
+  private File fAirdrops;
   private cUserManagement m_oUserManagement = new cUserManagement();
   private cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
   private int m_iMaxPageNumber = 2;
   private cTableModel m_oTableModel;
-  
+
   class cTableModel extends DefaultTableModel
   {
 
@@ -44,72 +50,91 @@ public class cMainPanel extends javax.swing.JPanel
       return getColumnName(column).equals("Name");
     }
   }
-  
+
   /**
    * Creates new form cMainPanel
    */
   public cMainPanel()
   {
-	initComponents();
-	spnPage.setValue(1);
-	spnPage.addChangeListener(new ChangeListener() {
-	  @Override
-	  public void stateChanged(ChangeEvent e)
-	  {
+    initComponents();
+    spnPage.setValue(1);
+    spnPage.addChangeListener(new ChangeListener()
+    {
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
         try
         {
-          int iPage = Integer.parseInt(spnPage.getValue()+"");
+          int iPage = Integer.parseInt(spnPage.getValue() + "");
           loadUsers();
         }
         catch (Exception ex)
         {
           System.err.println("Invalid page: " + ex.getMessage());
         }
-	  }
-	});
-    
-    spnAirdropAmount.setModel(new SpinnerNumberModel(10,1,Integer.MAX_VALUE,1));
-    
+      }
+    });
+
+    fAirdrops = new File("airdrops.ser");
+    if (fAirdrops.exists())
+    {
+      m_oAirdrops = (cAirdropList) m_oSerializationFactory.deserialize(fAirdrops, false);
+      ArrayList<String> lsPreviousAirdrops = m_oAirdrops.getlsAirdropUUIDs();
+      for (String sAirdrop : lsPreviousAirdrops)
+      {
+        System.out.println("Previous airdrop: " + sAirdrop);
+      }
+    }
+
+    spnAirdropAmount.setModel(new SpinnerNumberModel(10, 1, Integer.MAX_VALUE, 1));
+
     m_oTableModel = new cTableModel();
     TableModel model = oUserTable.getModel();
     int iColumnCount = model.getColumnCount();
-    for (int i=0; i<iColumnCount; i++)
+    for (int i = 0; i < iColumnCount; i++)
     {
       m_oTableModel.addColumn(model.getColumnName(i));
     }
     oUserTable.setModel(m_oTableModel);
-    
-    oUserTable.addPropertyChangeListener(new PropertyChangeListener() 
+
+    oUserTable.addPropertyChangeListener(new PropertyChangeListener()
     {
       @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-          if ("tableCellEditor".equals(evt.getPropertyName())) 
+      public void propertyChange(PropertyChangeEvent evt)
+      {
+        if ("tableCellEditor".equals(evt.getPropertyName()))
+        {
+          if (evt.getNewValue() == null)
           {
-            if (evt.getNewValue() == null)
+            int iRow = oUserTable.getSelectedRow();
+            int iCol = oUserTable.getSelectedColumn();
+            int iUUIDIndex = getColumnIndexByHeading("UUID");
+            String sUUID = oUserTable.getValueAt(iRow, iUUIDIndex) + "";
+            String sNewName = oUserTable.getValueAt(iRow, iCol) + "";
+            System.out.println("User name changed: " + sUUID + " -> " + sNewName);
+            cResponse oResponse = m_oUserManagement.editUser(sUUID, sNewName);
+
+            if (oResponse != null && !oResponse.getsuccess())
             {
-              int iRow = oUserTable.getSelectedRow();
-              int iCol = oUserTable.getSelectedColumn();
-              int iUUIDIndex = getColumnIndexByHeading("UUID");
-              String sUUID = oUserTable.getValueAt(iRow, iUUIDIndex)+"";
-              String sNewName = oUserTable.getValueAt(iRow, iCol)+"";
-              System.out.println("User name changed: " + sUUID + " -> " + sNewName);
-              cResponse oResponse = m_oUserManagement.editUser(sUUID, sNewName);
-              
-              if (oResponse != null && !oResponse.getsuccess())
-              {
-                JOptionPane.showMessageDialog(oUserTable, "Failed to edit user with UUID: " + 
-                        sUUID + "\nCode: " + oResponse.geterr().getcode() + 
-                        "\nMessage: " + oResponse.geterr().getmsg());
-              }
+              JOptionPane.showMessageDialog(oUserTable, "Failed to edit user with UUID: "
+                      + sUUID + "\nCode: " + oResponse.geterr().getcode()
+                      + "\nMessage: " + oResponse.geterr().getmsg());
             }
           }
+        }
       }
     });
   }
 
+  public void terminate()
+  {
+    m_oSerializationFactory.serialize(m_oAirdrops, fAirdrops, false);
+  }
+
   /**
-   * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
-   * content of this method is always regenerated by the Form Editor.
+   * This method is called from within the constructor to initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is always
+   * regenerated by the Form Editor.
    */
   @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -138,6 +163,8 @@ public class cMainPanel extends javax.swing.JPanel
     spnAirdropAmount = new javax.swing.JSpinner();
     jLabel6 = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
+    pnlTransactions = new javax.swing.JPanel();
+    btnListTransactions = new javax.swing.JButton();
 
     jLabel3.setText("Filter:");
 
@@ -261,8 +288,8 @@ public class cMainPanel extends javax.swing.JPanel
             .addComponent(jLabel1)
             .addGap(18, 18, 18)
             .addComponent(spnPage, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(18, 18, 18)
-            .addComponent(btnListUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnListUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
             .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
               .addGroup(oUsersPanelLayout.createSequentialGroup()
@@ -330,6 +357,36 @@ public class cMainPanel extends javax.swing.JPanel
     oUsersTabScrollTab.setViewportView(oUsersPanel);
 
     oMainTabPane.addTab("Users", oUsersTabScrollTab);
+
+    btnListTransactions.setText("List Transactions");
+    btnListTransactions.setToolTipText("");
+    btnListTransactions.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnListTransactionsActionPerformed(evt);
+      }
+    });
+
+    javax.swing.GroupLayout pnlTransactionsLayout = new javax.swing.GroupLayout(pnlTransactions);
+    pnlTransactions.setLayout(pnlTransactionsLayout);
+    pnlTransactionsLayout.setHorizontalGroup(
+      pnlTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTransactionsLayout.createSequentialGroup()
+        .addContainerGap(630, Short.MAX_VALUE)
+        .addComponent(btnListTransactions)
+        .addContainerGap())
+    );
+    pnlTransactionsLayout.setVerticalGroup(
+      pnlTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlTransactionsLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(btnListTransactions)
+        .addContainerGap(436, Short.MAX_VALUE))
+    );
+
+    jScrollPane1.setViewportView(pnlTransactions);
+
     oMainTabPane.addTab("Transactions", jScrollPane1);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -345,177 +402,200 @@ public class cMainPanel extends javax.swing.JPanel
   }// </editor-fold>//GEN-END:initComponents
 
     private void cmbFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFilterActionPerformed
-	  spnPage.setValue(1);
+      spnPage.setValue(1);
     }//GEN-LAST:event_cmbFilterActionPerformed
 
     private void cmbOrderByActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbOrderByActionPerformed
-	  spnPage.setValue(1);
+      spnPage.setValue(1);
     }//GEN-LAST:event_cmbOrderByActionPerformed
 
     private void cmbOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbOrderActionPerformed
-	  spnPage.setValue(1);
+      spnPage.setValue(1);
     }//GEN-LAST:event_cmbOrderActionPerformed
 
     private void btnListUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListUsersActionPerformed
-	  loadUsers();
+      loadUsers();
     }//GEN-LAST:event_btnListUsersActionPerformed
 
     private void btnCreateUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateUserActionPerformed
-	  btnCreateUser.setText("Please wait...");
-	  btnCreateUser.setEnabled(false);
-	  new Thread(new Runnable()
-	  {
-		@Override
-		public void run()
-		{
-		  cResponse oResponse = m_oUserManagement.createUser(txtName.getText());
+      btnCreateUser.setText("Please wait...");
+      btnCreateUser.setEnabled(false);
+      new Thread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          cResponse oResponse = m_oUserManagement.createUser(txtName.getText());
 
-		  if (oResponse != null && !oResponse.getsuccess())
-		  {
-			String sErrorMsg = "";
-			cError oError = oResponse.geterr();
-			if (oError != null)
-			{
-			  cErrorData[] error_data = oError.geterror_data();
-			  if (error_data != null)
-			  {
-				for (cErrorData oErr : error_data)
-				{
-				  sErrorMsg += oErr.getname() + "\n";
-				}
-			  }
-			  showError(oResponse.geterr(), "Failed to create user: " + sErrorMsg);
-			}
-			else
-			{
-			  showError(oResponse.geterr(), "Failed to create user");
-			}
-		  }
-		  else
-		  {
-			loadUsers();
-		  }
+          if (oResponse != null && !oResponse.getsuccess())
+          {
+            String sErrorMsg = "";
+            cError oError = oResponse.geterr();
+            if (oError != null)
+            {
+              cErrorData[] error_data = oError.geterror_data();
+              if (error_data != null)
+              {
+                for (cErrorData oErr : error_data)
+                {
+                  sErrorMsg += oErr.getname() + "\n";
+                }
+              }
+              showError(oResponse.geterr(), "Failed to create user: " + sErrorMsg);
+            }
+            else
+            {
+              showError(oResponse.geterr(), "Failed to create user");
+            }
+          }
+          else
+          {
+            loadUsers();
+          }
 
-		  btnCreateUser.setText("Get Users");
-		  btnCreateUser.setEnabled(true);
-		}
-	  }).start();
+          btnCreateUser.setText("Get Users");
+          btnCreateUser.setEnabled(true);
+        }
+      }).start();
     }//GEN-LAST:event_btnCreateUserActionPerformed
 
   private void btnAirdropActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAirdropActionPerformed
   {//GEN-HEADEREND:event_btnAirdropActionPerformed
-    new Thread(new Runnable() 
+    new Thread(new Runnable()
     {
       @Override
       public void run()
       {
-        String sAirdropTo = (cmbAirdropTo.getSelectedItem()+"").replace(" ", "_");
-        cResponse oResponse = m_oUserManagement.sendAirdropTo(sAirdropTo, Integer.parseInt(spnAirdropAmount.getValue()+""));
+        String sAirdropTo = (cmbAirdropTo.getSelectedItem() + "").replace(" ", "_");
+        cResponse oResponse = m_oUserManagement.sendAirdropTo(sAirdropTo, Integer.parseInt(spnAirdropAmount.getValue() + ""));
         if (oResponse.getsuccess())
-		{
+        {
+          String sAirdrop_uuid = oResponse.getdata().getairdrop_uuid();
+          m_oAirdrops.addAirdropUuid(sAirdrop_uuid);
           loadUsers();
         }
-		else
-		{
-		  showError(oResponse.geterr(), "Failed to retrieve users");
-		}
+        else
+        {
+          showError(oResponse.geterr(), "Failed to retrieve users");
+        }
       }
     }).start();
   }//GEN-LAST:event_btnAirdropActionPerformed
 
+  private void btnListTransactionsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnListTransactionsActionPerformed
+  {//GEN-HEADEREND:event_btnListTransactionsActionPerformed
+    btnListTransactions.setText("Please wait...");
+    btnListTransactions.setEnabled(false);
+    new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        cResponse oResponse = m_oTransactionManagement.listTransactions();
+        if (oResponse.getsuccess())
+        {
+          System.out.println(oResponse.getdata().toString());
+        }
+        btnListTransactions.setText("List Transactions");
+        btnListTransactions.setEnabled(true);
+      }
+    }).start();
+  }//GEN-LAST:event_btnListTransactionsActionPerformed
+
   public void loadUsers()
   {
-	btnListUsers.setText("Please wait...");
-	btnListUsers.setEnabled(false);
-	new Thread(new Runnable()
-	{
-	  @Override
-	  public void run()
-	  {
-		clearUsersTable();
+    btnListUsers.setText("Please wait...");
+    btnListUsers.setEnabled(false);
+    new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        clearUsersTable();
 
-		String sOrderBy = cmbOrderBy.getSelectedItem() + "";
-		String sOrder = cmbOrder.getSelectedItem() + "";
-		String sFilter = cmbFilter.getSelectedItem() + "";
-		String sPage = spnPage.getValue() + "";
+        String sOrderBy = cmbOrderBy.getSelectedItem() + "";
+        String sOrder = cmbOrder.getSelectedItem() + "";
+        String sFilter = cmbFilter.getSelectedItem() + "";
+        String sPage = spnPage.getValue() + "";
 
-		cResponse oResponse = m_oUserManagement.listUsers(sPage, sFilter, sOrderBy, sOrder);
+        cResponse oResponse = m_oUserManagement.listUsers(sPage, sFilter, sOrderBy, sOrder);
 
-		if (oResponse.getsuccess())
-		{
-		  cData oUserData = oResponse.getdata();
-		  cEconomyUser[] lsUsers = oUserData.geteconomy_users();
+        if (oResponse.getsuccess())
+        {
+          cData oUserData = oResponse.getdata();
+          cEconomyUser[] lsUsers = oUserData.geteconomy_users();
 
-		  String sPage_no = oUserData.getmeta().getoNextPagePayload().getPage_no();
-		  if (sPage_no != null)
-		  {
-			int iPage = Integer.parseInt(sPage);
-			int iNextPage = Integer.parseInt(sPage_no);
-			if (iNextPage > m_iMaxPageNumber)
-			{
-			  m_iMaxPageNumber = iNextPage;
-			  spnPage.setModel(new SpinnerNumberModel(iPage, 1, m_iMaxPageNumber, 1));
-			}
-		  }
+          String sPage_no = oUserData.getmeta().getoNextPagePayload().getPage_no();
+          if (sPage_no != null)
+          {
+            int iPage = Integer.parseInt(sPage);
+            int iNextPage = Integer.parseInt(sPage_no);
+            if (iNextPage > m_iMaxPageNumber)
+            {
+              m_iMaxPageNumber = iNextPage;
+              spnPage.setModel(new SpinnerNumberModel(iPage, 1, m_iMaxPageNumber, 1));
+            }
+          }
 
-		  DefaultTableModel oUserModel = (DefaultTableModel) oUserTable.getModel();
-		  for (cEconomyUser oUser : lsUsers)
-		  {
-			Vector<Object> vRow = new Vector<Object>();
-			int iRowNumber = oUserModel.getRowCount();
-			oUserModel.addRow(vRow);
+          DefaultTableModel oUserModel = (DefaultTableModel) oUserTable.getModel();
+          for (cEconomyUser oUser : lsUsers)
+          {
+            Vector<Object> vRow = new Vector<Object>();
+            int iRowNumber = oUserModel.getRowCount();
+            oUserModel.addRow(vRow);
 
-			oUserModel.setValueAt(oUser.getName(), iRowNumber, getColumnIndexByHeading("Name"));
-			oUserModel.setValueAt(oUser.getToken_balance(), iRowNumber, getColumnIndexByHeading("Tokens"));
-			oUserModel.setValueAt(oUser.getTotal_airdropped_tokens(), iRowNumber, getColumnIndexByHeading("Airdropped Tokens"));
-			oUserModel.setValueAt(oUser.getUuid(), iRowNumber, getColumnIndexByHeading("UUID"));
-		  }
-		}
-		else
-		{
-		  showError(oResponse.geterr(), "Failed to retrieve users");
-		}
-		btnListUsers.setText("Get Users");
-		btnListUsers.setEnabled(true);
-	  }
-	}).start();
+            oUserModel.setValueAt(oUser.getName(), iRowNumber, getColumnIndexByHeading("Name"));
+            oUserModel.setValueAt(oUser.getToken_balance(), iRowNumber, getColumnIndexByHeading("Tokens"));
+            oUserModel.setValueAt(oUser.getTotal_airdropped_tokens(), iRowNumber, getColumnIndexByHeading("Airdropped Tokens"));
+            oUserModel.setValueAt(oUser.getUuid(), iRowNumber, getColumnIndexByHeading("UUID"));
+          }
+        }
+        else
+        {
+          showError(oResponse.geterr(), "Failed to retrieve users");
+        }
+        btnListUsers.setText("Get Users");
+        btnListUsers.setEnabled(true);
+      }
+    }).start();
   }
 
   public void clearUsersTable()
   {
-	DefaultTableModel dm = (DefaultTableModel) oUserTable.getModel();
-	int rowCount = dm.getRowCount();
-	//Remove rows one by one from the end of the table
-	for (int i = rowCount - 1; i >= 0; i--)
-	{
-	  dm.removeRow(i);
-	}
-	oUserTable.repaint();
+    DefaultTableModel dm = (DefaultTableModel) oUserTable.getModel();
+    int rowCount = dm.getRowCount();
+    //Remove rows one by one from the end of the table
+    for (int i = rowCount - 1; i >= 0; i--)
+    {
+      dm.removeRow(i);
+    }
+    oUserTable.repaint();
   }
 
   public int getColumnIndexByHeading(String _sColumnHeading)
   {
-	DefaultTableModel oUserModel = (DefaultTableModel) oUserTable.getModel();
-	for (int iCol = 0; iCol < oUserModel.getColumnCount(); iCol++)
-	{
-	  if (oUserModel.getColumnName(iCol).equals(_sColumnHeading))
-	  {
-		return iCol;
-	  }
-	}
-	return -1;
+    DefaultTableModel oUserModel = (DefaultTableModel) oUserTable.getModel();
+    for (int iCol = 0; iCol < oUserModel.getColumnCount(); iCol++)
+    {
+      if (oUserModel.getColumnName(iCol).equals(_sColumnHeading))
+      {
+        return iCol;
+      }
+    }
+    return -1;
   }
 
   private void showError(cError oError, String sMessage)
   {
-	JOptionPane.showMessageDialog(OSTKitAlpha.oFrame, sMessage
-			+ "\nCode: " + oError.getcode()
-			+ "\nMessage: " + oError.getmsg());
+    JOptionPane.showMessageDialog(OSTKitAlpha.oFrame, sMessage
+            + "\nCode: " + oError.getcode()
+            + "\nMessage: " + oError.getmsg());
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnAirdrop;
   private javax.swing.JButton btnCreateUser;
+  private javax.swing.JButton btnListTransactions;
   private javax.swing.JButton btnListUsers;
   private javax.swing.JComboBox<String> cmbAirdropTo;
   private javax.swing.JComboBox<String> cmbFilter;
@@ -533,6 +613,7 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JTable oUserTable;
   private javax.swing.JPanel oUsersPanel;
   private javax.swing.JScrollPane oUsersTabScrollTab;
+  private javax.swing.JPanel pnlTransactions;
   private javax.swing.JSpinner spnAirdropAmount;
   private javax.swing.JSpinner spnPage;
   private javax.swing.JTextField txtName;

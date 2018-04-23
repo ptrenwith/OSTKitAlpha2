@@ -19,6 +19,7 @@ import org.digitalpassport.ui.cMainPanel;
 public class OSTKitAlpha
 {
   public static JFrame oFrame;
+  private cMainPanel m_oMainPanel = null;
   private cWindowBounds oWindowBounds;
   private File fBounds;
   private cSerializationFactory oSerializationFactory = new cSerializationFactory();
@@ -33,9 +34,8 @@ public class OSTKitAlpha
   
   public OSTKitAlpha()
   {
-    
     oFrame = new JFrame("Digital Passport");
-    
+    m_oMainPanel = new cMainPanel();
     fBounds = new File("bounds.ser");
     // default window bounds
     oWindowBounds = new cWindowBounds();
@@ -89,7 +89,7 @@ public class OSTKitAlpha
 
     });
     
-    oFrame.add(new cMainPanel());
+    oFrame.add(m_oMainPanel);
     
     oFrame.setVisible(true);
   }
@@ -100,6 +100,11 @@ public class OSTKitAlpha
     oWindowBounds.setY(oFrame.getY());
     oWindowBounds.setH(oFrame.getHeight());
     oWindowBounds.setW(oFrame.getWidth());
+    
+    if (m_oMainPanel != null)
+    {
+      m_oMainPanel.terminate();
+    }
     
     oSerializationFactory.serialize(oWindowBounds, fBounds, false);
     System.exit(0);

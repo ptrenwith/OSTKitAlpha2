@@ -15,7 +15,11 @@ public interface IConstants
   public static final String g_sPATH_USERS_EDIT             = "/users/edit";
   public static final String g_sPATH_USERS_CREATE           = "/users/create";
   public static final String g_sPATH_USERS_AIRDROP_DROP     = "/users/airdrop/drop";
-  public static final String g_sPATH_TRANSACTION_TYPES_STATUS = "/transaction-types/status";
+  public static final String g_sPATH_TRANSACTION_TYPES_STATUS  = "/transaction-types/status";
+  public static final String g_sPATH_TRANSACTION_TYPES_CREATE  = "/transaction-types/create";
+  public static final String g_sPATH_TRANSACTION_TYPES_EDIT    = "/transaction-types/edit";
+  public static final String g_sPATH_TRANSACTION_TYPES_LIST    = "/transaction-types/list";
+  public static final String g_sPATH_TRANSACTION_TYPES_EXECUTE = "/transaction-types/execute";
   
   public static final String g_sPARAM_SUCCESS               = "success";
   public static final String g_sPARAM_DATA                  = "data";
