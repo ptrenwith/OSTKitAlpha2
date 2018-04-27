@@ -22,6 +22,8 @@ import org.digitalpassport.deserialize.json.cData;
 import org.digitalpassport.deserialize.json.cError;
 import org.digitalpassport.deserialize.json.cErrorData;
 import org.digitalpassport.deserialize.json.cResponse;
+import org.digitalpassport.deserialize.json.transactiontypes.cTransaction;
+import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
 import org.digitalpassport.serialization.cSerializationFactory;
 
@@ -31,7 +33,6 @@ import org.digitalpassport.serialization.cSerializationFactory;
  */
 public class cMainPanel extends javax.swing.JPanel
 {
-
   private cSerializationFactory m_oSerializationFactory = new cSerializationFactory();
   private cAirdropList m_oAirdrops = new cAirdropList();
   private File fAirdrops;
@@ -87,6 +88,7 @@ public class cMainPanel extends javax.swing.JPanel
       for (String sAirdrop : lsPreviousAirdrops)
       {
         System.out.println("Previous airdrop: " + sAirdrop);
+        cmbAirdrops.addItem(sAirdrop);
       }
     }
 
@@ -112,7 +114,7 @@ public class cMainPanel extends javax.swing.JPanel
           {
             int iRow = tblUsers.getSelectedRow();
             int iCol = tblUsers.getSelectedColumn();
-            int iUUIDIndex = getColumnIndexByHeading("UUID");
+            int iUUIDIndex = getUserTableColumnIndexByHeading("UUID");
             String sUUID = tblUsers.getValueAt(iRow, iUUIDIndex) + "";
             String sNewName = tblUsers.getValueAt(iRow, iCol) + "";
             System.out.println("User name changed: " + sUUID + " -> " + sNewName);
@@ -128,6 +130,9 @@ public class cMainPanel extends javax.swing.JPanel
         }
       }
     });
+    
+    btnListUsers.doClick();
+    btnListTransactions.doClick();
   }
 
   public void terminate()
@@ -163,7 +168,12 @@ public class cMainPanel extends javax.swing.JPanel
     btnCreateUser = new javax.swing.JButton();
     jScrollPane1 = new javax.swing.JScrollPane();
     pnlTransactions = new javax.swing.JPanel();
+    jTabbedPane1 = new javax.swing.JTabbedPane();
+    pnlNewTransaction = new javax.swing.JPanel();
+    pnlExistingTransactions = new javax.swing.JPanel();
     btnListTransactions = new javax.swing.JButton();
+    jScrollPane3 = new javax.swing.JScrollPane();
+    tblTransactions = new javax.swing.JTable();
     pnlAirdrops = new javax.swing.JPanel();
     lblAirdropToUsers = new javax.swing.JLabel();
     cmbAirdropTo = new javax.swing.JComboBox<>();
@@ -335,6 +345,19 @@ public class cMainPanel extends javax.swing.JPanel
 
     oMainTabPane.addTab("Users", oUsersTabScrollTab);
 
+    javax.swing.GroupLayout pnlNewTransactionLayout = new javax.swing.GroupLayout(pnlNewTransaction);
+    pnlNewTransaction.setLayout(pnlNewTransactionLayout);
+    pnlNewTransactionLayout.setHorizontalGroup(
+      pnlNewTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 789, Short.MAX_VALUE)
+    );
+    pnlNewTransactionLayout.setVerticalGroup(
+      pnlNewTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 491, Short.MAX_VALUE)
+    );
+
+    jTabbedPane1.addTab("New", pnlNewTransaction);
+
     btnListTransactions.setText("List Transactions");
     btnListTransactions.setToolTipText("");
     btnListTransactions.addActionListener(new java.awt.event.ActionListener()
@@ -345,21 +368,75 @@ public class cMainPanel extends javax.swing.JPanel
       }
     });
 
+    tblTransactions.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][]
+      {
+
+      },
+      new String []
+      {
+        "ID", "Client Transaction ID", "Name", "Kind", "Currency Type", "Currency Value", "Commission Percentage", "Status"
+      }
+    )
+    {
+      Class[] types = new Class []
+      {
+        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean []
+      {
+        false, false, false, false, false, false, false, false
+      };
+
+      public Class getColumnClass(int columnIndex)
+      {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex)
+      {
+        return canEdit [columnIndex];
+      }
+    });
+    tblTransactions.getTableHeader().setReorderingAllowed(false);
+    jScrollPane3.setViewportView(tblTransactions);
+
+    javax.swing.GroupLayout pnlExistingTransactionsLayout = new javax.swing.GroupLayout(pnlExistingTransactions);
+    pnlExistingTransactions.setLayout(pnlExistingTransactionsLayout);
+    pnlExistingTransactionsLayout.setHorizontalGroup(
+      pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlExistingTransactionsLayout.createSequentialGroup()
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(btnListTransactions))
+          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE))
+        .addContainerGap())
+    );
+    pnlExistingTransactionsLayout.setVerticalGroup(
+      pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(btnListTransactions)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+        .addContainerGap())
+    );
+
+    jTabbedPane1.addTab("Existing", pnlExistingTransactions);
+
     javax.swing.GroupLayout pnlTransactionsLayout = new javax.swing.GroupLayout(pnlTransactions);
     pnlTransactions.setLayout(pnlTransactionsLayout);
     pnlTransactionsLayout.setHorizontalGroup(
       pnlTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTransactionsLayout.createSequentialGroup()
-        .addContainerGap(666, Short.MAX_VALUE)
-        .addComponent(btnListTransactions)
-        .addContainerGap())
+      .addComponent(jTabbedPane1)
     );
     pnlTransactionsLayout.setVerticalGroup(
       pnlTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(pnlTransactionsLayout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(btnListTransactions)
-        .addContainerGap(494, Short.MAX_VALUE))
+        .addComponent(jTabbedPane1))
     );
 
     jScrollPane1.setViewportView(pnlTransactions);
@@ -572,7 +649,7 @@ public class cMainPanel extends javax.swing.JPanel
         }
         else
         {
-          showError(oResponse.geterr(), "Failed to retrieve users");
+          showError(oResponse.geterr(), "Failed to send airdrop");
         }
       }
     }).start();
@@ -590,7 +667,28 @@ public class cMainPanel extends javax.swing.JPanel
         cResponse oResponse = m_oTransactionManagement.listTransactions();
         if (oResponse.getsuccess())
         {
-          System.out.println(oResponse.getdata().toString());
+          
+          cTransactionTypes[] lsTransaction_types = oResponse.getdata().gettransaction_types();
+          DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactions.getModel();
+          for (cTransactionTypes oTransaction : lsTransaction_types)
+          {
+            Vector<Object> vRow = new Vector<Object>();
+            int iRowNumber = oTransactionModel.getRowCount();
+            oTransactionModel.addRow(vRow);
+
+            oTransactionModel.setValueAt(oTransaction.getid(), iRowNumber, getTransactionTableColumnIndexByHeading("ID"));
+            oTransactionModel.setValueAt(oTransaction.getclient_transaction_id(), iRowNumber, getTransactionTableColumnIndexByHeading("Client Transaction ID"));
+            oTransactionModel.setValueAt(oTransaction.getname(), iRowNumber, getTransactionTableColumnIndexByHeading("Name"));
+            oTransactionModel.setValueAt(oTransaction.getkind(), iRowNumber, getTransactionTableColumnIndexByHeading("Kind"));
+            oTransactionModel.setValueAt(oTransaction.getcurrency_type(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Type"));
+            oTransactionModel.setValueAt(oTransaction.getcurrency_value(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Value"));
+            oTransactionModel.setValueAt(oTransaction.getcommission_percent(), iRowNumber, getTransactionTableColumnIndexByHeading("Commission Percentage"));
+            oTransactionModel.setValueAt(oTransaction.getstatus(), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));
+          }
+        }
+        else 
+        {
+          showError(oResponse.geterr(), "List Transactions");
         }
         btnListTransactions.setText("List Transactions");
         btnListTransactions.setEnabled(true);
@@ -641,6 +739,10 @@ public class cMainPanel extends javax.swing.JPanel
               }
             }
           }
+          else
+          {
+            showError(oResponse.geterr(), "Airdrop Status");
+          }
         }
       }
     }).start();
@@ -689,10 +791,10 @@ public class cMainPanel extends javax.swing.JPanel
             int iRowNumber = oUserModel.getRowCount();
             oUserModel.addRow(vRow);
 
-            oUserModel.setValueAt(oUser.getName(), iRowNumber, getColumnIndexByHeading("Name"));
-            oUserModel.setValueAt(oUser.getToken_balance(), iRowNumber, getColumnIndexByHeading("Tokens"));
-            oUserModel.setValueAt(oUser.getTotal_airdropped_tokens(), iRowNumber, getColumnIndexByHeading("Airdropped Tokens"));
-            oUserModel.setValueAt(oUser.getUuid(), iRowNumber, getColumnIndexByHeading("UUID"));
+            oUserModel.setValueAt(oUser.getName(), iRowNumber, getUserTableColumnIndexByHeading("Name"));
+            oUserModel.setValueAt(oUser.getToken_balance(), iRowNumber, getUserTableColumnIndexByHeading("Tokens"));
+            oUserModel.setValueAt(oUser.getTotal_airdropped_tokens(), iRowNumber, getUserTableColumnIndexByHeading("Airdropped Tokens"));
+            oUserModel.setValueAt(oUser.getUuid(), iRowNumber, getUserTableColumnIndexByHeading("UUID"));
           }
         }
         else
@@ -717,9 +819,22 @@ public class cMainPanel extends javax.swing.JPanel
     tblUsers.repaint();
   }
 
-  public int getColumnIndexByHeading(String _sColumnHeading)
+  public int getUserTableColumnIndexByHeading(String _sColumnHeading)
   {
     DefaultTableModel oUserModel = (DefaultTableModel) tblUsers.getModel();
+    for (int iCol = 0; iCol < oUserModel.getColumnCount(); iCol++)
+    {
+      if (oUserModel.getColumnName(iCol).equals(_sColumnHeading))
+      {
+        return iCol;
+      }
+    }
+    return -1;
+  }
+  
+  public int getTransactionTableColumnIndexByHeading(String _sColumnHeading)
+  {
+    DefaultTableModel oUserModel = (DefaultTableModel) tblTransactions.getModel();
     for (int iCol = 0; iCol < oUserModel.getColumnCount(); iCol++)
     {
       if (oUserModel.getColumnName(iCol).equals(_sColumnHeading))
@@ -754,7 +869,9 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JLabel jLabel4;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
+  private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JScrollPane jScrollPane4;
+  private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JLabel lblAirdropAmount;
   private javax.swing.JLabel lblAirdropStatus;
   private javax.swing.JLabel lblAirdropToUsers;
@@ -763,10 +880,13 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JPanel oUsersPanel;
   private javax.swing.JScrollPane oUsersTabScrollTab;
   private javax.swing.JPanel pnlAirdrops;
+  private javax.swing.JPanel pnlExistingTransactions;
+  private javax.swing.JPanel pnlNewTransaction;
   private javax.swing.JPanel pnlTransactions;
   private javax.swing.JSpinner spnAirdropAmount;
   private javax.swing.JSpinner spnPage;
   private javax.swing.JTable tblAirdropStepsCompleted;
+  private javax.swing.JTable tblTransactions;
   private javax.swing.JTable tblUsers;
   private javax.swing.JTextField txtName;
   // End of variables declaration//GEN-END:variables
