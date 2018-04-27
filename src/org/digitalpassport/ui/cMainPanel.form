@@ -613,6 +613,103 @@
             </Component>
           </SubComponents>
         </Container>
+        <Container class="javax.swing.JPanel" name="Tokens">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Tokens">
+                <Property name="tabTitle" type="java.lang.String" value="Tokens"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lblClientId" alignment="0" max="32767" attributes="0"/>
+                          <Component id="lblClientName" alignment="0" pref="773" max="32767" attributes="0"/>
+                          <Component id="lblSymbol" alignment="0" pref="773" max="32767" attributes="0"/>
+                          <Component id="lblSymbolIcon" alignment="0" pref="773" max="32767" attributes="0"/>
+                          <Component id="lblConversionFactor" alignment="0" pref="773" max="32767" attributes="0"/>
+                          <Component id="lblerc20Address" alignment="1" pref="773" max="32767" attributes="0"/>
+                          <Component id="lblAirdropContractAddress" alignment="0" pref="773" max="32767" attributes="0"/>
+                          <Component id="lblSimpleStakeContractAddress" alignment="1" pref="773" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblClientId" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblClientName" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblSymbol" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblSymbolIcon" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblConversionFactor" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblerc20Address" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblAirdropContractAddress" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblSimpleStakeContractAddress" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="359" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="lblClientId">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Client ID: "/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblClientName">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Client Name:"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblSymbol">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Symbol:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblSymbolIcon">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Symbol Icon:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblConversionFactor">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Conversion Factor:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblerc20Address">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Token ERC-20 Address:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblAirdropContractAddress">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Airdrop Contract Address:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblSimpleStakeContractAddress">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Simple Stake Contract Address:"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>
