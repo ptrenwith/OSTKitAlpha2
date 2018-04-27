@@ -15,6 +15,7 @@ public interface IConstants
   public static final String g_sPATH_USERS_EDIT             = "/users/edit";
   public static final String g_sPATH_USERS_CREATE           = "/users/create";
   public static final String g_sPATH_USERS_AIRDROP_DROP     = "/users/airdrop/drop";
+  public static final String g_sPATH_USERS_AIRDROP_STATUS      = "/users/airdrop/status";
   public static final String g_sPATH_TRANSACTION_TYPES_STATUS  = "/transaction-types/status";
   public static final String g_sPATH_TRANSACTION_TYPES_CREATE  = "/transaction-types/create";
   public static final String g_sPATH_TRANSACTION_TYPES_EDIT    = "/transaction-types/edit";
@@ -97,4 +98,9 @@ public interface IConstants
   
   public static final String g_sPARAM_AMOUNT                = "amount";
   public static final String g_sPARAM_LIST_TYPE             = "list_type";
+  
+  public static final String g_sPARAM_AIRDROP_USERS_IDENTIFIED    = "users_identified";
+  public static final String g_sPARAM_AIRDROP_TOKENS_TRANSFERED   = "tokens_transfered";
+  public static final String g_sPARAM_AIRDROP_CONTRACT_APPORVED   = "contract_approved";
+  public static final String g_sPARAM_AIRDROP_ALOC_DONE           = "allocation_done";
 }

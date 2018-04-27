@@ -112,4 +112,24 @@ public class cUserManagement
     }
     return oResponse;
   }
+  
+  public cResponse airdropStatus(String sAirdropUUID)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put(g_sPARAM_AIRDROP_UUID, sAirdropUUID);
+      
+      String sResponse = cAPIClient.post(g_sPATH_USERS_AIRDROP_STATUS, oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
 }

@@ -12,6 +12,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.digitalpassport.OSTKitAlpha;
+import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_ALOC_DONE;
+import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_CONTRACT_APPORVED;
+import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_TOKENS_TRANSFERED;
+import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_USERS_IDENTIFIED;
 import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.cUserManagement;
 import org.digitalpassport.deserialize.json.cData;
@@ -34,12 +38,12 @@ public class cMainPanel extends javax.swing.JPanel
   private cUserManagement m_oUserManagement = new cUserManagement();
   private cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
   private int m_iMaxPageNumber = 2;
-  private cTableModel m_oTableModel;
+  private cUserTableModel m_oUserTableModel;
 
-  class cTableModel extends DefaultTableModel
+  class cUserTableModel extends DefaultTableModel
   {
 
-    public cTableModel()
+    public cUserTableModel()
     {
       super();
     }
@@ -88,16 +92,16 @@ public class cMainPanel extends javax.swing.JPanel
 
     spnAirdropAmount.setModel(new SpinnerNumberModel(10, 1, Integer.MAX_VALUE, 1));
 
-    m_oTableModel = new cTableModel();
-    TableModel model = oUserTable.getModel();
+    m_oUserTableModel = new cUserTableModel();
+    TableModel model = tblUsers.getModel();
     int iColumnCount = model.getColumnCount();
     for (int i = 0; i < iColumnCount; i++)
     {
-      m_oTableModel.addColumn(model.getColumnName(i));
+      m_oUserTableModel.addColumn(model.getColumnName(i));
     }
-    oUserTable.setModel(m_oTableModel);
+    tblUsers.setModel(m_oUserTableModel);
 
-    oUserTable.addPropertyChangeListener(new PropertyChangeListener()
+    tblUsers.addPropertyChangeListener(new PropertyChangeListener()
     {
       @Override
       public void propertyChange(PropertyChangeEvent evt)
@@ -106,17 +110,17 @@ public class cMainPanel extends javax.swing.JPanel
         {
           if (evt.getNewValue() == null)
           {
-            int iRow = oUserTable.getSelectedRow();
-            int iCol = oUserTable.getSelectedColumn();
+            int iRow = tblUsers.getSelectedRow();
+            int iCol = tblUsers.getSelectedColumn();
             int iUUIDIndex = getColumnIndexByHeading("UUID");
-            String sUUID = oUserTable.getValueAt(iRow, iUUIDIndex) + "";
-            String sNewName = oUserTable.getValueAt(iRow, iCol) + "";
+            String sUUID = tblUsers.getValueAt(iRow, iUUIDIndex) + "";
+            String sNewName = tblUsers.getValueAt(iRow, iCol) + "";
             System.out.println("User name changed: " + sUUID + " -> " + sNewName);
             cResponse oResponse = m_oUserManagement.editUser(sUUID, sNewName);
 
             if (oResponse != null && !oResponse.getsuccess())
             {
-              JOptionPane.showMessageDialog(oUserTable, "Failed to edit user with UUID: "
+              JOptionPane.showMessageDialog(tblUsers, "Failed to edit user with UUID: "
                       + sUUID + "\nCode: " + oResponse.geterr().getcode()
                       + "\nMessage: " + oResponse.geterr().getmsg());
             }
@@ -153,18 +157,25 @@ public class cMainPanel extends javax.swing.JPanel
     spnPage = new javax.swing.JSpinner();
     btnListUsers = new javax.swing.JButton();
     jScrollPane2 = new javax.swing.JScrollPane();
-    oUserTable = new javax.swing.JTable();
+    tblUsers = new javax.swing.JTable();
     jLabel4 = new javax.swing.JLabel();
     txtName = new javax.swing.JTextField();
     btnCreateUser = new javax.swing.JButton();
-    jLabel5 = new javax.swing.JLabel();
-    cmbAirdropTo = new javax.swing.JComboBox<>();
-    btnAirdrop = new javax.swing.JButton();
-    spnAirdropAmount = new javax.swing.JSpinner();
-    jLabel6 = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
     pnlTransactions = new javax.swing.JPanel();
     btnListTransactions = new javax.swing.JButton();
+    pnlAirdrops = new javax.swing.JPanel();
+    lblAirdropToUsers = new javax.swing.JLabel();
+    cmbAirdropTo = new javax.swing.JComboBox<>();
+    lblAirdropAmount = new javax.swing.JLabel();
+    spnAirdropAmount = new javax.swing.JSpinner();
+    btnAirdrop = new javax.swing.JButton();
+    lblAirdropUUIDs = new javax.swing.JLabel();
+    cmbAirdrops = new javax.swing.JComboBox<>();
+    btnAirdropStatus = new javax.swing.JButton();
+    jScrollPane4 = new javax.swing.JScrollPane();
+    tblAirdropStepsCompleted = new javax.swing.JTable();
+    lblAirdropStatus = new javax.swing.JLabel();
 
     jLabel3.setText("Filter:");
 
@@ -208,7 +219,7 @@ public class cMainPanel extends javax.swing.JPanel
       }
     });
 
-    oUserTable.setModel(new javax.swing.table.DefaultTableModel(
+    tblUsers.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][]
       {
 
@@ -238,7 +249,7 @@ public class cMainPanel extends javax.swing.JPanel
         return canEdit [columnIndex];
       }
     });
-    jScrollPane2.setViewportView(oUserTable);
+    jScrollPane2.setViewportView(tblUsers);
 
     jLabel4.setText("Name:");
 
@@ -251,21 +262,6 @@ public class cMainPanel extends javax.swing.JPanel
       }
     });
 
-    jLabel5.setText("Airdrop tokens to users:");
-
-    cmbAirdropTo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "never airdropped" }));
-
-    btnAirdrop.setText("Airdrop");
-    btnAirdrop.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        btnAirdropActionPerformed(evt);
-      }
-    });
-
-    jLabel6.setText("Amount:");
-
     javax.swing.GroupLayout oUsersPanelLayout = new javax.swing.GroupLayout(oUsersPanel);
     oUsersPanel.setLayout(oUsersPanelLayout);
     oUsersPanelLayout.setHorizontalGroup(
@@ -274,7 +270,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane2)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
-            .addGap(0, 120, Short.MAX_VALUE)
+            .addGap(0, 156, Short.MAX_VALUE)
             .addComponent(jLabel3)
             .addGap(18, 18, 18)
             .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -291,23 +287,11 @@ public class cMainPanel extends javax.swing.JPanel
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(btnListUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
-            .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addGroup(oUsersPanelLayout.createSequentialGroup()
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cmbAirdropTo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addGroup(oUsersPanelLayout.createSequentialGroup()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtName)))
+            .addComponent(jLabel4)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(txtName)
             .addGap(18, 18, 18)
-            .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addComponent(btnCreateUser, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-              .addComponent(btnAirdrop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addComponent(btnCreateUser, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
         .addContainerGap())
     );
     oUsersPanelLayout.setVerticalGroup(
@@ -338,20 +322,13 @@ public class cMainPanel extends javax.swing.JPanel
             .addComponent(spnPage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnListUsers))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnCreateUser)
           .addComponent(jLabel4))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel5)
-          .addComponent(cmbAirdropTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(btnAirdrop)
-          .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(jLabel6))
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addContainerGap())
     );
 
     oUsersTabScrollTab.setViewportView(oUsersPanel);
@@ -373,7 +350,7 @@ public class cMainPanel extends javax.swing.JPanel
     pnlTransactionsLayout.setHorizontalGroup(
       pnlTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTransactionsLayout.createSequentialGroup()
-        .addContainerGap(630, Short.MAX_VALUE)
+        .addContainerGap(666, Short.MAX_VALUE)
         .addComponent(btnListTransactions)
         .addContainerGap())
     );
@@ -382,12 +359,131 @@ public class cMainPanel extends javax.swing.JPanel
       .addGroup(pnlTransactionsLayout.createSequentialGroup()
         .addContainerGap()
         .addComponent(btnListTransactions)
-        .addContainerGap(436, Short.MAX_VALUE))
+        .addContainerGap(494, Short.MAX_VALUE))
     );
 
     jScrollPane1.setViewportView(pnlTransactions);
 
     oMainTabPane.addTab("Transactions", jScrollPane1);
+
+    lblAirdropToUsers.setText("Airdrop tokens to users:");
+
+    cmbAirdropTo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "never airdropped" }));
+
+    lblAirdropAmount.setText("Amount:");
+
+    btnAirdrop.setText("Airdrop");
+    btnAirdrop.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnAirdropActionPerformed(evt);
+      }
+    });
+
+    lblAirdropUUIDs.setText("Previous Airdrops:");
+    lblAirdropUUIDs.setToolTipText("");
+
+    btnAirdropStatus.setText("Status");
+    btnAirdropStatus.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnAirdropStatusActionPerformed(evt);
+      }
+    });
+
+    tblAirdropStepsCompleted.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][]
+      {
+        {null, null, null, null}
+      },
+      new String []
+      {
+        "Users Identified", "Tokens Transfered", "Contract Approved", "Allocation Done"
+      }
+    )
+    {
+      Class[] types = new Class []
+      {
+        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean []
+      {
+        false, false, false, false
+      };
+
+      public Class getColumnClass(int columnIndex)
+      {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex)
+      {
+        return canEdit [columnIndex];
+      }
+    });
+    tblAirdropStepsCompleted.setRowSelectionAllowed(false);
+    tblAirdropStepsCompleted.getTableHeader().setReorderingAllowed(false);
+    jScrollPane4.setViewportView(tblAirdropStepsCompleted);
+
+    lblAirdropStatus.setText("Status:");
+
+    javax.swing.GroupLayout pnlAirdropsLayout = new javax.swing.GroupLayout(pnlAirdrops);
+    pnlAirdrops.setLayout(pnlAirdropsLayout);
+    pnlAirdropsLayout.setHorizontalGroup(
+      pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlAirdropsLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(pnlAirdropsLayout.createSequentialGroup()
+            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+              .addComponent(lblAirdropUUIDs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblAirdropToUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(cmbAirdropTo, 0, 389, Short.MAX_VALUE)
+              .addComponent(cmbAirdrops, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(lblAirdropAmount)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(btnAirdropStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(btnAirdrop, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
+            .addGap(11, 11, 11))
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAirdropsLayout.createSequentialGroup()
+            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addComponent(lblAirdropStatus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jScrollPane4))
+            .addContainerGap())))
+    );
+    pnlAirdropsLayout.setVerticalGroup(
+      pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlAirdropsLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(lblAirdropToUsers)
+          .addComponent(cmbAirdropTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnAirdrop)
+          .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblAirdropAmount))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(lblAirdropUUIDs)
+          .addComponent(cmbAirdrops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnAirdropStatus))
+        .addGap(15, 15, 15)
+        .addComponent(lblAirdropStatus)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap(334, Short.MAX_VALUE))
+    );
+
+    lblAirdropUUIDs.getAccessibleContext().setAccessibleName("Previous Airdrops:");
+
+    oMainTabPane.addTab("Airdrops", pnlAirdrops);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -502,6 +598,55 @@ public class cMainPanel extends javax.swing.JPanel
     }).start();
   }//GEN-LAST:event_btnListTransactionsActionPerformed
 
+  private void btnAirdropStatusActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAirdropStatusActionPerformed
+  {//GEN-HEADEREND:event_btnAirdropStatusActionPerformed
+    new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        String sAirdropUUID = cmbAirdrops.getSelectedItem()+"";
+        if (sAirdropUUID != null)
+        {
+          cResponse oResponse = m_oUserManagement.airdropStatus(sAirdropUUID);
+          if (oResponse.getsuccess())
+          {
+            String airdrop_uuid = oResponse.getdata().getairdrop_uuid();
+            String current_status = oResponse.getdata().getcurrent_status();
+            String[] steps_complete = oResponse.getdata().getsteps_complete();
+            
+            lblAirdropStatus.setText("Status: " + current_status);
+            
+            tblAirdropStepsCompleted.setValueAt("NO", 0, 0);
+            tblAirdropStepsCompleted.setValueAt("NO", 0, 1);
+            tblAirdropStepsCompleted.setValueAt("NO", 0, 2);
+            tblAirdropStepsCompleted.setValueAt("NO", 0, 3);
+            for (String step: steps_complete)
+            {
+              if (step.equals(g_sPARAM_AIRDROP_USERS_IDENTIFIED))
+              {
+                tblAirdropStepsCompleted.setValueAt("YES", 0, 0);
+              }
+              else if (step.equals(g_sPARAM_AIRDROP_TOKENS_TRANSFERED))
+              {
+                tblAirdropStepsCompleted.setValueAt("YES", 0, 1);
+              }
+              else if (step.equals(g_sPARAM_AIRDROP_CONTRACT_APPORVED))
+              {
+                tblAirdropStepsCompleted.setValueAt("YES", 0, 2);
+              }
+              else if (step.equals(g_sPARAM_AIRDROP_ALOC_DONE))
+              {
+                tblAirdropStepsCompleted.setValueAt("YES", 0, 3);
+              }
+            }
+          }
+        }
+      }
+    }).start();
+        
+  }//GEN-LAST:event_btnAirdropStatusActionPerformed
+
   public void loadUsers()
   {
     btnListUsers.setText("Please wait...");
@@ -537,7 +682,7 @@ public class cMainPanel extends javax.swing.JPanel
             }
           }
 
-          DefaultTableModel oUserModel = (DefaultTableModel) oUserTable.getModel();
+          DefaultTableModel oUserModel = (DefaultTableModel) tblUsers.getModel();
           for (cEconomyUser oUser : lsUsers)
           {
             Vector<Object> vRow = new Vector<Object>();
@@ -562,19 +707,19 @@ public class cMainPanel extends javax.swing.JPanel
 
   public void clearUsersTable()
   {
-    DefaultTableModel dm = (DefaultTableModel) oUserTable.getModel();
+    DefaultTableModel dm = (DefaultTableModel) tblUsers.getModel();
     int rowCount = dm.getRowCount();
     //Remove rows one by one from the end of the table
     for (int i = rowCount - 1; i >= 0; i--)
     {
       dm.removeRow(i);
     }
-    oUserTable.repaint();
+    tblUsers.repaint();
   }
 
   public int getColumnIndexByHeading(String _sColumnHeading)
   {
-    DefaultTableModel oUserModel = (DefaultTableModel) oUserTable.getModel();
+    DefaultTableModel oUserModel = (DefaultTableModel) tblUsers.getModel();
     for (int iCol = 0; iCol < oUserModel.getColumnCount(); iCol++)
     {
       if (oUserModel.getColumnName(iCol).equals(_sColumnHeading))
@@ -594,10 +739,12 @@ public class cMainPanel extends javax.swing.JPanel
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnAirdrop;
+  private javax.swing.JButton btnAirdropStatus;
   private javax.swing.JButton btnCreateUser;
   private javax.swing.JButton btnListTransactions;
   private javax.swing.JButton btnListUsers;
   private javax.swing.JComboBox<String> cmbAirdropTo;
+  private javax.swing.JComboBox<String> cmbAirdrops;
   private javax.swing.JComboBox<String> cmbFilter;
   private javax.swing.JComboBox<String> cmbOrder;
   private javax.swing.JComboBox<String> cmbOrderBy;
@@ -605,17 +752,22 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
-  private javax.swing.JLabel jLabel5;
-  private javax.swing.JLabel jLabel6;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
+  private javax.swing.JScrollPane jScrollPane4;
+  private javax.swing.JLabel lblAirdropAmount;
+  private javax.swing.JLabel lblAirdropStatus;
+  private javax.swing.JLabel lblAirdropToUsers;
+  private javax.swing.JLabel lblAirdropUUIDs;
   private javax.swing.JTabbedPane oMainTabPane;
-  private javax.swing.JTable oUserTable;
   private javax.swing.JPanel oUsersPanel;
   private javax.swing.JScrollPane oUsersTabScrollTab;
+  private javax.swing.JPanel pnlAirdrops;
   private javax.swing.JPanel pnlTransactions;
   private javax.swing.JSpinner spnAirdropAmount;
   private javax.swing.JSpinner spnPage;
+  private javax.swing.JTable tblAirdropStepsCompleted;
+  private javax.swing.JTable tblUsers;
   private javax.swing.JTextField txtName;
   // End of variables declaration//GEN-END:variables
 }
