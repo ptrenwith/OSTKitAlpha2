@@ -66,8 +66,8 @@ public class cTransactionManagement
       TreeMap oParameters = new TreeMap();
       oParameters.put(g_sPARAM_CLIENT_TRANSACTION_ID, client_transaction_id);
       oParameters.put(g_sPARAM_NAME, sName);
-      oParameters.put(g_sPARAM_KIND, eKind);
-      oParameters.put(g_sPARAM_CURRENCY_TYPE, eType);
+      oParameters.put(g_sPARAM_KIND, eKind.name());
+      oParameters.put(g_sPARAM_CURRENCY_TYPE, eType.name());
       oParameters.put(g_sPARAM_CURRENCY_VALUE, value);
       oParameters.put(g_sPARAM_COMMISSION_PERCENT, percent);
       

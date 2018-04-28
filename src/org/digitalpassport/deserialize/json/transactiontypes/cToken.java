@@ -1,6 +1,7 @@
 
 package org.digitalpassport.deserialize.json.transactiontypes;
 
+import java.util.Objects;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 import static org.digitalpassport.api.IConstants.*;

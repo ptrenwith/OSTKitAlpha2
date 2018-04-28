@@ -8,5 +8,5 @@ package org.digitalpassport.api.commands;
 public enum eCurrencyType
 {
   USD,
-  BT
+  DPT
 }
