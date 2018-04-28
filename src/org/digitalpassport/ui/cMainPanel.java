@@ -15,10 +15,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.digitalpassport.OSTKitAlpha;
-import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_ALOC_DONE;
-import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_CONTRACT_APPORVED;
-import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_TOKENS_TRANSFERED;
-import static org.digitalpassport.api.IConstants.g_sPARAM_AIRDROP_USERS_IDENTIFIED;
+import static org.digitalpassport.api.IConstants.*;
 import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.cUserManagement;
 import org.digitalpassport.api.commands.eCurrencyType;
@@ -47,6 +44,7 @@ public class cMainPanel extends javax.swing.JPanel
   private int m_iMaxPageNumber = 2;
   private cUserTableModel m_oUserTableModel;
   private int iOriginalTransactionHash = -1;
+  private cEconomyUser[] m_lsUsers = null;
   
   class cUserTableModel extends DefaultTableModel
   {
@@ -163,6 +161,8 @@ public class cMainPanel extends javax.swing.JPanel
       @Override
       public void mouseClicked(MouseEvent e)
       {
+        btnExecute.setEnabled(true);
+        
         lblTransactionId.setText(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("ID")));
         txtTransactionName.setText(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Name")));
         cmbTransactionKind.setSelectedItem(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind")));
@@ -171,6 +171,24 @@ public class cMainPanel extends javax.swing.JPanel
         spnCommissionPercentage.setValue(Double.parseDouble(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Commission Percentage"))));
         
         spnCommissionPercentage.setEnabled(eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))).equals(eTransactionKind.user_to_user));
+        
+        switch (eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))))
+        {
+          case user_to_user:
+            cmbFromUser.setEnabled(true);
+            cmbToUser.setEnabled(true);
+            break;
+          case user_to_company:
+            cmbFromUser.setEnabled(true);
+            cmbToUser.setEnabled(false);
+            break;
+          case company_to_user:
+            cmbFromUser.setEnabled(false);
+            cmbToUser.setEnabled(true);
+            break;
+          default:
+            break;
+        }
         
         iOriginalTransactionHash = transactionHashCode();
       }
@@ -279,6 +297,11 @@ public class cMainPanel extends javax.swing.JPanel
     spnCommissionPercentage = new javax.swing.JSpinner();
     lblTransactionIDLabel = new javax.swing.JLabel();
     lblTransactionId = new javax.swing.JLabel();
+    lblFromUser = new javax.swing.JLabel();
+    cmbFromUser = new javax.swing.JComboBox<>();
+    lblToUser = new javax.swing.JLabel();
+    cmbToUser = new javax.swing.JComboBox<>();
+    btnExecute = new javax.swing.JButton();
     pnlAirdrops = new javax.swing.JPanel();
     lblAirdropToUsers = new javax.swing.JLabel();
     cmbAirdropTo = new javax.swing.JComboBox<>();
@@ -440,7 +463,7 @@ public class cMainPanel extends javax.swing.JPanel
             .addComponent(spnPage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnListUsers))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -520,7 +543,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(pnlNewTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(lblCommissionPercentage1)
           .addComponent(spnCommissionPercentage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addContainerGap(438, Short.MAX_VALUE))
+        .addContainerGap(396, Short.MAX_VALUE))
     );
 
     jTabbedPane1.addTab("New", pnlNewTransaction);
@@ -592,6 +615,31 @@ public class cMainPanel extends javax.swing.JPanel
 
     lblTransactionIDLabel.setText("ID:");
 
+    lblFromUser.setText("From User:");
+
+    cmbFromUser.setEnabled(false);
+    cmbFromUser.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        cmbFromUserActionPerformed(evt);
+      }
+    });
+
+    lblToUser.setText("To User:");
+
+    cmbToUser.setEnabled(false);
+
+    btnExecute.setText("Execute Transaction");
+    btnExecute.setEnabled(false);
+    btnExecute.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnExecuteActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout pnlExistingTransactionsLayout = new javax.swing.GroupLayout(pnlExistingTransactions);
     pnlExistingTransactions.setLayout(pnlExistingTransactionsLayout);
     pnlExistingTransactionsLayout.setHorizontalGroup(
@@ -600,14 +648,16 @@ public class cMainPanel extends javax.swing.JPanel
         .addContainerGap()
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
-          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlExistingTransactionsLayout.createSequentialGroup()
-            .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addComponent(lblCommissionPercentage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(lblCurrencyValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(lblCurrencyType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(lblKind, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(lblTransactionName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(lblTransactionIDLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
+            .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+              .addComponent(lblToUser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblFromUser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblCommissionPercentage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblCurrencyValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblCurrencyType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblKind, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblTransactionName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblTransactionIDLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(txtTransactionName, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -615,11 +665,14 @@ public class cMainPanel extends javax.swing.JPanel
               .addComponent(cmbCurrencyType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(txtCurrencyValue)
               .addComponent(spnCommissionPercentage, javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+              .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(cmbFromUser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(cmbToUser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
               .addComponent(btnListTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(btnSaveTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+              .addComponent(btnSaveTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(btnExecute, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         .addContainerGap())
     );
     pnlExistingTransactionsLayout.setVerticalGroup(
@@ -628,10 +681,11 @@ public class cMainPanel extends javax.swing.JPanel
         .addContainerGap()
         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(btnListTransactions)
-          .addComponent(lblTransactionIDLabel)
-          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            .addComponent(btnListTransactions)
+            .addComponent(lblTransactionIDLabel)))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(btnSaveTransaction)
@@ -653,7 +707,16 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(lblCommissionPercentage)
           .addComponent(spnCommissionPercentage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addGap(159, 159, 159))
+        .addGap(39, 39, 39)
+        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(cmbFromUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblFromUser)
+          .addComponent(btnExecute))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(cmbToUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblToUser))
+        .addGap(70, 70, 70))
     );
 
     jTabbedPane1.addTab("Existing", pnlExistingTransactions);
@@ -668,7 +731,7 @@ public class cMainPanel extends javax.swing.JPanel
       pnlTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(pnlTransactionsLayout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jTabbedPane1))
+        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, Short.MAX_VALUE))
     );
 
     jScrollPane1.setViewportView(pnlTransactions);
@@ -787,7 +850,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addComponent(lblAirdropStatus)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(415, Short.MAX_VALUE))
+        .addContainerGap(409, Short.MAX_VALUE))
     );
 
     oMainTabPane.addTab("Airdrops", pnlAirdrops);
@@ -842,7 +905,7 @@ public class cMainPanel extends javax.swing.JPanel
       .addGroup(TokensLayout.createSequentialGroup()
         .addContainerGap()
         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(325, Short.MAX_VALUE))
+        .addContainerGap(319, Short.MAX_VALUE))
     );
 
     oMainTabPane.addTab("Tokens", Tokens);
@@ -855,7 +918,7 @@ public class cMainPanel extends javax.swing.JPanel
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
+      .addComponent(oMainTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 635, javax.swing.GroupLayout.PREFERRED_SIZE)
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -1114,6 +1177,66 @@ public class cMainPanel extends javax.swing.JPanel
     }).start();
   }//GEN-LAST:event_btnCreateTransactionActionPerformed
 
+  private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnExecuteActionPerformed
+  {//GEN-HEADEREND:event_btnExecuteActionPerformed
+    btnExecute.setText("Please wait...");
+    btnExecute.setEnabled(false);
+    new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        String sFromUser = cmbFromUser.getSelectedItem()+"";
+        String sToUser = cmbToUser.getSelectedItem()+"";
+
+        String sFromUserUuid = sFromUser.substring(sFromUser.indexOf(" - ")+3);
+        String sToUserUuid = sToUser.substring(sToUser.indexOf(" - ")+3);
+        
+        String sName = tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Name"))+"";
+        cResponse oResponse = null;
+        switch (eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))))
+        {
+          case user_to_user:
+            oResponse = m_oTransactionManagement.executeTransaction(sFromUserUuid, sToUserUuid, sName);
+            break;
+          case user_to_company:
+            break;
+          case company_to_user:
+            break;
+          default:
+            break;
+        }
+        
+        if (oResponse != null)
+        {
+          if (oResponse.getsuccess())
+          {
+            //{"success":true,"data":{"transaction_uuid":"4d30bdeb-e156-4746-baa3-f6a8d5d99eff","transaction_hash":null,"from_uuid":"06efebcc-2422-4fb1-a2da-a654e7992fc6","to_uuid":"8613864a-97b5-4802-a745-a4bc72511cd3","transaction_kind":"like"}}
+
+          }
+          else
+          {
+            showError(oResponse.geterr(), "Transaction Error");
+          }
+        }
+        btnExecute.setText("Execute Transaction");
+        btnExecute.setEnabled(true);
+      }
+    }).start();
+  }//GEN-LAST:event_btnExecuteActionPerformed
+
+  private void cmbFromUserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbFromUserActionPerformed
+  {//GEN-HEADEREND:event_cmbFromUserActionPerformed
+    cmbToUser.removeAllItems();
+    for (cEconomyUser oUser : m_lsUsers)
+    {
+      if (!(cmbFromUser.getSelectedItem()+"").equals(oUser.getName() + " - " + oUser.getUuid()))
+      {
+        cmbToUser.addItem(oUser.getName() + " - " + oUser.getUuid());
+      }
+    }
+  }//GEN-LAST:event_cmbFromUserActionPerformed
+
   public void loadUsers()
   {
     btnListUsers.setText("Please wait...");
@@ -1135,8 +1258,8 @@ public class cMainPanel extends javax.swing.JPanel
         if (oResponse.getsuccess())
         {
           cData oUserData = oResponse.getdata();
-          cEconomyUser[] lsUsers = oUserData.geteconomy_users();
-
+          m_lsUsers = oUserData.geteconomy_users();
+          
           String sPage_no = oUserData.getmeta().getoNextPagePayload().getPage_no();
           if (sPage_no != null)
           {
@@ -1148,9 +1271,13 @@ public class cMainPanel extends javax.swing.JPanel
               spnPage.setModel(new SpinnerNumberModel(iPage, 1, m_iMaxPageNumber, 1));
             }
           }
-
+          
+          cmbFromUser.removeAllItems();
+          cmbToUser.removeAllItems();
+          
           DefaultTableModel oUserModel = (DefaultTableModel) tblUsers.getModel();
-          for (cEconomyUser oUser : lsUsers)
+          int iItem = 0;
+          for (cEconomyUser oUser : m_lsUsers)
           {
             Vector<Object> vRow = new Vector<Object>();
             int iRowNumber = oUserModel.getRowCount();
@@ -1160,6 +1287,12 @@ public class cMainPanel extends javax.swing.JPanel
             oUserModel.setValueAt(oUser.getToken_balance(), iRowNumber, getUserTableColumnIndexByHeading("Tokens"));
             oUserModel.setValueAt(oUser.getTotal_airdropped_tokens(), iRowNumber, getUserTableColumnIndexByHeading("Airdropped Tokens"));
             oUserModel.setValueAt(oUser.getUuid(), iRowNumber, getUserTableColumnIndexByHeading("UUID"));
+            
+            cmbFromUser.addItem(oUser.getName() + " - " + oUser.getUuid());
+            if (iItem++ != 0)
+            {
+              cmbToUser.addItem(oUser.getName() + " - " + oUser.getUuid());
+            }
           }
         }
         else
@@ -1235,6 +1368,7 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JButton btnAirdropStatus;
   private javax.swing.JButton btnCreateTransaction;
   private javax.swing.JButton btnCreateUser;
+  private javax.swing.JButton btnExecute;
   private javax.swing.JButton btnListTransactions;
   private javax.swing.JButton btnListUsers;
   private javax.swing.JButton btnSaveTransaction;
@@ -1243,8 +1377,10 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JComboBox<String> cmbCurrencyType;
   private javax.swing.JComboBox<String> cmbCurrencyType1;
   private javax.swing.JComboBox<String> cmbFilter;
+  private javax.swing.JComboBox<String> cmbFromUser;
   private javax.swing.JComboBox<String> cmbOrder;
   private javax.swing.JComboBox<String> cmbOrderBy;
+  private javax.swing.JComboBox<String> cmbToUser;
   private javax.swing.JComboBox<String> cmbTransactionKind;
   private javax.swing.JComboBox<String> cmbTransactionKind1;
   private javax.swing.JLabel jLabel1;
@@ -1267,8 +1403,10 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JLabel lblCurrencyType1;
   private javax.swing.JLabel lblCurrencyValue;
   private javax.swing.JLabel lblCurrencyValue1;
+  private javax.swing.JLabel lblFromUser;
   private javax.swing.JLabel lblKind;
   private javax.swing.JLabel lblKind1;
+  private javax.swing.JLabel lblToUser;
   private javax.swing.JLabel lblTransactionIDLabel;
   private javax.swing.JLabel lblTransactionId;
   private javax.swing.JLabel lblTransactionName;
