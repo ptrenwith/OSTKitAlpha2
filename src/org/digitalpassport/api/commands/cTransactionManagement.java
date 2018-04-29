@@ -129,18 +129,16 @@ public class cTransactionManagement
     cResponse oResponse = null;
     try
     {
-      String[] uuids = new String[1];
-      uuids[0] = sTransactionId;
       TreeMap oParameters = new TreeMap();
-      oParameters.put(g_sPARAM_TRANSACTION_UUIDS, uuids);
+      oParameters.put(g_sPARAM_TRANSACTION_UUIDS, sTransactionId);
       
       String sResponse = cAPIClient.post(g_sPATH_TRANSACTION_TYPES_STATUS, oParameters);
-            
+      System.out.println(sResponse);
       cClientTokens oClientTokens = null;
       {
-        int indexOf = sResponse.indexOf("client_tokens\": {\n");
-        int iStartBracket1 = sResponse.indexOf("{", indexOf + "client_tokens: {\n".length());
-        int iBracket1 = sResponse.indexOf("}", indexOf + "client_tokens: {\n".length());
+        int indexOf = sResponse.indexOf("client_tokens\":");
+        int iStartBracket1 = sResponse.indexOf("{", indexOf + "client_tokens:".length()+2);
+        int iBracket1 = sResponse.indexOf("}", indexOf + "client_tokens:".length()+2);
         int iBracket2 = sResponse.indexOf("}", iBracket1+1);
         String client_tokens = sResponse.substring(iStartBracket1, iBracket2);
         String sOld_client_tokens = sResponse.substring(indexOf, iStartBracket1);
@@ -150,9 +148,9 @@ public class cTransactionManagement
       
       cTransactionTypes oTransactionTypes = null;
       {
-        int indexOf = sResponse.indexOf("transaction_types\": {\n");
-        int iStartBracket1 = sResponse.indexOf("{", indexOf + "transaction_types: {\n".length());
-        int iBracket1 = sResponse.indexOf("}", indexOf + "transaction_types: {\n".length());
+        int indexOf = sResponse.indexOf("transaction_types\":{");
+        int iStartBracket1 = sResponse.indexOf("{", indexOf + "transaction_types:{".length()+1);
+        int iBracket1 = sResponse.indexOf("}", indexOf + "transaction_types:{".length()+1);
         int iBracket2 = sResponse.indexOf("}", iBracket1+1);
         String transaction_types = sResponse.substring(iStartBracket1, iBracket2);
         String sOld_transaction_types = sResponse.substring(indexOf, iStartBracket1);
@@ -163,15 +161,15 @@ public class cTransactionManagement
       cEconomyUser oEconomyUser = null;
       cEconomyUser oEconomyUser2 = null;
       {
-        int indexOf = sResponse.indexOf("economy_users\": {\n");
-        int iStartBracket1 = sResponse.indexOf("{", indexOf + "economy_users: {\n".length());
-        int iBracket1 = sResponse.indexOf("}", indexOf + "economy_users: {\n".length());
+        int indexOf = sResponse.indexOf("economy_users\":{");
+        int iStartBracket1 = sResponse.indexOf("{", indexOf + "economy_users:{".length()+1);
+        int iBracket1 = sResponse.indexOf("}", indexOf + "economy_users:{".length()+1);
         String economy_users = "" + sResponse.substring(iStartBracket1, iBracket1) + "}";
         oEconomyUser = oMapper.readValue(economy_users, cEconomyUser.class);
 
         indexOf = iBracket1;
-        iStartBracket1 = sResponse.indexOf("{", indexOf + "economy_users: {\n".length());
-        iBracket1 = sResponse.indexOf("}", indexOf + "economy_users: {\n".length());
+        iStartBracket1 = sResponse.indexOf("{", indexOf + "economy_users:{".length()+1);
+        iBracket1 = sResponse.indexOf("}", indexOf + "economy_users:{".length()+1);
         economy_users = "" + sResponse.substring(iStartBracket1, iBracket1) + "}";
         oEconomyUser2 = oMapper.readValue(economy_users, cEconomyUser.class);
       }

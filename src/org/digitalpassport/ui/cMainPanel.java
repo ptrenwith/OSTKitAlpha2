@@ -5,7 +5,9 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -36,9 +38,12 @@ import org.digitalpassport.deserialize.json.transactiontypes.eStatus;
  */
 public class cMainPanel extends javax.swing.JPanel
 {
+  private SimpleDateFormat m_oSimpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSZ");
   private cSerializationFactory m_oSerializationFactory = new cSerializationFactory();
   private cAirdropList m_oAirdrops = new cAirdropList();
+  private cTransactionList m_oTransactions = new cTransactionList();
   private File fAirdrops;
+  private File fTransactions;
   private cUserManagement m_oUserManagement = new cUserManagement();
   private cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
   private int m_iMaxPageNumber = 2;
@@ -94,6 +99,18 @@ public class cMainPanel extends javax.swing.JPanel
       {
         System.out.println("Previous airdrop: " + sAirdrop);
         cmbAirdrops.addItem(sAirdrop);
+      }
+    }
+    
+    fTransactions = new File("transactions.ser");
+    if (fTransactions.exists())
+    {
+      m_oTransactions = (cTransactionList) m_oSerializationFactory.deserialize(fTransactions, false);
+      ArrayList<String> lsPreviousTransactions = m_oTransactions.getTransactionUUIDs();
+      for (String sTransaction : lsPreviousTransactions)
+      {
+        System.out.println("Previous transaction: " + sTransaction);
+        cmbTransactionHistory.addItem(sTransaction);
       }
     }
 
@@ -238,6 +255,7 @@ public class cMainPanel extends javax.swing.JPanel
   public void terminate()
   {
     m_oSerializationFactory.serialize(m_oAirdrops, fAirdrops, false);
+    m_oSerializationFactory.serialize(m_oTransactions, fTransactions, false);
   }
 
   /**
@@ -249,6 +267,7 @@ public class cMainPanel extends javax.swing.JPanel
   private void initComponents()
   {
 
+    jScrollPane6 = new javax.swing.JScrollPane();
     oMainTabPane = new javax.swing.JTabbedPane();
     oUsersTabScrollTab = new javax.swing.JScrollPane();
     oUsersPanel = new javax.swing.JPanel();
@@ -265,6 +284,21 @@ public class cMainPanel extends javax.swing.JPanel
     jLabel4 = new javax.swing.JLabel();
     txtName = new javax.swing.JTextField();
     btnCreateUser = new javax.swing.JButton();
+    pnlAirdrops = new javax.swing.JPanel();
+    lblAirdropToUsers = new javax.swing.JLabel();
+    cmbAirdropTo = new javax.swing.JComboBox<>();
+    lblAirdropAmount = new javax.swing.JLabel();
+    spnAirdropAmount = new javax.swing.JSpinner();
+    btnAirdrop = new javax.swing.JButton();
+    lblAirdropUUIDs = new javax.swing.JLabel();
+    cmbAirdrops = new javax.swing.JComboBox<>();
+    btnAirdropStatus = new javax.swing.JButton();
+    jScrollPane4 = new javax.swing.JScrollPane();
+    tblAirdropStepsCompleted = new javax.swing.JTable();
+    lblAirdropStatus = new javax.swing.JLabel();
+    Tokens = new javax.swing.JPanel();
+    jScrollPane5 = new javax.swing.JScrollPane();
+    tblTokens = new javax.swing.JTable();
     jScrollPane1 = new javax.swing.JScrollPane();
     pnlTransactions = new javax.swing.JPanel();
     jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -280,6 +314,12 @@ public class cMainPanel extends javax.swing.JPanel
     cmbTransactionKind1 = new javax.swing.JComboBox<>();
     txtTransactionName1 = new javax.swing.JTextField();
     btnCreateTransaction = new javax.swing.JButton();
+    pnlTransactionHistory = new javax.swing.JPanel();
+    jLabel5 = new javax.swing.JLabel();
+    cmbTransactionHistory = new javax.swing.JComboBox<>();
+    btnTransactionStatus = new javax.swing.JButton();
+    jScrollPane7 = new javax.swing.JScrollPane();
+    tblTransactionStatus = new javax.swing.JTable();
     pnlExistingTransactions = new javax.swing.JPanel();
     btnListTransactions = new javax.swing.JButton();
     jScrollPane3 = new javax.swing.JScrollPane();
@@ -296,27 +336,12 @@ public class cMainPanel extends javax.swing.JPanel
     txtCurrencyValue = new javax.swing.JFormattedTextField();
     spnCommissionPercentage = new javax.swing.JSpinner();
     lblTransactionIDLabel = new javax.swing.JLabel();
-    lblTransactionId = new javax.swing.JLabel();
     lblFromUser = new javax.swing.JLabel();
     cmbFromUser = new javax.swing.JComboBox<>();
     lblToUser = new javax.swing.JLabel();
     cmbToUser = new javax.swing.JComboBox<>();
     btnExecute = new javax.swing.JButton();
-    pnlAirdrops = new javax.swing.JPanel();
-    lblAirdropToUsers = new javax.swing.JLabel();
-    cmbAirdropTo = new javax.swing.JComboBox<>();
-    lblAirdropAmount = new javax.swing.JLabel();
-    spnAirdropAmount = new javax.swing.JSpinner();
-    btnAirdrop = new javax.swing.JButton();
-    lblAirdropUUIDs = new javax.swing.JLabel();
-    cmbAirdrops = new javax.swing.JComboBox<>();
-    btnAirdropStatus = new javax.swing.JButton();
-    jScrollPane4 = new javax.swing.JScrollPane();
-    tblAirdropStepsCompleted = new javax.swing.JTable();
-    lblAirdropStatus = new javax.swing.JLabel();
-    Tokens = new javax.swing.JPanel();
-    jScrollPane5 = new javax.swing.JScrollPane();
-    tblTokens = new javax.swing.JTable();
+    lblTransactionId = new javax.swing.JLabel();
 
     jLabel3.setText("Filter:");
 
@@ -411,7 +436,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane2)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
-            .addGap(0, 156, Short.MAX_VALUE)
+            .addGap(0, 211, Short.MAX_VALUE)
             .addComponent(jLabel3)
             .addGap(18, 18, 18)
             .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -463,8 +488,8 @@ public class cMainPanel extends javax.swing.JPanel
             .addComponent(spnPage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(btnListUsers))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnCreateUser)
@@ -475,6 +500,176 @@ public class cMainPanel extends javax.swing.JPanel
     oUsersTabScrollTab.setViewportView(oUsersPanel);
 
     oMainTabPane.addTab("Users", oUsersTabScrollTab);
+
+    lblAirdropToUsers.setText("Airdrop tokens to users:");
+
+    cmbAirdropTo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "never airdropped" }));
+
+    lblAirdropAmount.setText("Amount:");
+
+    btnAirdrop.setText("Airdrop");
+    btnAirdrop.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnAirdropActionPerformed(evt);
+      }
+    });
+
+    lblAirdropUUIDs.setText("Previous Airdrops:");
+    lblAirdropUUIDs.setToolTipText("");
+
+    btnAirdropStatus.setText("Status");
+    btnAirdropStatus.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnAirdropStatusActionPerformed(evt);
+      }
+    });
+
+    tblAirdropStepsCompleted.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][]
+      {
+        {null, null, null, null}
+      },
+      new String []
+      {
+        "Users Identified", "Tokens Transfered", "Contract Approved", "Allocation Done"
+      }
+    )
+    {
+      Class[] types = new Class []
+      {
+        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean []
+      {
+        false, false, false, false
+      };
+
+      public Class getColumnClass(int columnIndex)
+      {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex)
+      {
+        return canEdit [columnIndex];
+      }
+    });
+    tblAirdropStepsCompleted.setRowSelectionAllowed(false);
+    tblAirdropStepsCompleted.getTableHeader().setReorderingAllowed(false);
+    jScrollPane4.setViewportView(tblAirdropStepsCompleted);
+
+    lblAirdropStatus.setText("Status:");
+
+    javax.swing.GroupLayout pnlAirdropsLayout = new javax.swing.GroupLayout(pnlAirdrops);
+    pnlAirdrops.setLayout(pnlAirdropsLayout);
+    pnlAirdropsLayout.setHorizontalGroup(
+      pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlAirdropsLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(lblAirdropStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 840, Short.MAX_VALUE)
+          .addGroup(pnlAirdropsLayout.createSequentialGroup()
+            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+              .addComponent(lblAirdropUUIDs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblAirdropToUsers))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(cmbAirdropTo, 0, 1, Short.MAX_VALUE)
+              .addComponent(cmbAirdrops, 0, 1, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(lblAirdropAmount)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(btnAirdropStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(btnAirdrop, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAirdropsLayout.createSequentialGroup()
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addContainerGap())
+    );
+    pnlAirdropsLayout.setVerticalGroup(
+      pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlAirdropsLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(lblAirdropToUsers)
+          .addComponent(cmbAirdropTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnAirdrop)
+          .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblAirdropAmount))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(lblAirdropUUIDs)
+          .addComponent(cmbAirdrops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnAirdropStatus))
+        .addGap(21, 21, 21)
+        .addComponent(lblAirdropStatus)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap())
+    );
+
+    oMainTabPane.addTab("Airdrops", pnlAirdrops);
+
+    tblTokens.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][]
+      {
+        {null, null},
+        {null, null},
+        {null, null},
+        {null, null},
+        {null, null},
+        {null, null},
+        {null, null},
+        {null, null}
+      },
+      new String []
+      {
+        "Key", "Value"
+      }
+    )
+    {
+      Class[] types = new Class []
+      {
+        java.lang.String.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean []
+      {
+        false, false
+      };
+
+      public Class getColumnClass(int columnIndex)
+      {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex)
+      {
+        return canEdit [columnIndex];
+      }
+    });
+    jScrollPane5.setViewportView(tblTokens);
+
+    javax.swing.GroupLayout TokensLayout = new javax.swing.GroupLayout(Tokens);
+    Tokens.setLayout(TokensLayout);
+    TokensLayout.setHorizontalGroup(
+      TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
+    );
+    TokensLayout.setVerticalGroup(
+      TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(TokensLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+    );
+
+    oMainTabPane.addTab("Tokens", Tokens);
 
     lblTransactionName1.setText("Name: ");
 
@@ -512,7 +707,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlNewTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(txtCurrencyValue1)
-          .addComponent(cmbCurrencyType1, 0, 507, Short.MAX_VALUE)
+          .addComponent(cmbCurrencyType1, 0, 562, Short.MAX_VALUE)
           .addComponent(cmbTransactionKind1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(txtTransactionName1, javax.swing.GroupLayout.Alignment.TRAILING)
           .addComponent(spnCommissionPercentage1, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -543,10 +738,84 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(pnlNewTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(lblCommissionPercentage1)
           .addComponent(spnCommissionPercentage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addContainerGap(396, Short.MAX_VALUE))
+        .addContainerGap())
     );
 
     jTabbedPane1.addTab("New", pnlNewTransaction);
+
+    jLabel5.setText("Transaction:");
+
+    btnTransactionStatus.setLabel("Transaction Status");
+    btnTransactionStatus.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnTransactionStatusActionPerformed(evt);
+      }
+    });
+
+    tblTransactionStatus.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][]
+      {
+
+      },
+      new String []
+      {
+        "Name", "Kind", "Currency", "Value", "Commission Percent", "Time", "From", "To"
+      }
+    )
+    {
+      Class[] types = new Class []
+      {
+        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean []
+      {
+        false, false, false, false, false, false, false, false
+      };
+
+      public Class getColumnClass(int columnIndex)
+      {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex)
+      {
+        return canEdit [columnIndex];
+      }
+    });
+    tblTransactionStatus.getTableHeader().setReorderingAllowed(false);
+    jScrollPane7.setViewportView(tblTransactionStatus);
+
+    javax.swing.GroupLayout pnlTransactionHistoryLayout = new javax.swing.GroupLayout(pnlTransactionHistory);
+    pnlTransactionHistory.setLayout(pnlTransactionHistoryLayout);
+    pnlTransactionHistoryLayout.setHorizontalGroup(
+      pnlTransactionHistoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlTransactionHistoryLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(pnlTransactionHistoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
+          .addGroup(pnlTransactionHistoryLayout.createSequentialGroup()
+            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(cmbTransactionHistory, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(btnTransactionStatus)))
+        .addContainerGap())
+    );
+    pnlTransactionHistoryLayout.setVerticalGroup(
+      pnlTransactionHistoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlTransactionHistoryLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(pnlTransactionHistoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(jLabel5)
+          .addComponent(cmbTransactionHistory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnTransactionStatus))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE))
+    );
+
+    jTabbedPane1.addTab("History", pnlTransactionHistory);
 
     btnListTransactions.setText("Refresh Transactions");
     btnListTransactions.setToolTipText("");
@@ -640,6 +909,8 @@ public class cMainPanel extends javax.swing.JPanel
       }
     });
 
+    lblTransactionId.setToolTipText("");
+
     javax.swing.GroupLayout pnlExistingTransactionsLayout = new javax.swing.GroupLayout(pnlExistingTransactions);
     pnlExistingTransactions.setLayout(pnlExistingTransactionsLayout);
     pnlExistingTransactionsLayout.setHorizontalGroup(
@@ -647,7 +918,7 @@ public class cMainPanel extends javax.swing.JPanel
       .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
           .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
             .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
               .addComponent(lblToUser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -665,9 +936,9 @@ public class cMainPanel extends javax.swing.JPanel
               .addComponent(cmbCurrencyType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(txtCurrencyValue)
               .addComponent(spnCommissionPercentage, javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(cmbFromUser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(cmbToUser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+              .addComponent(cmbToUser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
               .addComponent(btnListTransactions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -681,11 +952,10 @@ public class cMainPanel extends javax.swing.JPanel
         .addContainerGap()
         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-            .addComponent(btnListTransactions)
-            .addComponent(lblTransactionIDLabel)))
+        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(btnListTransactions)
+          .addComponent(lblTransactionIDLabel)
+          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(btnSaveTransaction)
@@ -693,21 +963,21 @@ public class cMainPanel extends javax.swing.JPanel
           .addComponent(lblTransactionName))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(lblKind)
-          .addComponent(cmbTransactionKind, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(cmbTransactionKind, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblKind))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(lblCurrencyType)
-          .addComponent(cmbCurrencyType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(cmbCurrencyType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblCurrencyType))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(lblCurrencyValue)
-          .addComponent(txtCurrencyValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(txtCurrencyValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblCurrencyValue))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(lblCommissionPercentage)
-          .addComponent(spnCommissionPercentage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addGap(39, 39, 39)
+          .addComponent(spnCommissionPercentage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblCommissionPercentage))
+        .addGap(18, 18, 18)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(cmbFromUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(lblFromUser)
@@ -716,7 +986,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(cmbToUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(lblToUser))
-        .addGap(70, 70, 70))
+        .addContainerGap())
     );
 
     jTabbedPane1.addTab("Existing", pnlExistingTransactions);
@@ -729,196 +999,24 @@ public class cMainPanel extends javax.swing.JPanel
     );
     pnlTransactionsLayout.setVerticalGroup(
       pnlTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(pnlTransactionsLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, Short.MAX_VALUE))
+      .addComponent(jTabbedPane1)
     );
 
     jScrollPane1.setViewportView(pnlTransactions);
 
     oMainTabPane.addTab("Transactions", jScrollPane1);
 
-    lblAirdropToUsers.setText("Airdrop tokens to users:");
-
-    cmbAirdropTo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "never airdropped" }));
-
-    lblAirdropAmount.setText("Amount:");
-
-    btnAirdrop.setText("Airdrop");
-    btnAirdrop.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        btnAirdropActionPerformed(evt);
-      }
-    });
-
-    lblAirdropUUIDs.setText("Previous Airdrops:");
-    lblAirdropUUIDs.setToolTipText("");
-
-    btnAirdropStatus.setText("Status");
-    btnAirdropStatus.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        btnAirdropStatusActionPerformed(evt);
-      }
-    });
-
-    tblAirdropStepsCompleted.setModel(new javax.swing.table.DefaultTableModel(
-      new Object [][]
-      {
-        {null, null, null, null}
-      },
-      new String []
-      {
-        "Users Identified", "Tokens Transfered", "Contract Approved", "Allocation Done"
-      }
-    )
-    {
-      Class[] types = new Class []
-      {
-        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-      };
-      boolean[] canEdit = new boolean []
-      {
-        false, false, false, false
-      };
-
-      public Class getColumnClass(int columnIndex)
-      {
-        return types [columnIndex];
-      }
-
-      public boolean isCellEditable(int rowIndex, int columnIndex)
-      {
-        return canEdit [columnIndex];
-      }
-    });
-    tblAirdropStepsCompleted.setRowSelectionAllowed(false);
-    tblAirdropStepsCompleted.getTableHeader().setReorderingAllowed(false);
-    jScrollPane4.setViewportView(tblAirdropStepsCompleted);
-
-    lblAirdropStatus.setText("Status:");
-
-    javax.swing.GroupLayout pnlAirdropsLayout = new javax.swing.GroupLayout(pnlAirdrops);
-    pnlAirdrops.setLayout(pnlAirdropsLayout);
-    pnlAirdropsLayout.setHorizontalGroup(
-      pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(pnlAirdropsLayout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(pnlAirdropsLayout.createSequentialGroup()
-            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-              .addComponent(lblAirdropUUIDs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(lblAirdropToUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(cmbAirdropTo, 0, 389, Short.MAX_VALUE)
-              .addComponent(cmbAirdrops, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(lblAirdropAmount)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addComponent(btnAirdropStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(btnAirdrop, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
-            .addGap(11, 11, 11))
-          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAirdropsLayout.createSequentialGroup()
-            .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(lblAirdropStatus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(jScrollPane4))
-            .addContainerGap())))
-    );
-    pnlAirdropsLayout.setVerticalGroup(
-      pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(pnlAirdropsLayout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(lblAirdropToUsers)
-          .addComponent(cmbAirdropTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(btnAirdrop)
-          .addComponent(spnAirdropAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(lblAirdropAmount))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(lblAirdropUUIDs)
-          .addComponent(cmbAirdrops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(btnAirdropStatus))
-        .addGap(15, 15, 15)
-        .addComponent(lblAirdropStatus)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(409, Short.MAX_VALUE))
-    );
-
-    oMainTabPane.addTab("Airdrops", pnlAirdrops);
-
-    tblTokens.setModel(new javax.swing.table.DefaultTableModel(
-      new Object [][]
-      {
-        {null, null},
-        {null, null},
-        {null, null},
-        {null, null},
-        {null, null},
-        {null, null},
-        {null, null},
-        {null, null}
-      },
-      new String []
-      {
-        "Key", "Value"
-      }
-    )
-    {
-      Class[] types = new Class []
-      {
-        java.lang.String.class, java.lang.String.class
-      };
-      boolean[] canEdit = new boolean []
-      {
-        false, false
-      };
-
-      public Class getColumnClass(int columnIndex)
-      {
-        return types [columnIndex];
-      }
-
-      public boolean isCellEditable(int rowIndex, int columnIndex)
-      {
-        return canEdit [columnIndex];
-      }
-    });
-    jScrollPane5.setViewportView(tblTokens);
-
-    javax.swing.GroupLayout TokensLayout = new javax.swing.GroupLayout(Tokens);
-    Tokens.setLayout(TokensLayout);
-    TokensLayout.setHorizontalGroup(
-      TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 797, Short.MAX_VALUE)
-    );
-    TokensLayout.setVerticalGroup(
-      TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(TokensLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(319, Short.MAX_VALUE))
-    );
-
-    oMainTabPane.addTab("Tokens", Tokens);
+    jScrollPane6.setViewportView(oMainTabPane);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane)
+      .addComponent(jScrollPane6)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 635, javax.swing.GroupLayout.PREFERRED_SIZE)
+      .addComponent(jScrollPane6)
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -1212,7 +1310,7 @@ public class cMainPanel extends javax.swing.JPanel
           if (oResponse.getsuccess())
           {
             //{"success":true,"data":{"transaction_uuid":"4d30bdeb-e156-4746-baa3-f6a8d5d99eff","transaction_hash":null,"from_uuid":"06efebcc-2422-4fb1-a2da-a654e7992fc6","to_uuid":"8613864a-97b5-4802-a745-a4bc72511cd3","transaction_kind":"like"}}
-
+            m_oTransactions.addTransactionUuid(oResponse.getdata().gettransaction_uuid());
           }
           else
           {
@@ -1236,6 +1334,48 @@ public class cMainPanel extends javax.swing.JPanel
       }
     }
   }//GEN-LAST:event_cmbFromUserActionPerformed
+
+  private void btnTransactionStatusActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnTransactionStatusActionPerformed
+  {//GEN-HEADEREND:event_btnTransactionStatusActionPerformed
+    btnListUsers.setText("Please wait...");
+    btnListUsers.setEnabled(false);
+    new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        cResponse oResponse = m_oTransactionManagement.getTransactionStatus("4d30bdeb-e156-4746-baa3-f6a8d5d99eff");
+
+        if (oResponse.getsuccess())
+        {
+          cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
+          String sDate = m_oSimpleDateFormat.format(new Date(transaction_type.getuts()));
+          cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
+          cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
+          DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactionStatus.getModel();
+
+          Vector<Object> vRow = new Vector<Object>();
+          int iRowNumber = oTransactionModel.getRowCount();
+          oTransactionModel.addRow(vRow);
+
+          oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, 0);
+          oTransactionModel.setValueAt(transaction_type.getkind(), iRowNumber, 1);
+          oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, 2);
+          oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, 3);
+          oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, 4);
+          oTransactionModel.setValueAt(sDate, iRowNumber, 5);
+          oTransactionModel.setValueAt(fromUser.getName() + " (" + fromUser.getkind() + ")", iRowNumber, 6);
+          oTransactionModel.setValueAt(toUser.getName() + " (" + toUser.getkind() + ")", iRowNumber, 7);
+        }
+        else
+        {
+          showError(oResponse.geterr(), "Transaction Status");
+        }
+        btnListUsers.setText("Transaction Status");
+        btnListUsers.setEnabled(true);
+      }
+    }).start();
+  }//GEN-LAST:event_btnTransactionStatusActionPerformed
 
   public void loadUsers()
   {
@@ -1372,6 +1512,7 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JButton btnListTransactions;
   private javax.swing.JButton btnListUsers;
   private javax.swing.JButton btnSaveTransaction;
+  private javax.swing.JButton btnTransactionStatus;
   private javax.swing.JComboBox<String> cmbAirdropTo;
   private javax.swing.JComboBox<String> cmbAirdrops;
   private javax.swing.JComboBox<String> cmbCurrencyType;
@@ -1381,17 +1522,21 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JComboBox<String> cmbOrder;
   private javax.swing.JComboBox<String> cmbOrderBy;
   private javax.swing.JComboBox<String> cmbToUser;
+  private javax.swing.JComboBox<String> cmbTransactionHistory;
   private javax.swing.JComboBox<String> cmbTransactionKind;
   private javax.swing.JComboBox<String> cmbTransactionKind1;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel5;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JScrollPane jScrollPane4;
   private javax.swing.JScrollPane jScrollPane5;
+  private javax.swing.JScrollPane jScrollPane6;
+  private javax.swing.JScrollPane jScrollPane7;
   private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JLabel lblAirdropAmount;
   private javax.swing.JLabel lblAirdropStatus;
@@ -1417,6 +1562,7 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JPanel pnlAirdrops;
   private javax.swing.JPanel pnlExistingTransactions;
   private javax.swing.JPanel pnlNewTransaction;
+  private javax.swing.JPanel pnlTransactionHistory;
   private javax.swing.JPanel pnlTransactions;
   private javax.swing.JSpinner spnAirdropAmount;
   private javax.swing.JSpinner spnCommissionPercentage;
@@ -1424,6 +1570,7 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JSpinner spnPage;
   private javax.swing.JTable tblAirdropStepsCompleted;
   private javax.swing.JTable tblTokens;
+  private javax.swing.JTable tblTransactionStatus;
   private javax.swing.JTable tblTransactions;
   private javax.swing.JTable tblUsers;
   private javax.swing.JFormattedTextField txtCurrencyValue;
