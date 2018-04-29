@@ -761,17 +761,17 @@ public class cMainPanel extends javax.swing.JPanel
       },
       new String []
       {
-        "Name", "Kind", "Currency", "Value", "Commission Percent", "Time", "From", "To"
+        "Name", "Kind", "Currency", "Value", "Commission Percent", "From", "To"
       }
     )
     {
       Class[] types = new Class []
       {
-        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
       };
       boolean[] canEdit = new boolean []
       {
-        false, false, false, false, false, false, false, false
+        false, false, false, false, false, false, false
       };
 
       public Class getColumnClass(int columnIndex)
@@ -1292,14 +1292,18 @@ public class cMainPanel extends javax.swing.JPanel
         
         String sName = tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Name"))+"";
         cResponse oResponse = null;
+        // company address 0x2abf49729f033cd72b5a875bad81dc9b305f06de
+        // company uuid 1ec0b428-1b27-4218-95ae-b116f14b0450
         switch (eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))))
         {
           case user_to_user:
             oResponse = m_oTransactionManagement.executeTransaction(sFromUserUuid, sToUserUuid, sName);
             break;
           case user_to_company:
+            oResponse = m_oTransactionManagement.executeTransaction(sFromUserUuid, "1ec0b428-1b27-4218-95ae-b116f14b0450", sName);
             break;
           case company_to_user:
+            oResponse = m_oTransactionManagement.executeTransaction("1ec0b428-1b27-4218-95ae-b116f14b0450", sToUserUuid, sName);
             break;
           default:
             break;
@@ -1311,6 +1315,9 @@ public class cMainPanel extends javax.swing.JPanel
           {
             //{"success":true,"data":{"transaction_uuid":"4d30bdeb-e156-4746-baa3-f6a8d5d99eff","transaction_hash":null,"from_uuid":"06efebcc-2422-4fb1-a2da-a654e7992fc6","to_uuid":"8613864a-97b5-4802-a745-a4bc72511cd3","transaction_kind":"like"}}
             m_oTransactions.addTransactionUuid(oResponse.getdata().gettransaction_uuid());
+            cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
+            
+            showInfo("Transaction Successfully executed! :-)");
           }
           else
           {
@@ -1344,7 +1351,8 @@ public class cMainPanel extends javax.swing.JPanel
       @Override
       public void run()
       {
-        cResponse oResponse = m_oTransactionManagement.getTransactionStatus("4d30bdeb-e156-4746-baa3-f6a8d5d99eff");
+        String id = cmbTransactionHistory.getSelectedItem()+"";
+        cResponse oResponse = m_oTransactionManagement.getTransactionStatus(id);
 
         if (oResponse.getsuccess())
         {
@@ -1363,9 +1371,9 @@ public class cMainPanel extends javax.swing.JPanel
           oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, 2);
           oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, 3);
           oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, 4);
-          oTransactionModel.setValueAt(sDate, iRowNumber, 5);
-          oTransactionModel.setValueAt(fromUser.getName() + " (" + fromUser.getkind() + ")", iRowNumber, 6);
-          oTransactionModel.setValueAt(toUser.getName() + " (" + toUser.getkind() + ")", iRowNumber, 7);
+          //oTransactionModel.setValueAt(sDate, iRowNumber, 5);
+          oTransactionModel.setValueAt(fromUser.getName() + " (" + fromUser.getkind() + ")", iRowNumber, 5);
+          oTransactionModel.setValueAt(toUser.getName() + " (" + toUser.getkind() + ")", iRowNumber, 6);
         }
         else
         {
@@ -1495,6 +1503,11 @@ public class cMainPanel extends javax.swing.JPanel
     return -1;
   }
 
+  private void showInfo(String sMessage)
+  {
+    JOptionPane.showMessageDialog(OSTKitAlpha.oFrame, sMessage);
+  }
+  
   private void showError(cError oError, String sMessage)
   {
     JOptionPane.showMessageDialog(OSTKitAlpha.oFrame, sMessage
