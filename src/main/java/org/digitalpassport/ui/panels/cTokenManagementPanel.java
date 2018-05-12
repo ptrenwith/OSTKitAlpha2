@@ -1,4 +1,5 @@
-package org.digitalpassport.ui;
+
+package org.digitalpassport.ui.panels;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,29 +33,31 @@ import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
 import org.digitalpassport.serialization.cSerializationFactory;
 import org.digitalpassport.transactions.cStatusRenderer;
 import org.digitalpassport.deserialize.json.transactiontypes.eStatus;
+import org.digitalpassport.ui.cAirdropList;
+import org.digitalpassport.ui.cTransactionList;
 
 /**
  *
  * @author Philip M. Trenwith
  */
-public class cMainPanel extends javax.swing.JPanel
+public class cTokenManagementPanel extends javax.swing.JPanel
 {
   private SimpleDateFormat m_oSimpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSZ");
   private cSerializationFactory m_oSerializationFactory = new cSerializationFactory();
   private cAirdropList m_oAirdrops = new cAirdropList();
   private cTransactionList m_oTransactions = new cTransactionList();
-  private File fAirdrops;
-  private File fTransactions;
   private cUserManagement m_oUserManagement = new cUserManagement();
   private cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
-  private int m_iMaxPageNumber = 2;
   private cUserTableModel m_oUserTableModel;
-  private int iOriginalTransactionHash = -1;
   private cEconomyUser[] m_lsUsers = null;
+  
+  private int m_iMaxPageNumber = 2;
+  private int iOriginalTransactionHash = -1;
+  private File fAirdrops;
+  private File fTransactions;
   
   class cUserTableModel extends DefaultTableModel
   {
-
     public cUserTableModel()
     {
       super();
@@ -66,13 +69,14 @@ public class cMainPanel extends javax.swing.JPanel
       return getColumnName(column).equals("Name");
     }
   }
-
+  
   /**
-   * Creates new form cMainPanel
+   * Creates new form cTokenManagementPanel
    */
-  public cMainPanel()
+  public cTokenManagementPanel()
   {
     initComponents();
+    
     spnPage.setValue(1);
     spnPage.addChangeListener(new ChangeListener()
     {
@@ -268,7 +272,6 @@ public class cMainPanel extends javax.swing.JPanel
   private void initComponents()
   {
 
-    jScrollPane6 = new javax.swing.JScrollPane();
     oMainTabPane = new javax.swing.JTabbedPane();
     oUsersTabScrollTab = new javax.swing.JScrollPane();
     oUsersPanel = new javax.swing.JPanel();
@@ -437,7 +440,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane2)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
-            .addGap(0, 211, Short.MAX_VALUE)
+            .addGap(0, 263, Short.MAX_VALUE)
             .addComponent(jLabel3)
             .addGap(18, 18, 18)
             .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -572,7 +575,7 @@ public class cMainPanel extends javax.swing.JPanel
       .addGroup(pnlAirdropsLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(lblAirdropStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 840, Short.MAX_VALUE)
+          .addComponent(lblAirdropStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(pnlAirdropsLayout.createSequentialGroup()
             .addGroup(pnlAirdropsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
               .addComponent(lblAirdropUUIDs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -590,7 +593,7 @@ public class cMainPanel extends javax.swing.JPanel
               .addComponent(btnAirdropStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(btnAirdrop, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAirdropsLayout.createSequentialGroup()
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE)))
         .addContainerGap())
     );
@@ -661,7 +664,7 @@ public class cMainPanel extends javax.swing.JPanel
     Tokens.setLayout(TokensLayout);
     TokensLayout.setHorizontalGroup(
       TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
     );
     TokensLayout.setVerticalGroup(
       TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -678,7 +681,6 @@ public class cMainPanel extends javax.swing.JPanel
 
     lblCurrencyType1.setText("Currency Type:");
 
-    lblCurrencyValue1.setLabelFor(txtCurrencyValue);
     lblCurrencyValue1.setText("Currency Value:");
 
     lblCommissionPercentage1.setText("Commission Percentage:");
@@ -708,7 +710,7 @@ public class cMainPanel extends javax.swing.JPanel
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlNewTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(txtCurrencyValue1)
-          .addComponent(cmbCurrencyType1, 0, 562, Short.MAX_VALUE)
+          .addComponent(cmbCurrencyType1, 0, 614, Short.MAX_VALUE)
           .addComponent(cmbTransactionKind1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(txtTransactionName1, javax.swing.GroupLayout.Alignment.TRAILING)
           .addComponent(spnCommissionPercentage1, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -795,7 +797,7 @@ public class cMainPanel extends javax.swing.JPanel
       .addGroup(pnlTransactionHistoryLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(pnlTransactionHistoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
+          .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 872, Short.MAX_VALUE)
           .addGroup(pnlTransactionHistoryLayout.createSequentialGroup()
             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -813,7 +815,7 @@ public class cMainPanel extends javax.swing.JPanel
           .addComponent(cmbTransactionHistory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnTransactionStatus))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE))
+        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE))
     );
 
     jTabbedPane1.addTab("History", pnlTransactionHistory);
@@ -876,7 +878,6 @@ public class cMainPanel extends javax.swing.JPanel
 
     lblCurrencyType.setText("Currency Type:");
 
-    lblCurrencyValue.setLabelFor(txtCurrencyValue);
     lblCurrencyValue.setText("Currency Value:");
 
     lblCommissionPercentage.setText("Commission Percentage:");
@@ -919,7 +920,7 @@ public class cMainPanel extends javax.swing.JPanel
       .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
+          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 872, Short.MAX_VALUE)
           .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
             .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
               .addComponent(lblToUser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -953,10 +954,11 @@ public class cMainPanel extends javax.swing.JPanel
         .addContainerGap()
         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(btnListTransactions)
-          .addComponent(lblTransactionIDLabel)
-          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            .addComponent(btnListTransactions)
+            .addComponent(lblTransactionIDLabel)))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(btnSaveTransaction)
@@ -1007,40 +1009,43 @@ public class cMainPanel extends javax.swing.JPanel
 
     oMainTabPane.addTab("Transactions", jScrollPane1);
 
-    jScrollPane6.setViewportView(oMainTabPane);
-
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane6)
+      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane6)
+      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
     );
   }// </editor-fold>//GEN-END:initComponents
 
-    private void cmbFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFilterActionPerformed
-      spnPage.setValue(1);
-    }//GEN-LAST:event_cmbFilterActionPerformed
+  private void cmbFilterActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbFilterActionPerformed
+  {//GEN-HEADEREND:event_cmbFilterActionPerformed
+    spnPage.setValue(1);
+  }//GEN-LAST:event_cmbFilterActionPerformed
 
-    private void cmbOrderByActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbOrderByActionPerformed
-      spnPage.setValue(1);
-    }//GEN-LAST:event_cmbOrderByActionPerformed
+  private void cmbOrderByActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbOrderByActionPerformed
+  {//GEN-HEADEREND:event_cmbOrderByActionPerformed
+    spnPage.setValue(1);
+  }//GEN-LAST:event_cmbOrderByActionPerformed
 
-    private void cmbOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbOrderActionPerformed
-      spnPage.setValue(1);
-    }//GEN-LAST:event_cmbOrderActionPerformed
+  private void cmbOrderActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbOrderActionPerformed
+  {//GEN-HEADEREND:event_cmbOrderActionPerformed
+    spnPage.setValue(1);
+  }//GEN-LAST:event_cmbOrderActionPerformed
 
-    private void btnListUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListUsersActionPerformed
-      loadUsers();
-    }//GEN-LAST:event_btnListUsersActionPerformed
+  private void btnListUsersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnListUsersActionPerformed
+  {//GEN-HEADEREND:event_btnListUsersActionPerformed
+    loadUsers();
+  }//GEN-LAST:event_btnListUsersActionPerformed
 
-    private void btnCreateUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateUserActionPerformed
-      btnCreateUser.setText("Please wait...");
-      btnCreateUser.setEnabled(false);
-      new Thread(new Runnable()
+  private void btnCreateUserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCreateUserActionPerformed
+  {//GEN-HEADEREND:event_btnCreateUserActionPerformed
+    btnCreateUser.setText("Please wait...");
+    btnCreateUser.setEnabled(false);
+    new Thread(new Runnable()
       {
         @Override
         public void run()
@@ -1077,259 +1082,259 @@ public class cMainPanel extends javax.swing.JPanel
           btnCreateUser.setEnabled(true);
         }
       }).start();
-    }//GEN-LAST:event_btnCreateUserActionPerformed
+  }//GEN-LAST:event_btnCreateUserActionPerformed
 
   private void btnAirdropActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAirdropActionPerformed
   {//GEN-HEADEREND:event_btnAirdropActionPerformed
     new Thread(new Runnable()
-    {
-      @Override
-      public void run()
       {
-        String sAirdropTo = (cmbAirdropTo.getSelectedItem() + "").replace(" ", "_");
-        cResponse oResponse = m_oUserManagement.sendAirdropTo(sAirdropTo, Integer.parseInt(spnAirdropAmount.getValue() + ""));
-        if (oResponse.getsuccess())
+        @Override
+        public void run()
         {
-          String sAirdrop_uuid = oResponse.getdata().getairdrop_uuid();
-          m_oAirdrops.addAirdropUuid(sAirdrop_uuid);
-          loadUsers();
+          String sAirdropTo = (cmbAirdropTo.getSelectedItem() + "").replace(" ", "_");
+          cResponse oResponse = m_oUserManagement.sendAirdropTo(sAirdropTo, Integer.parseInt(spnAirdropAmount.getValue() + ""));
+          if (oResponse.getsuccess())
+          {
+            String sAirdrop_uuid = oResponse.getdata().getairdrop_uuid();
+            m_oAirdrops.addAirdropUuid(sAirdrop_uuid);
+            loadUsers();
+          }
+          else
+          {
+            showError(oResponse.geterr(), "Failed to send airdrop");
+          }
         }
-        else
-        {
-          showError(oResponse.geterr(), "Failed to send airdrop");
-        }
-      }
-    }).start();
+      }).start();
   }//GEN-LAST:event_btnAirdropActionPerformed
+
+  private void btnAirdropStatusActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAirdropStatusActionPerformed
+  {//GEN-HEADEREND:event_btnAirdropStatusActionPerformed
+    new Thread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          String sAirdropUUID = cmbAirdrops.getSelectedItem() + "";
+          if (sAirdropUUID != null)
+          {
+            cResponse oResponse = m_oUserManagement.airdropStatus(sAirdropUUID);
+            if (oResponse.getsuccess())
+            {
+              String airdrop_uuid = oResponse.getdata().getairdrop_uuid();
+              String current_status = oResponse.getdata().getcurrent_status();
+              String[] steps_complete = oResponse.getdata().getsteps_complete();
+
+              lblAirdropStatus.setText("Status: " + current_status);
+
+              tblAirdropStepsCompleted.setValueAt("NO", 0, 0);
+              tblAirdropStepsCompleted.setValueAt("NO", 0, 1);
+              tblAirdropStepsCompleted.setValueAt("NO", 0, 2);
+              tblAirdropStepsCompleted.setValueAt("NO", 0, 3);
+              for (String step : steps_complete)
+              {
+                if (step.equals(g_sPARAM_AIRDROP_USERS_IDENTIFIED))
+                {
+                  tblAirdropStepsCompleted.setValueAt("YES", 0, 0);
+                }
+                else if (step.equals(g_sPARAM_AIRDROP_TOKENS_TRANSFERED))
+                {
+                  tblAirdropStepsCompleted.setValueAt("YES", 0, 1);
+                }
+                else if (step.equals(g_sPARAM_AIRDROP_CONTRACT_APPORVED))
+                {
+                  tblAirdropStepsCompleted.setValueAt("YES", 0, 2);
+                }
+                else if (step.equals(g_sPARAM_AIRDROP_ALOC_DONE))
+                {
+                  tblAirdropStepsCompleted.setValueAt("YES", 0, 3);
+                }
+              }
+            }
+            else
+            {
+              showError(oResponse.geterr(), "Airdrop Status");
+            }
+          }
+        }
+      }).start();
+  }//GEN-LAST:event_btnAirdropStatusActionPerformed
+
+  private void btnCreateTransactionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCreateTransactionActionPerformed
+  {//GEN-HEADEREND:event_btnCreateTransactionActionPerformed
+    new Thread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          btnCreateTransaction.setEnabled(false);
+          btnCreateTransaction.setText("Please wait...");
+          //        int iNewTransactionHash = transactionHashCode();
+          //        if (iOriginalTransactionHash != iNewTransactionHash)
+          {
+            String sTransactionName = txtTransactionName1.getText();
+            eTransactionKind oTransactionKind = eTransactionKind.valueOf(""+cmbTransactionKind1.getSelectedItem());
+            eCurrencyType oCurrencyType = eCurrencyType.valueOf(""+cmbCurrencyType1.getSelectedItem());
+            String sCurrencyValue = txtCurrencyValue1.getText();
+            String sCommissionPercentage = ""+spnCommissionPercentage1.getValue();
+
+            cResponse oResponse = m_oTransactionManagement.createTransaction(sTransactionName, oTransactionKind, oCurrencyType,
+              Float.parseFloat(sCurrencyValue), Float.parseFloat(sCommissionPercentage));
+            if (oResponse.getsuccess())
+            {
+              btnListTransactions.doClick();
+            }
+            else
+            {
+              showError(oResponse.geterr(), "Transaction Error");
+            }
+          }
+          btnCreateTransaction.setEnabled(true);
+          btnCreateTransaction.setText("Save Transaction");
+        }
+      }).start();
+  }//GEN-LAST:event_btnCreateTransactionActionPerformed
+
+  private void btnTransactionStatusActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnTransactionStatusActionPerformed
+  {//GEN-HEADEREND:event_btnTransactionStatusActionPerformed
+    btnListUsers.setText("Please wait...");
+    btnListUsers.setEnabled(false);
+    new Thread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          String id = cmbTransactionHistory.getSelectedItem()+"";
+          cResponse oResponse = m_oTransactionManagement.getTransactionStatus(id);
+
+          if (oResponse.getsuccess())
+          {
+            cTransaction[] transactions = oResponse.getdata().gettransactions();
+            cTransaction transaction = null;
+            String sDate = "";
+            if (transactions != null && transactions.length>0)
+            {
+              transaction = oResponse.getdata().gettransactions()[0];
+              sDate = m_oSimpleDateFormat.format(new Date(transaction.gettransaction_timestamp()));
+            }
+            cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
+            cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
+            cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
+            DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactionStatus.getModel();
+
+            Vector<Object> vRow = new Vector<Object>();
+            int iRowNumber = oTransactionModel.getRowCount();
+            oTransactionModel.addRow(vRow);
+
+            oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Name"));
+            oTransactionModel.setValueAt(transaction_type.getkind(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Kind"));
+            oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Currency"));
+            oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Value"));
+            oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Commission Percent"));
+            oTransactionModel.setValueAt(fromUser.getName() + " (" + fromUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
+            oTransactionModel.setValueAt(toUser.getName() + " (" + toUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
+            oTransactionModel.setValueAt(sDate, iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Time"));
+            if (transaction != null)
+            {
+              oTransactionModel.setValueAt(transaction.getblock_number(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Block"));
+              oTransactionModel.setValueAt(transaction.gettransaction_hash(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Hash"));
+              oTransactionModel.setValueAt(transaction.gettransaction_fee(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Fee"));
+            }
+          }
+          else
+          {
+            showError(oResponse.geterr(), "Transaction Status");
+          }
+          btnListUsers.setText("Transaction Status");
+          btnListUsers.setEnabled(true);
+        }
+      }).start();
+  }//GEN-LAST:event_btnTransactionStatusActionPerformed
 
   private void btnListTransactionsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnListTransactionsActionPerformed
   {//GEN-HEADEREND:event_btnListTransactionsActionPerformed
     btnListTransactions.setText("Please wait...");
     btnListTransactions.setEnabled(false);
     new Thread(new Runnable()
-    {
-      @Override
-      public void run()
       {
-        clearTransactionTable();
+        @Override
+        public void run()
+        {
+          clearTransactionTable();
 
-        cResponse oResponse = m_oTransactionManagement.listTransactions();
-        if (oResponse.getsuccess())
-        {
-          cTransactionTypes[] lsTransaction_types = oResponse.getdata().gettransaction_types();
-          DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactions.getModel();
-          for (cTransactionTypes oTransaction : lsTransaction_types)
-          {
-            Vector<Object> vRow = new Vector<Object>();
-            int iRowNumber = oTransactionModel.getRowCount();
-            oTransactionModel.addRow(vRow);
-            oTransactionModel.setValueAt(oTransaction.getid(), iRowNumber, getTransactionTableColumnIndexByHeading("ID"));
-            oTransactionModel.setValueAt(oTransaction.getclient_transaction_id(), iRowNumber, getTransactionTableColumnIndexByHeading("Client Transaction ID"));
-            oTransactionModel.setValueAt(oTransaction.getname(), iRowNumber, getTransactionTableColumnIndexByHeading("Name"));
-            oTransactionModel.setValueAt(oTransaction.getkind(), iRowNumber, getTransactionTableColumnIndexByHeading("Kind"));
-            oTransactionModel.setValueAt(oTransaction.getcurrency_type(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Type"));
-            oTransactionModel.setValueAt(oTransaction.getcurrency_value(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Value"));
-            oTransactionModel.setValueAt(oTransaction.getcommission_percent(), iRowNumber, getTransactionTableColumnIndexByHeading("Commission Percentage"));
-            oTransactionModel.setValueAt(eStatus.valueOf(oTransaction.getstatus()), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));
-          }
-          
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getclient_id(), 0, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getname(), 1, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol(), 2, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol_icon(), 3, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getconversion_factor(), 4, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().gettoken_erc20_address(), 5, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getairdrop_contract_addr(), 6, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsimple_stake_contract_addr(), 7, 1);
-        }
-        else
-        {
-          showError(oResponse.geterr(), "List Transactions");
-        }
-        btnListTransactions.setText("List Transactions");
-        btnListTransactions.setEnabled(true);
-      }
-    }).start();
-  }//GEN-LAST:event_btnListTransactionsActionPerformed
-
-  private void btnAirdropStatusActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAirdropStatusActionPerformed
-  {//GEN-HEADEREND:event_btnAirdropStatusActionPerformed
-    new Thread(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        String sAirdropUUID = cmbAirdrops.getSelectedItem() + "";
-        if (sAirdropUUID != null)
-        {
-          cResponse oResponse = m_oUserManagement.airdropStatus(sAirdropUUID);
+          cResponse oResponse = m_oTransactionManagement.listTransactions();
           if (oResponse.getsuccess())
           {
-            String airdrop_uuid = oResponse.getdata().getairdrop_uuid();
-            String current_status = oResponse.getdata().getcurrent_status();
-            String[] steps_complete = oResponse.getdata().getsteps_complete();
-
-            lblAirdropStatus.setText("Status: " + current_status);
-
-            tblAirdropStepsCompleted.setValueAt("NO", 0, 0);
-            tblAirdropStepsCompleted.setValueAt("NO", 0, 1);
-            tblAirdropStepsCompleted.setValueAt("NO", 0, 2);
-            tblAirdropStepsCompleted.setValueAt("NO", 0, 3);
-            for (String step : steps_complete)
+            cTransactionTypes[] lsTransaction_types = oResponse.getdata().gettransaction_types();
+            DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactions.getModel();
+            for (cTransactionTypes oTransaction : lsTransaction_types)
             {
-              if (step.equals(g_sPARAM_AIRDROP_USERS_IDENTIFIED))
-              {
-                tblAirdropStepsCompleted.setValueAt("YES", 0, 0);
-              }
-              else if (step.equals(g_sPARAM_AIRDROP_TOKENS_TRANSFERED))
-              {
-                tblAirdropStepsCompleted.setValueAt("YES", 0, 1);
-              }
-              else if (step.equals(g_sPARAM_AIRDROP_CONTRACT_APPORVED))
-              {
-                tblAirdropStepsCompleted.setValueAt("YES", 0, 2);
-              }
-              else if (step.equals(g_sPARAM_AIRDROP_ALOC_DONE))
-              {
-                tblAirdropStepsCompleted.setValueAt("YES", 0, 3);
-              }
+              Vector<Object> vRow = new Vector<Object>();
+              int iRowNumber = oTransactionModel.getRowCount();
+              oTransactionModel.addRow(vRow);
+              oTransactionModel.setValueAt(oTransaction.getid(), iRowNumber, getTransactionTableColumnIndexByHeading("ID"));
+              oTransactionModel.setValueAt(oTransaction.getclient_transaction_id(), iRowNumber, getTransactionTableColumnIndexByHeading("Client Transaction ID"));
+              oTransactionModel.setValueAt(oTransaction.getname(), iRowNumber, getTransactionTableColumnIndexByHeading("Name"));
+              oTransactionModel.setValueAt(oTransaction.getkind(), iRowNumber, getTransactionTableColumnIndexByHeading("Kind"));
+              oTransactionModel.setValueAt(oTransaction.getcurrency_type(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Type"));
+              oTransactionModel.setValueAt(oTransaction.getcurrency_value(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Value"));
+              oTransactionModel.setValueAt(oTransaction.getcommission_percent(), iRowNumber, getTransactionTableColumnIndexByHeading("Commission Percentage"));
+              oTransactionModel.setValueAt(eStatus.valueOf(oTransaction.getstatus()), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));
             }
+
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getclient_id(), 0, 1);
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getname(), 1, 1);
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol(), 2, 1);
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol_icon(), 3, 1);
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getconversion_factor(), 4, 1);
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().gettoken_erc20_address(), 5, 1);
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getairdrop_contract_addr(), 6, 1);
+            tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsimple_stake_contract_addr(), 7, 1);
           }
           else
           {
-            showError(oResponse.geterr(), "Airdrop Status");
+            showError(oResponse.geterr(), "List Transactions");
           }
+          btnListTransactions.setText("List Transactions");
+          btnListTransactions.setEnabled(true);
         }
-      }
-    }).start();
-
-  }//GEN-LAST:event_btnAirdropStatusActionPerformed
+      }).start();
+  }//GEN-LAST:event_btnListTransactionsActionPerformed
 
   private void btnSaveTransactionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSaveTransactionActionPerformed
   {//GEN-HEADEREND:event_btnSaveTransactionActionPerformed
     new Thread(new Runnable()
-    {
-      @Override
-      public void run()
       {
-        btnSaveTransaction.setEnabled(false);
-        btnSaveTransaction.setText("Please wait...");
-        int iNewTransactionHash = transactionHashCode();
-        if (iOriginalTransactionHash != iNewTransactionHash)
+        @Override
+        public void run()
         {
-          String sTransactionId = lblTransactionId.getText();
-          String sTransactionName = txtTransactionName.getText();
-          eTransactionKind oTransactionKind = eTransactionKind.valueOf(""+cmbTransactionKind.getSelectedItem());
-          eCurrencyType oCurrencyType = eCurrencyType.valueOf(""+cmbCurrencyType.getSelectedItem());
-          String sCurrencyValue = txtCurrencyValue.getText();
-          String sCommissionPercentage = ""+spnCommissionPercentage.getValue();
+          btnSaveTransaction.setEnabled(false);
+          btnSaveTransaction.setText("Please wait...");
+          int iNewTransactionHash = transactionHashCode();
+          if (iOriginalTransactionHash != iNewTransactionHash)
+          {
+            String sTransactionId = lblTransactionId.getText();
+            String sTransactionName = txtTransactionName.getText();
+            eTransactionKind oTransactionKind = eTransactionKind.valueOf(""+cmbTransactionKind.getSelectedItem());
+            eCurrencyType oCurrencyType = eCurrencyType.valueOf(""+cmbCurrencyType.getSelectedItem());
+            String sCurrencyValue = txtCurrencyValue.getText();
+            String sCommissionPercentage = ""+spnCommissionPercentage.getValue();
 
-          cResponse oResponse = m_oTransactionManagement.editTransaction(sTransactionId, sTransactionName, oTransactionKind, oCurrencyType,
+            cResponse oResponse = m_oTransactionManagement.editTransaction(sTransactionId, sTransactionName, oTransactionKind, oCurrencyType,
               Float.parseFloat(sCurrencyValue), Float.parseFloat(sCommissionPercentage));
-          if (oResponse.getsuccess())
-          {
-            btnListTransactions.doClick();
+            if (oResponse.getsuccess())
+            {
+              btnListTransactions.doClick();
+            }
+            else
+            {
+              showError(oResponse.geterr(), "Transaction Error");
+            }
           }
-          else
-          {
-            showError(oResponse.geterr(), "Transaction Error");
-          }
+          btnSaveTransaction.setEnabled(true);
+          btnSaveTransaction.setText("Save Transaction");
         }
-        btnSaveTransaction.setEnabled(true);
-        btnSaveTransaction.setText("Save Transaction");
-      }
-    }).start();
+      }).start();
   }//GEN-LAST:event_btnSaveTransactionActionPerformed
-
-  private void btnCreateTransactionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCreateTransactionActionPerformed
-  {//GEN-HEADEREND:event_btnCreateTransactionActionPerformed
-    new Thread(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        btnCreateTransaction.setEnabled(false);
-        btnCreateTransaction.setText("Please wait...");
-//        int iNewTransactionHash = transactionHashCode();
-//        if (iOriginalTransactionHash != iNewTransactionHash)
-        {
-          String sTransactionName = txtTransactionName1.getText();
-          eTransactionKind oTransactionKind = eTransactionKind.valueOf(""+cmbTransactionKind1.getSelectedItem());
-          eCurrencyType oCurrencyType = eCurrencyType.valueOf(""+cmbCurrencyType1.getSelectedItem());
-          String sCurrencyValue = txtCurrencyValue1.getText();
-          String sCommissionPercentage = ""+spnCommissionPercentage1.getValue();
-
-          cResponse oResponse = m_oTransactionManagement.createTransaction(sTransactionName, oTransactionKind, oCurrencyType,
-              Float.parseFloat(sCurrencyValue), Float.parseFloat(sCommissionPercentage));
-          if (oResponse.getsuccess())
-          {
-            btnListTransactions.doClick();
-          }
-          else
-          {
-            showError(oResponse.geterr(), "Transaction Error");
-          }
-        }
-        btnCreateTransaction.setEnabled(true);
-        btnCreateTransaction.setText("Save Transaction");
-      }
-    }).start();
-  }//GEN-LAST:event_btnCreateTransactionActionPerformed
-
-  private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnExecuteActionPerformed
-  {//GEN-HEADEREND:event_btnExecuteActionPerformed
-    btnExecute.setText("Please wait...");
-    btnExecute.setEnabled(false);
-    new Thread(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        String sFromUser = cmbFromUser.getSelectedItem()+"";
-        String sToUser = cmbToUser.getSelectedItem()+"";
-
-        String sFromUserUuid = sFromUser.substring(sFromUser.indexOf(" - ")+3);
-        String sToUserUuid = sToUser.substring(sToUser.indexOf(" - ")+3);
-        
-        String sName = tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Name"))+"";
-        cResponse oResponse = null;
-        // company address 0x2abf49729f033cd72b5a875bad81dc9b305f06de
-        // company uuid 1ec0b428-1b27-4218-95ae-b116f14b0450
-        switch (eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))))
-        {
-          case user_to_user:
-            oResponse = m_oTransactionManagement.executeTransaction(sFromUserUuid, sToUserUuid, sName);
-            break;
-          case user_to_company:
-            oResponse = m_oTransactionManagement.executeTransaction(sFromUserUuid, "1ec0b428-1b27-4218-95ae-b116f14b0450", sName);
-            break;
-          case company_to_user:
-            oResponse = m_oTransactionManagement.executeTransaction("1ec0b428-1b27-4218-95ae-b116f14b0450", sToUserUuid, sName);
-            break;
-          default:
-            break;
-        }
-        
-        if (oResponse != null)
-        {
-          if (oResponse.getsuccess())
-          {
-            //{"success":true,"data":{"transaction_uuid":"4d30bdeb-e156-4746-baa3-f6a8d5d99eff","transaction_hash":null,"from_uuid":"06efebcc-2422-4fb1-a2da-a654e7992fc6","to_uuid":"8613864a-97b5-4802-a745-a4bc72511cd3","transaction_kind":"like"}}
-            m_oTransactions.addTransactionUuid(oResponse.getdata().gettransaction_uuid());
-            cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
-            
-            showInfo("Transaction Successfully executed! :-)");
-          }
-          else
-          {
-            showError(oResponse.geterr(), "Transaction Error");
-          }
-        }
-        btnExecute.setText("Execute Transaction");
-        btnExecute.setEnabled(true);
-      }
-    }).start();
-  }//GEN-LAST:event_btnExecuteActionPerformed
 
   private void cmbFromUserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cmbFromUserActionPerformed
   {//GEN-HEADEREND:event_cmbFromUserActionPerformed
@@ -1343,61 +1348,60 @@ public class cMainPanel extends javax.swing.JPanel
     }
   }//GEN-LAST:event_cmbFromUserActionPerformed
 
-  private void btnTransactionStatusActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnTransactionStatusActionPerformed
-  {//GEN-HEADEREND:event_btnTransactionStatusActionPerformed
-    btnListUsers.setText("Please wait...");
-    btnListUsers.setEnabled(false);
+  private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnExecuteActionPerformed
+  {//GEN-HEADEREND:event_btnExecuteActionPerformed
+    btnExecute.setText("Please wait...");
+    btnExecute.setEnabled(false);
     new Thread(new Runnable()
-    {
-      @Override
-      public void run()
       {
-        String id = cmbTransactionHistory.getSelectedItem()+"";
-        cResponse oResponse = m_oTransactionManagement.getTransactionStatus(id);
-
-        if (oResponse.getsuccess())
+        @Override
+        public void run()
         {
-          cTransaction[] transactions = oResponse.getdata().gettransactions();
-          cTransaction transaction = null;
-          String sDate = "";
-          if (transactions != null && transactions.length>0)
-          {
-            transaction = oResponse.getdata().gettransactions()[0];
-            sDate = m_oSimpleDateFormat.format(new Date(transaction.gettransaction_timestamp()));
-          }
-          cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
-          cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
-          cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
-          DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactionStatus.getModel();
+          String sFromUser = cmbFromUser.getSelectedItem()+"";
+          String sToUser = cmbToUser.getSelectedItem()+"";
 
-          Vector<Object> vRow = new Vector<Object>();
-          int iRowNumber = oTransactionModel.getRowCount();
-          oTransactionModel.addRow(vRow);
+          String sFromUserUuid = sFromUser.substring(sFromUser.indexOf(" - ")+3);
+          String sToUserUuid = sToUser.substring(sToUser.indexOf(" - ")+3);
 
-          oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Name"));
-          oTransactionModel.setValueAt(transaction_type.getkind(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Kind"));
-          oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Currency"));
-          oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Value"));
-          oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Commission Percent"));
-          oTransactionModel.setValueAt(fromUser.getName() + " (" + fromUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
-          oTransactionModel.setValueAt(toUser.getName() + " (" + toUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
-          oTransactionModel.setValueAt(sDate, iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Time"));
-          if (transaction != null)
+          String sName = tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Name"))+"";
+          cResponse oResponse = null;
+          // company address 0x2abf49729f033cd72b5a875bad81dc9b305f06de
+          // company uuid 1ec0b428-1b27-4218-95ae-b116f14b0450
+          switch (eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))))
           {
-            oTransactionModel.setValueAt(transaction.getblock_number(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Block"));
-            oTransactionModel.setValueAt(transaction.gettransaction_hash(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Hash"));
-            oTransactionModel.setValueAt(transaction.gettransaction_fee(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Fee"));
+            case user_to_user:
+            oResponse = m_oTransactionManagement.executeTransaction(sFromUserUuid, sToUserUuid, sName);
+            break;
+            case user_to_company:
+            oResponse = m_oTransactionManagement.executeTransaction(sFromUserUuid, "1ec0b428-1b27-4218-95ae-b116f14b0450", sName);
+            break;
+            case company_to_user:
+            oResponse = m_oTransactionManagement.executeTransaction("1ec0b428-1b27-4218-95ae-b116f14b0450", sToUserUuid, sName);
+            break;
+            default:
+            break;
           }
+
+          if (oResponse != null)
+          {
+            if (oResponse.getsuccess())
+            {
+              //{"success":true,"data":{"transaction_uuid":"4d30bdeb-e156-4746-baa3-f6a8d5d99eff","transaction_hash":null,"from_uuid":"06efebcc-2422-4fb1-a2da-a654e7992fc6","to_uuid":"8613864a-97b5-4802-a745-a4bc72511cd3","transaction_kind":"like"}}
+              m_oTransactions.addTransactionUuid(oResponse.getdata().gettransaction_uuid());
+              cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
+
+              showInfo("Transaction Successfully executed! :-)");
+            }
+            else
+            {
+              showError(oResponse.geterr(), "Transaction Error");
+            }
+          }
+          btnExecute.setText("Execute Transaction");
+          btnExecute.setEnabled(true);
         }
-        else
-        {
-          showError(oResponse.geterr(), "Transaction Status");
-        }
-        btnListUsers.setText("Transaction Status");
-        btnListUsers.setEnabled(true);
-      }
-    }).start();
-  }//GEN-LAST:event_btnTransactionStatusActionPerformed
+      }).start();
+  }//GEN-LAST:event_btnExecuteActionPerformed
 
   public void loadUsers()
   {
@@ -1530,18 +1534,19 @@ public class cMainPanel extends javax.swing.JPanel
     return -1;
   }
 
-  private void showInfo(String sMessage)
+  public static void showInfo(String sMessage)
   {
-    JOptionPane.showMessageDialog(OSTKitAlpha.oFrame, sMessage);
+    JOptionPane.showMessageDialog(OSTKitAlpha.m_oTokenManagementPanel, sMessage);
   }
   
-  private void showError(cError oError, String sMessage)
+  public static void showError(cError oError, String sMessage)
   {
-    JOptionPane.showMessageDialog(OSTKitAlpha.oFrame, sMessage
+    JOptionPane.showMessageDialog(OSTKitAlpha.m_oTokenManagementPanel, sMessage
         + "\nCode: " + oError.getcode()
         + "\nMessage: " + oError.getmsg());
   }
 
+  
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JPanel Tokens;
   private javax.swing.JButton btnAirdrop;
@@ -1575,7 +1580,6 @@ public class cMainPanel extends javax.swing.JPanel
   private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JScrollPane jScrollPane4;
   private javax.swing.JScrollPane jScrollPane5;
-  private javax.swing.JScrollPane jScrollPane6;
   private javax.swing.JScrollPane jScrollPane7;
   private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JLabel lblAirdropAmount;
