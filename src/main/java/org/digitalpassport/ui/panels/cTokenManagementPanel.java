@@ -440,7 +440,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         .addGroup(oUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jScrollPane2)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, oUsersPanelLayout.createSequentialGroup()
-            .addGap(0, 263, Short.MAX_VALUE)
+            .addGap(0, 306, Short.MAX_VALUE)
             .addComponent(jLabel3)
             .addGap(18, 18, 18)
             .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -664,7 +664,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
     Tokens.setLayout(TokensLayout);
     TokensLayout.setHorizontalGroup(
       TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 947, Short.MAX_VALUE)
     );
     TokensLayout.setVerticalGroup(
       TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -710,7 +710,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlNewTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(txtCurrencyValue1)
-          .addComponent(cmbCurrencyType1, 0, 614, Short.MAX_VALUE)
+          .addComponent(cmbCurrencyType1, 0, 657, Short.MAX_VALUE)
           .addComponent(cmbTransactionKind1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(txtTransactionName1, javax.swing.GroupLayout.Alignment.TRAILING)
           .addComponent(spnCommissionPercentage1, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -797,7 +797,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
       .addGroup(pnlTransactionHistoryLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(pnlTransactionHistoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 872, Short.MAX_VALUE)
+          .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 915, Short.MAX_VALUE)
           .addGroup(pnlTransactionHistoryLayout.createSequentialGroup()
             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -815,7 +815,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
           .addComponent(cmbTransactionHistory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnTransactionStatus))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE))
+        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE))
     );
 
     jTabbedPane1.addTab("History", pnlTransactionHistory);
@@ -920,7 +920,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
       .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 872, Short.MAX_VALUE)
+          .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 915, Short.MAX_VALUE)
           .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
             .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
               .addComponent(lblToUser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -954,12 +954,12 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         .addContainerGap()
         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
           .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
             .addComponent(btnListTransactions)
-            .addComponent(lblTransactionIDLabel)))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(lblTransactionIDLabel))
+          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addGap(12, 12, 12)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(btnSaveTransaction)
           .addComponent(txtTransactionName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1013,11 +1013,11 @@ public class cTokenManagementPanel extends javax.swing.JPanel
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+      .addComponent(oMainTabPane)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(oMainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+      .addComponent(oMainTabPane)
     );
   }// </editor-fold>//GEN-END:initComponents
 

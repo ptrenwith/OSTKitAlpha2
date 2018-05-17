@@ -5,6 +5,8 @@
  */
 package org.digitalpassport.ui.panels;
 
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author Philip
@@ -32,23 +34,61 @@ public class cFileSharingPanel extends javax.swing.JPanel
     btnUploadFile = new javax.swing.JButton();
     jScrollPane1 = new javax.swing.JScrollPane();
     tblFiles = new javax.swing.JTable();
+    bnLogin = new javax.swing.JButton();
+    txtPassword = new javax.swing.JPasswordField();
+    lblPassword = new javax.swing.JLabel();
+    txtUsername = new javax.swing.JTextField();
+    lblUsername = new javax.swing.JLabel();
 
     btnUploadFile.setText("Upload");
+    btnUploadFile.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnUploadFileActionPerformed(evt);
+      }
+    });
 
     tblFiles.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][]
       {
-        {null, null, null, null},
-        {null, null, null, null},
-        {null, null, null, null},
-        {null, null, null, null}
+        {null, null, null},
+        {null, null, null},
+        {null, null, null},
+        {null, null, null}
       },
       new String []
       {
-        "Title 1", "Title 2", "Title 3", "Title 4"
+        "ID", "Filename", "Owner"
       }
-    ));
+    )
+    {
+      Class[] types = new Class []
+      {
+        java.lang.String.class, java.lang.String.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean []
+      {
+        false, false, false
+      };
+
+      public Class getColumnClass(int columnIndex)
+      {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex)
+      {
+        return canEdit [columnIndex];
+      }
+    });
     jScrollPane1.setViewportView(tblFiles);
+
+    bnLogin.setText("Login");
+
+    lblPassword.setText("Password:");
+
+    lblUsername.setText("Username:");
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -58,26 +98,59 @@ public class cFileSharingPanel extends javax.swing.JPanel
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(lblUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(24, 24, 24)
+            .addComponent(lblPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(bnLogin))
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 953, Short.MAX_VALUE)
+          .addGroup(layout.createSequentialGroup()
             .addComponent(btnUploadFile)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+            .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(btnUploadFile)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(bnLogin)
+          .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblPassword)
+          .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(lblUsername))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(btnUploadFile)
         .addContainerGap())
     );
   }// </editor-fold>//GEN-END:initComponents
 
+  private void btnUploadFileActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnUploadFileActionPerformed
+  {//GEN-HEADEREND:event_btnUploadFileActionPerformed
+    JFileChooser fileChooser = new JFileChooser();
+    int result = fileChooser.showOpenDialog(tblFiles);
+    if (result == JFileChooser.APPROVE_OPTION) 
+    {
+      
+    }
+  }//GEN-LAST:event_btnUploadFileActionPerformed
+
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton bnLogin;
   private javax.swing.JButton btnUploadFile;
   private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JLabel lblPassword;
+  private javax.swing.JLabel lblUsername;
   private javax.swing.JTable tblFiles;
+  private javax.swing.JPasswordField txtPassword;
+  private javax.swing.JTextField txtUsername;
   // End of variables declaration//GEN-END:variables
 }
