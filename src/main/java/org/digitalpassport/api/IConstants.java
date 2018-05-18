@@ -82,6 +82,7 @@ public interface IConstants
   public static final String g_sPARAM_FILTER                = "filter";
   public static final String g_sPARAM_ORDER_BY              = "order_by";
   public static final String g_sPARAM_ORDER                 = "order";
+  public static final String g_sPARAM_LIMIT                 = "limit";
   
   public static final String g_sPARAM_UUID                  = "uuid";
   

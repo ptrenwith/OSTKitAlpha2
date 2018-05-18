@@ -190,8 +190,11 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         cmbTransactionKind.setSelectedItem(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind")));
         cmbCurrencyType.setSelectedItem(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Currency Type")));
         txtCurrencyValue.setText(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Currency Value")));
-        spnCommissionPercentage.setValue(Double.parseDouble(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Commission Percentage"))));
-        
+        Object oCommissionPercentage = tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Commission Percentage"));
+        if (oCommissionPercentage != null)
+        {
+          spnCommissionPercentage.setValue(Double.parseDouble(""+oCommissionPercentage));
+        }
         spnCommissionPercentage.setEnabled(eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))).equals(eTransactionKind.user_to_user));
         
         switch (eTransactionKind.valueOf(""+tblTransactions.getValueAt(tblTransactions.getSelectedRow(), getTransactionTableColumnIndexByHeading("Kind"))))
@@ -1046,42 +1049,42 @@ public class cTokenManagementPanel extends javax.swing.JPanel
     btnCreateUser.setText("Please wait...");
     btnCreateUser.setEnabled(false);
     new Thread(new Runnable()
+    {
+      @Override
+      public void run()
       {
-        @Override
-        public void run()
-        {
-          cResponse oResponse = m_oUserManagement.createUser(txtName.getText());
+        cResponse oResponse = m_oUserManagement.createUser(txtName.getText());
 
-          if (oResponse != null && !oResponse.getsuccess())
+        if (oResponse != null && !oResponse.getsuccess())
+        {
+          String sErrorMsg = "";
+          cError oError = oResponse.geterr();
+          if (oError != null)
           {
-            String sErrorMsg = "";
-            cError oError = oResponse.geterr();
-            if (oError != null)
+            cErrorData[] error_data = oError.geterror_data();
+            if (error_data != null)
             {
-              cErrorData[] error_data = oError.geterror_data();
-              if (error_data != null)
+              for (cErrorData oErr : error_data)
               {
-                for (cErrorData oErr : error_data)
-                {
-                  sErrorMsg += oErr.getname() + "\n";
-                }
+                sErrorMsg += oErr.getname() + "\n";
               }
-              showError(oResponse.geterr(), "Failed to create user: " + sErrorMsg);
             }
-            else
-            {
-              showError(oResponse.geterr(), "Failed to create user");
-            }
+            showError(oResponse.geterr(), "Failed to create user: " + sErrorMsg);
           }
           else
           {
-            loadUsers();
+            showError(oResponse.geterr(), "Failed to create user");
           }
-
-          btnCreateUser.setText("Get Users");
-          btnCreateUser.setEnabled(true);
         }
-      }).start();
+        else
+        {
+          loadUsers();
+        }
+
+        btnCreateUser.setText("Get Users");
+        btnCreateUser.setEnabled(true);
+      }
+    }).start();
   }//GEN-LAST:event_btnCreateUserActionPerformed
 
   private void btnAirdropActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAirdropActionPerformed
@@ -1266,8 +1269,10 @@ public class cTokenManagementPanel extends javax.swing.JPanel
           {
             cTransactionTypes[] lsTransaction_types = oResponse.getdata().gettransaction_types();
             DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactions.getModel();
+            
             for (cTransactionTypes oTransaction : lsTransaction_types)
             {
+              String sStatus = oTransaction.getstatus();
               Vector<Object> vRow = new Vector<Object>();
               int iRowNumber = oTransactionModel.getRowCount();
               oTransactionModel.addRow(vRow);
@@ -1278,7 +1283,10 @@ public class cTokenManagementPanel extends javax.swing.JPanel
               oTransactionModel.setValueAt(oTransaction.getcurrency_type(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Type"));
               oTransactionModel.setValueAt(oTransaction.getcurrency_value(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Value"));
               oTransactionModel.setValueAt(oTransaction.getcommission_percent(), iRowNumber, getTransactionTableColumnIndexByHeading("Commission Percentage"));
-              oTransactionModel.setValueAt(eStatus.valueOf(oTransaction.getstatus()), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));
+              if (sStatus != null)
+              {
+                oTransactionModel.setValueAt(eStatus.valueOf(sStatus), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));
+              }
             }
 
             tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getclient_id(), 0, 1);
@@ -1541,9 +1549,16 @@ public class cTokenManagementPanel extends javax.swing.JPanel
   
   public static void showError(cError oError, String sMessage)
   {
-    JOptionPane.showMessageDialog(OSTKitAlpha.m_oTokenManagementPanel, sMessage
-        + "\nCode: " + oError.getcode()
-        + "\nMessage: " + oError.getmsg());
+    if (oError != null)
+    {
+      JOptionPane.showMessageDialog(OSTKitAlpha.m_oTokenManagementPanel, sMessage
+          + "\nCode: " + oError.getcode()
+          + "\nMessage: " + oError.getmsg());
+    }
+    else
+    {
+      JOptionPane.showMessageDialog(OSTKitAlpha.m_oTokenManagementPanel, sMessage);
+    }
   }
 
   

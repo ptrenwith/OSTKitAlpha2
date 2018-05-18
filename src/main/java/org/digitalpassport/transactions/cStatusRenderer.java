@@ -24,16 +24,18 @@ public class cStatusRenderer implements TableCellRenderer
       boolean hasFocus, int row, int column)
   {
     eStatus status = (eStatus) value;
-    oLabel.setText(status.name());
-    if (eStatus.active.equals(status))
+    if (status != null)
     {
-      oLabel.setBackground(Color.GREEN);
+      oLabel.setText(status.name());
+      if (eStatus.active.equals(status))
+      {
+        oLabel.setBackground(Color.GREEN);
+      }
+      else
+      {
+        oLabel.setBackground(Color.RED);
+      }
     }
-    else
-    {
-      oLabel.setBackground(Color.RED);
-    }
-
     return oLabel;
   }
 }

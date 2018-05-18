@@ -2,6 +2,7 @@ package org.digitalpassport.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,9 +26,10 @@ public class cDatabaseHandler
   
   public cDatabaseHandler()
   {
+    init();
   }
   
-  public void init()
+  private void init()
   {
     try
     {
@@ -46,6 +48,36 @@ public class cDatabaseHandler
     }
   }
 
+  public boolean register(String sUsername, String sPasswordHash, String sDisplayName)
+  {
+    boolean bResult = false;
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users VALUES ('" + sUsername + "', '" + sPasswordHash + "', '" + sDisplayName + "')");
+      bResult = oStatement.execute();
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return bResult;
+  }
+  
   private ResultSet executeQuery(Statement oStatement, String sQuery)
   {
     ResultSet oResultSet = null;
