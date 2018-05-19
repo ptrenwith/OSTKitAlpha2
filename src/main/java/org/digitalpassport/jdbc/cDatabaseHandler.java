@@ -54,8 +54,10 @@ public class cDatabaseHandler
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users VALUES ('" + sUsername + "', '" + sPasswordHash + "', '" + sDisplayName + "')");
-      bResult = oStatement.execute();
+      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users (Username, Password, DisplayName) VALUES ('" + 
+          sUsername + "', '" + sPasswordHash + "', '" + sDisplayName + "');");
+      oStatement.execute();
+      bResult = true;
     }
     catch (SQLException ex)
     {
@@ -67,6 +69,7 @@ public class cDatabaseHandler
       {
         try
         {
+          m_oConnection.commit();
           oStatement.close();
         }
         catch (SQLException ex)
