@@ -6,8 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.digitalpassport.passport.cDatabaseFile;
 import org.digitalpassport.passport.cDigitalPassport;
 
 /**
@@ -17,18 +19,30 @@ import org.digitalpassport.passport.cDigitalPassport;
 public class cDatabaseHandler 
 {
   private Connection m_oConnection = null;
- 
+  private static cDatabaseHandler g_oInstance = null;
   public static void main(String[] args)
   {
     cDatabaseHandler oDatabaseHandler = new cDatabaseHandler();
     oDatabaseHandler.init();
   }
   
-  public cDatabaseHandler()
+  public static cDatabaseHandler instance()
+  {
+    if (g_oInstance == null)
+    {
+      synchronized (cDatabaseHandler.class)
+      {
+        g_oInstance = new cDatabaseHandler();
+      }
+    }
+    return g_oInstance;
+  }
+  
+  private cDatabaseHandler()
   {
     init();
   }
-  
+      
   private void init()
   {
     try
@@ -48,6 +62,42 @@ public class cDatabaseHandler
     }
   }
 
+  public boolean login(String sUsername, String sPasswordHash)
+  {
+    boolean bResult = false;
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sUsername + "' AND " + 
+          " Password='" + sPasswordHash + "';");
+      ResultSet executeQuery = oStatement.executeQuery();
+      if (executeQuery.next())
+      {
+        bResult = true;
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return bResult;
+  }
+  
   public boolean register(String sUsername, String sPasswordHash, String sDisplayName)
   {
     boolean bResult = false;
@@ -79,6 +129,47 @@ public class cDatabaseHandler
       }
     }
     return bResult;
+  }
+  
+  public ArrayList<cDatabaseFile> getFilesForOwner(String sUsername)
+  {
+    ArrayList<cDatabaseFile> lsFiles = new ArrayList();
+    
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM passport WHERE Owner='" + sUsername + "';");
+      ResultSet oResultSet = oStatement.executeQuery();
+      while (oResultSet.next())
+      {
+        cDatabaseFile oDatabase = new cDatabaseFile();
+        oDatabase.m_sFileID = oResultSet.getString("ID");
+        oDatabase.m_sFilename = oResultSet.getString("Filename");
+        oDatabase.m_sOwner = oResultSet.getString("Owner");
+        lsFiles.add(oDatabase);
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    
+    return lsFiles;
   }
   
   private ResultSet executeQuery(Statement oStatement, String sQuery)

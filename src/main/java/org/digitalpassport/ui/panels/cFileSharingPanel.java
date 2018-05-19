@@ -2,6 +2,8 @@
 package org.digitalpassport.ui.panels;
 
 import javax.swing.JFileChooser;
+import org.digitalpassport.cryptography.cHashing;
+import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.ui.cRegisterFrame;
 
 /**
@@ -10,8 +12,9 @@ import org.digitalpassport.ui.cRegisterFrame;
  */
 public class cFileSharingPanel extends javax.swing.JPanel
 {
-
-  private cRegisterFrame m_oRegistrationFrame = new cRegisterFrame();
+  private cRegisterFrame m_oRegistrationFrame = null;
+  private boolean m_bLogin = false;
+  private String m_sUsername = "";
   
   /**
    * Creates new form cFileSharingPanel
@@ -19,6 +22,17 @@ public class cFileSharingPanel extends javax.swing.JPanel
   public cFileSharingPanel()
   {
     initComponents();
+    
+    btnLogin.setActionCommand("login");
+    m_oRegistrationFrame = new cRegisterFrame(this);
+  }
+  
+  public void setUsername(String sUsername)
+  {
+    m_bLogin = true;
+    m_sUsername = sUsername;
+    txtUsername.setText(sUsername);
+    setLogin();
   }
 
   /**
@@ -33,12 +47,12 @@ public class cFileSharingPanel extends javax.swing.JPanel
     btnUploadFile = new javax.swing.JButton();
     jScrollPane1 = new javax.swing.JScrollPane();
     tblFiles = new javax.swing.JTable();
-    bnLogin = new javax.swing.JButton();
-    txtPassword = new javax.swing.JPasswordField();
+    btnLogin = new javax.swing.JButton();
     lblPassword = new javax.swing.JLabel();
     txtUsername = new javax.swing.JTextField();
     lblUsername = new javax.swing.JLabel();
     btnRegister = new javax.swing.JButton();
+    txtPassword = new javax.swing.JPasswordField();
 
     btnUploadFile.setText("Upload");
     btnUploadFile.setEnabled(false);
@@ -53,10 +67,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
     tblFiles.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][]
       {
-        {null, null, null},
-        {null, null, null},
-        {null, null, null},
-        {null, null, null}
+
       },
       new String []
       {
@@ -86,7 +97,14 @@ public class cFileSharingPanel extends javax.swing.JPanel
     tblFiles.setEnabled(false);
     jScrollPane1.setViewportView(tblFiles);
 
-    bnLogin.setText("Login");
+    btnLogin.setText("Login");
+    btnLogin.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnLoginActionPerformed(evt);
+      }
+    });
 
     lblPassword.setText("Password:");
 
@@ -116,13 +134,13 @@ public class cFileSharingPanel extends javax.swing.JPanel
             .addGap(0, 0, Short.MAX_VALUE)
             .addComponent(lblUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(lblPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(bnLogin)
+            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(8, 8, 8)
+            .addComponent(btnLogin)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(btnRegister)))
         .addContainerGap())
@@ -132,12 +150,12 @@ public class cFileSharingPanel extends javax.swing.JPanel
       .addGroup(layout.createSequentialGroup()
         .addGap(10, 10, 10)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(bnLogin)
-          .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(btnLogin)
           .addComponent(lblPassword)
           .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(lblUsername)
-          .addComponent(btnRegister))
+          .addComponent(btnRegister)
+          .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -162,9 +180,62 @@ public class cFileSharingPanel extends javax.swing.JPanel
     m_oRegistrationFrame.setVisible(true);
   }//GEN-LAST:event_btnRegisterActionPerformed
 
+  private void btnLoginActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnLoginActionPerformed
+  {//GEN-HEADEREND:event_btnLoginActionPerformed
+    if (btnLogin.getActionCommand().equals("login"))
+    {
+      m_sUsername = txtUsername.getText();
+      char[] cPassword = txtPassword.getPassword();
+      String sPasswordHash = cHashing.hash(cPassword);
+      cDatabaseHandler oDatabase = cDatabaseHandler.instance();
+      m_bLogin = oDatabase.login(m_sUsername, sPasswordHash);
+      if (m_bLogin)
+      {
+        setLogin();
+      }
+    }
+    else if (btnLogin.getActionCommand().equals("logout"))
+    {
+      m_bLogin = false;
+      setLogin();
+    }
+  }//GEN-LAST:event_btnLoginActionPerformed
+
+  private void setLogin()
+  {
+    if (m_bLogin)
+    {
+      btnLogin.setText("Logout");
+      btnLogin.setActionCommand("logout");
+    }
+    else
+    {
+      btnLogin.setText("Login");
+      btnLogin.setActionCommand("login");
+    }
+    
+    lblPassword.setEnabled(!m_bLogin);
+    txtPassword.setEnabled(!m_bLogin);
+    lblUsername.setEnabled(!m_bLogin);
+    txtUsername.setEnabled(!m_bLogin);
+    btnRegister.setEnabled(!m_bLogin);
+    tblFiles.setEnabled(m_bLogin);
+    btnUploadFile.setEnabled(m_bLogin);
+    
+    loadFiles();
+  }
+  
+  private void loadFiles()
+  {
+    new Thread(()->
+    {
+      cDatabaseHandler oDatabase = cDatabaseHandler.instance();
+      oDatabase.getFilesForOwner(TOOL_TIP_TEXT_KEY);
+    }).start();
+  }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton bnLogin;
+  private javax.swing.JButton btnLogin;
   private javax.swing.JButton btnRegister;
   private javax.swing.JButton btnUploadFile;
   private javax.swing.JScrollPane jScrollPane1;
@@ -174,4 +245,5 @@ public class cFileSharingPanel extends javax.swing.JPanel
   private javax.swing.JPasswordField txtPassword;
   private javax.swing.JTextField txtUsername;
   // End of variables declaration//GEN-END:variables
+
 }

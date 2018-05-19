@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.digitalpassport.jdbc.cDatabaseHandler;
@@ -18,7 +17,7 @@ import org.digitalpassport.jdbc.cDatabaseHandler;
  */
 public class cDigitalPassport
 {
-  private cDatabaseHandler m_oDatabase = new cDatabaseHandler();
+  private cDatabaseHandler m_oDatabase = null;
   private Process m_oProcess = null;
   private boolean m_bTerminate = false;
   
@@ -48,6 +47,7 @@ public class cDigitalPassport
 
   public cDigitalPassport(File oFile)
   {
+    m_oDatabase = cDatabaseHandler.instance();
     if (oFile.getName().endsWith("passport"))
     {
       try 

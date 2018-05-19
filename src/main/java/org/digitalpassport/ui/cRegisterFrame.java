@@ -10,6 +10,7 @@ import org.digitalpassport.deserialize.json.cError;
 import org.digitalpassport.deserialize.json.cErrorData;
 import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.jdbc.cDatabaseHandler;
+import org.digitalpassport.ui.panels.cFileSharingPanel;
 import static org.digitalpassport.ui.panels.cTokenManagementPanel.showError;
 import static org.digitalpassport.ui.panels.cTokenManagementPanel.showInfo;
 
@@ -19,14 +20,16 @@ import static org.digitalpassport.ui.panels.cTokenManagementPanel.showInfo;
  */
 public class cRegisterFrame extends javax.swing.JFrame
 {
+  private cFileSharingPanel m_oParent = null;
   private cUserManagement m_oUserManagement = new cUserManagement();
   private cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
   
   /**
    * Creates new form cRegisterFrame
    */
-  public cRegisterFrame()
+  public cRegisterFrame(cFileSharingPanel oFrame)
   {
+    m_oParent = oFrame;
     initComponents();
     
     lblUsernameInUse.setVisible(false);
@@ -205,8 +208,8 @@ public class cRegisterFrame extends javax.swing.JFrame
       }
       else
       {
-        oDatabase = new cDatabaseHandler();
-        ResultSet oUserResultSet = oDatabase.select("select * from dpt_users where Username='" + txtUsername.getText() + "'");
+        oDatabase = cDatabaseHandler.instance();
+        ResultSet oUserResultSet = oDatabase.select("select * from dpt_users where Username='" + txtUsername.getText() + "';");
         if (oUserResultSet.next()) 
         {
           lblUsernameInUse.setVisible(true);
@@ -220,6 +223,7 @@ public class cRegisterFrame extends javax.swing.JFrame
           
           if (bRegistered)
           {
+            m_oParent.setUsername(sUsername);
             // create the user in the DPT economy
             cResponse oResponse = m_oUserManagement.createUser(sDisplayName);
             if (oResponse != null && !oResponse.getsuccess())
