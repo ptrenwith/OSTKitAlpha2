@@ -21,6 +21,7 @@ public class OSTKitAlpha
   public static cTokenManagementPanel m_oTokenManagementPanel;
   private cWindowBounds m_oWindowBounds;
   private cSerializationFactory m_oSerializationFactory = new cSerializationFactory();
+  
     
   private File m_fBounds;
   

@@ -17,6 +17,7 @@ import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.passport.cDatabaseFile;
 import org.digitalpassport.ui.cRegisterFrame;
+import org.digitalpassport.ui.cSelectUser;
 
 /**
  *
@@ -24,6 +25,7 @@ import org.digitalpassport.ui.cRegisterFrame;
  */
 public class cFileSharingPanel extends javax.swing.JPanel
 {
+  private cSelectUser m_oSelectUser = new cSelectUser();
   private cTransactionManagement m_oTransactionManagement = null;
   private cRegisterFrame m_oRegistrationFrame = null;
   private boolean m_bLogin = false;
@@ -101,7 +103,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
       public void actionPerformed(ActionEvent e) {
         int iRow = tblFiles.getSelectedRow();
         int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
-        String sTransaction = iID + "_like"; 
+        String sTransaction = iID + "_like";   
         if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
         {
           System.out.println("Share with: " + sTransaction);
@@ -114,6 +116,9 @@ public class cFileSharingPanel extends javax.swing.JPanel
 //              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
 //              Float.parseFloat(oTransaction.getcommission_percent()));
         }
+        
+        
+        m_oSelectUser.setVisible(true);
       }
     });
     m_oAccessMenuItem.addActionListener(new ActionListener() {
@@ -148,8 +153,8 @@ public class cFileSharingPanel extends javax.swing.JPanel
     });
     
     m_oPopupMenu.add(m_oShareMenuItem);
-    m_oPopupMenu.add(m_oLikeMenuItem);
-    m_oPopupMenu.add(m_oAccessMenuItem);
+    //m_oPopupMenu.add(m_oLikeMenuItem);
+    //m_oPopupMenu.add(m_oAccessMenuItem);
     m_oPopupMenu.add(m_oHistoryMenuItem);
     tblFiles.addMouseListener(new PopupTriggerListener());
   }
