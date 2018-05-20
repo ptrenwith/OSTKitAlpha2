@@ -1272,6 +1272,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
             
             for (cTransactionTypes oTransaction : lsTransaction_types)
             {
+              cTransactionManagement.m_oTransactions.put(oTransaction.getname(), oTransaction);
               String sStatus = oTransaction.getstatus();
               Vector<Object> vRow = new Vector<Object>();
               int iRowNumber = oTransactionModel.getRowCount();

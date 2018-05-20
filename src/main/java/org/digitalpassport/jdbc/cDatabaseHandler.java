@@ -35,6 +35,7 @@ public class cDatabaseHandler
         g_oInstance = new cDatabaseHandler();
       }
     }
+    g_oInstance.init();
     return g_oInstance;
   }
   
@@ -47,14 +48,17 @@ public class cDatabaseHandler
   {
     try
     {
-      System.out.println("Initializing Database Handler...");
-      String url = "jdbc:mysql://46.101.80.197:3306/digitalpassport";//?rewriteBatchedStatements=true";
-      String user = "philip";
-      String password = "umooxiuf";
-      Class.forName("com.mysql.jdbc.Driver").newInstance();
-      m_oConnection = DriverManager.getConnection(url, user, password);
-      m_oConnection.setAutoCommit(false);
-      System.out.println("Database Handler initialized");
+      if (m_oConnection == null || m_oConnection.isClosed())
+      {
+        System.out.println("Initializing Database Handler...");
+        String url = "jdbc:mysql://46.101.80.197:3306/digitalpassport";//?rewriteBatchedStatements=true";
+        String user = "philip";
+        String password = "umooxiuf";
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+        m_oConnection = DriverManager.getConnection(url, user, password);
+        m_oConnection.setAutoCommit(false);
+        System.out.println("Database Handler initialized");
+      }
     }
     catch (Exception ex)
     {
@@ -138,7 +142,7 @@ public class cDatabaseHandler
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("SELECT * FROM passport WHERE Owner='" + sUsername + "';");
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Owner='" + sUsername + "';");
       ResultSet oResultSet = oStatement.executeQuery();
       while (oResultSet.next())
       {
@@ -313,11 +317,69 @@ public class cDatabaseHandler
 
   public String getPassportID(String sPayload)
   {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    String sResult = "";
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Filename='" + sPayload + "';");
+      ResultSet executeQuery = oStatement.executeQuery();
+      if (executeQuery.next())
+      {
+        sResult = executeQuery.getString("ID");
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return sResult;
   }
 
-  public int uploadPassport(String name, String string)
+  public boolean uploadPassport(String sFilename, String sOwner)
   {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    boolean bResult = false;
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("INSERT INTO passports (Filename, Owner) VALUES ('" + 
+          sFilename + "', '" + sOwner + "');");
+      oStatement.execute();
+      bResult = true;
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return bResult;
   }
 }

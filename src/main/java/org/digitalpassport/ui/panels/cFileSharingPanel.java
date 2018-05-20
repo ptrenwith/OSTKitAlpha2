@@ -1,9 +1,21 @@
-
 package org.digitalpassport.ui.panels;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import static java.awt.event.MouseEvent.BUTTON3;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.table.DefaultTableModel;
+import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.cryptography.cHashing;
+import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.jdbc.cDatabaseHandler;
+import org.digitalpassport.passport.cDatabaseFile;
 import org.digitalpassport.ui.cRegisterFrame;
 
 /**
@@ -12,21 +24,136 @@ import org.digitalpassport.ui.cRegisterFrame;
  */
 public class cFileSharingPanel extends javax.swing.JPanel
 {
+  private cTransactionManagement m_oTransactionManagement = null;
   private cRegisterFrame m_oRegistrationFrame = null;
   private boolean m_bLogin = false;
   private String m_sUsername = "";
   
+  private JPopupMenu m_oPopupMenu = new JPopupMenu("Popup");
+  private JMenuItem m_oShareMenuItem = new JMenuItem("Share");
+  private JMenuItem m_oLikeMenuItem = new JMenuItem("Like");
+  private JMenuItem m_oAccessMenuItem = new JMenuItem("Access");
+  private JMenuItem m_oHistoryMenuItem = new JMenuItem("History");
+
+  class PopupTriggerListener implements MouseListener
+  {
+    public PopupTriggerListener()
+    {
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent ev)
+    {
+      if (ev.getButton() == BUTTON3)
+      {
+        m_oPopupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
+      }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent ev)
+    {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent ev)
+    {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e)
+    {
+    }
+  }
+
   /**
    * Creates new form cFileSharingPanel
    */
   public cFileSharingPanel()
   {
     initComponents();
-    
+
     btnLogin.setActionCommand("login");
-    m_oRegistrationFrame = new cRegisterFrame(this);
+    m_oTransactionManagement = new cTransactionManagement();
+    m_oRegistrationFrame = new cRegisterFrame(this, m_oTransactionManagement);
+
+    m_oShareMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        int iRow = tblFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
+        String sTransaction = iID + "_share"; 
+        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+        {
+          System.out.println("Share with: " + sTransaction);
+        }
+        else
+        {
+          System.out.println("Create Transaction: " + sTransaction);
+        }
+      }
+    });
+    m_oLikeMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        int iRow = tblFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
+        String sTransaction = iID + "_like"; 
+        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+        {
+          System.out.println("Share with: " + sTransaction);
+        }
+        else
+        {
+          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sTransaction);
+          System.out.println("Create Transaction: " + sTransaction);
+//          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()), 
+//              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
+//              Float.parseFloat(oTransaction.getcommission_percent()));
+        }
+      }
+    });
+    m_oAccessMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        int iRow = tblFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
+        String sTransaction = iID + "_access"; 
+        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+        {
+          System.out.println("Share with: " + sTransaction);
+        }
+        else
+        {
+          System.out.println("Create Transaction: " + sTransaction);
+        }
+      }
+    });
+    m_oHistoryMenuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        int iRow = tblFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
+        String sTransaction = iID + "_history"; 
+        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+        {
+          System.out.println("Share with: " + sTransaction);
+        }
+        else
+        {
+          System.out.println("Create Transaction: " + sTransaction);
+        }
+      }
+    });
+    
+    m_oPopupMenu.add(m_oShareMenuItem);
+    m_oPopupMenu.add(m_oLikeMenuItem);
+    m_oPopupMenu.add(m_oAccessMenuItem);
+    m_oPopupMenu.add(m_oHistoryMenuItem);
+    tblFiles.addMouseListener(new PopupTriggerListener());
   }
-  
+
   public void setUsername(String sUsername)
   {
     m_bLogin = true;
@@ -108,6 +235,8 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
     lblPassword.setText("Password:");
 
+    txtUsername.setText("philipt");
+
     lblUsername.setText("Username:");
 
     btnRegister.setText("Register");
@@ -118,6 +247,9 @@ public class cFileSharingPanel extends javax.swing.JPanel
         btnRegisterActionPerformed(evt);
       }
     });
+
+    txtPassword.setText("1234");
+    txtPassword.setToolTipText("");
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -168,15 +300,17 @@ public class cFileSharingPanel extends javax.swing.JPanel
   {//GEN-HEADEREND:event_btnUploadFileActionPerformed
     JFileChooser fileChooser = new JFileChooser();
     int result = fileChooser.showOpenDialog(tblFiles);
-    if (result == JFileChooser.APPROVE_OPTION) 
+    if (result == JFileChooser.APPROVE_OPTION)
     {
-      
+      File oFile = fileChooser.getSelectedFile();
+      cDatabaseHandler.instance().uploadPassport(oFile.getName(), m_sUsername);
+      loadFiles();
     }
   }//GEN-LAST:event_btnUploadFileActionPerformed
 
   private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRegisterActionPerformed
   {//GEN-HEADEREND:event_btnRegisterActionPerformed
-    m_oRegistrationFrame.setBounds(getX()+getWidth()/2, getY()+getHeight()/2, m_oRegistrationFrame.getWidth(), m_oRegistrationFrame.getHeight());
+    m_oRegistrationFrame.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2, m_oRegistrationFrame.getWidth(), m_oRegistrationFrame.getHeight());
     m_oRegistrationFrame.setVisible(true);
   }//GEN-LAST:event_btnRegisterActionPerformed
 
@@ -213,7 +347,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
       btnLogin.setText("Login");
       btnLogin.setActionCommand("login");
     }
-    
+
     lblPassword.setEnabled(!m_bLogin);
     txtPassword.setEnabled(!m_bLogin);
     lblUsername.setEnabled(!m_bLogin);
@@ -221,16 +355,35 @@ public class cFileSharingPanel extends javax.swing.JPanel
     btnRegister.setEnabled(!m_bLogin);
     tblFiles.setEnabled(m_bLogin);
     btnUploadFile.setEnabled(m_bLogin);
-    
+
     loadFiles();
   }
-  
+
   private void loadFiles()
   {
-    new Thread(()->
+    new Thread(new Runnable()
     {
-      cDatabaseHandler oDatabase = cDatabaseHandler.instance();
-      oDatabase.getFilesForOwner(TOOL_TIP_TEXT_KEY);
+      @Override
+      public void run()
+      {
+        cDatabaseHandler oDatabase = cDatabaseHandler.instance();
+        ArrayList<cDatabaseFile> lsFiles = oDatabase.getFilesForOwner(m_sUsername);
+        int rowCount = tblFiles.getRowCount();
+        DefaultTableModel model = (DefaultTableModel) tblFiles.getModel();
+        for (int i = 0; i < rowCount; i++)
+        {
+          model.removeRow(0);
+        }
+
+        for (cDatabaseFile oFile : lsFiles)
+        {
+          // Append a row 
+          model.addRow(new Object[]
+          {
+            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sOwner
+          });
+        }
+      }
     }).start();
   }
 

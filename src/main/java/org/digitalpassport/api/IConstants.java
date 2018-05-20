@@ -10,6 +10,7 @@ public interface IConstants
   public static final String API_KEY = "15f7ecf01a98f63ad3c6";
   
   public static final String m_sURL = "https://playgroundapi.ost.com";
+  public static final String m_sSANDBOX_URL = "https://sandboxapi.ost.com/v1";
   
   public static final String g_sPATH_USERS_LIST             = "/users/list";
   public static final String g_sPATH_USERS_EDIT             = "/users/edit";
@@ -89,6 +90,7 @@ public interface IConstants
   public static final String g_sPARAM_CODE                  = "code";
   public static final String g_sPARAM_MSG                   = "msg";
   public static final String g_sPARAM_ERROR_DATA            = "error_data";
+  public static final String g_sPARAM_INTERNAL_ID           = "internal_id";
   
   public static final String g_sPARAM_TOKENS_AIRDROPPED     = "total_airdropped_tokens";
   public static final String g_sPARAM_TOKEN_BALANCE         = "token_balance";

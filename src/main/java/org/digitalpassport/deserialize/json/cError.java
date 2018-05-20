@@ -17,15 +17,17 @@ public class cError
   @JsonIgnore private String display_text;
   @JsonIgnore private String display_heading;
   private cErrorData[] error_data;
+  @JsonIgnore private String internal_id;
   
   @JsonCreator
   public static cError of(@JsonProperty(g_sPARAM_CODE) String code,
           @JsonProperty(g_sPARAM_MSG) String msg,
           @JsonProperty(g_sPARAM_DISPLAY_TEXT) String display_text,
           @JsonProperty(g_sPARAM_DISPLAY_HEADING) String display_heading,
-          @JsonProperty(g_sPARAM_ERROR_DATA) cErrorData[] error_data)
+          @JsonProperty(g_sPARAM_ERROR_DATA) cErrorData[] error_data,
+          @JsonProperty(g_sPARAM_INTERNAL_ID) String  internal_id)
   {
-    return new cError(code, msg, display_heading, display_text, error_data);
+    return new cError(code, msg, display_heading, display_text, error_data, internal_id);
   }
   
   @JsonProperty(g_sPARAM_CODE)
@@ -53,20 +55,26 @@ public class cError
   {
     return error_data;
   }
+  @JsonProperty(g_sPARAM_INTERNAL_ID)
+  public String getinternal_id()
+  {
+    return internal_id;
+  }
 
-  public cError(String code, String msg, String display_heading, String display_text, cErrorData[] error_data)
+  public cError(String code, String msg, String display_heading, String display_text, cErrorData[] error_data, String internal_id)
   {
     this.code = code;
     this.msg = msg;
     this.display_heading = display_heading;
     this.display_text = display_text;
     this.error_data = error_data;
+    this.internal_id = internal_id;
   }
 
   @Override
   public String toString()
   {
     return "cError{" + "code=" + code + ", msg=" + msg + ", display_text=" + 
-            display_text + ", display_heading=" + display_heading + ", error_data=" + error_data + '}';
+            display_text + ", display_heading=" + display_heading + ", error_data=" + error_data + ", internal_id=" + internal_id + '}';
   }
 }

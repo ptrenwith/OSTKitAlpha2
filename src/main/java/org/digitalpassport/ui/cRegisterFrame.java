@@ -22,14 +22,15 @@ public class cRegisterFrame extends javax.swing.JFrame
 {
   private cFileSharingPanel m_oParent = null;
   private cUserManagement m_oUserManagement = new cUserManagement();
-  private cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
+  private cTransactionManagement m_oTransactionManagement = null;
   
   /**
    * Creates new form cRegisterFrame
    */
-  public cRegisterFrame(cFileSharingPanel oFrame)
+  public cRegisterFrame(cFileSharingPanel oFrame, cTransactionManagement oTransactionManagement)
   {
     m_oParent = oFrame;
+    m_oTransactionManagement = oTransactionManagement;
     initComponents();
     
     lblUsernameInUse.setVisible(false);
@@ -250,10 +251,16 @@ public class cRegisterFrame extends javax.swing.JFrame
             else
             {
               showInfo("User Registered :-)");
-              // if so selected airdrop ten tokens to the user
-              if (chbAirdropDPTAfterRegistration.isSelected())
+              if (oResponse != null && oResponse.getdata() != null && 
+                  oResponse.getdata().geteconomy_users() != null && 
+                  oResponse.getdata().geteconomy_users().length > 0)
               {
-                m_oUserManagement.sendAirdropTo(sUsername, 10);
+                String sUuid = oResponse.getdata().geteconomy_users()[0].getUuid();
+                // if so selected airdrop ten tokens to the user
+                if (chbAirdropDPTAfterRegistration.isSelected())
+                {
+                  m_oUserManagement.sendAirdropTo_sandbox(sUuid, 10);
+                }
               }
             }
           }

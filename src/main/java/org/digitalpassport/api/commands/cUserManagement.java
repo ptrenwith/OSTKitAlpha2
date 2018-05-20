@@ -113,6 +113,27 @@ public class cUserManagement
     return oResponse;
   }
   
+  public cResponse sendAirdropTo_sandbox(String sAirdropTo, int iAmount)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put("user_ids", sAirdropTo);
+      oParameters.put(g_sPARAM_AMOUNT, iAmount);
+      
+      String sResponse = cAPIClient.post_sandbox("/airdrops", oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
   public cResponse airdropStatus(String sAirdropUUID)
   {
     cResponse oResponse = null;

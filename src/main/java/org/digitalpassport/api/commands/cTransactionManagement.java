@@ -3,6 +3,8 @@ package org.digitalpassport.api.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +27,7 @@ public class cTransactionManagement
 {
   private static final JsonFactory m_oJsonFactory = new MappingJsonFactory();
   private static final ObjectMapper oMapper = new ObjectMapper(m_oJsonFactory);
+  public static final HashMap<String, cTransactionTypes> m_oTransactions = new HashMap(); 
   
   public cTransactionManagement()
   {

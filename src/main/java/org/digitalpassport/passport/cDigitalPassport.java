@@ -45,7 +45,7 @@ public class cDigitalPassport
     return m_oPASSPORT_PAYLOAD;
   }
 
-  public cDigitalPassport(File oFile)
+  public cDigitalPassport(File oFile, String sUsername)
   {
     m_oDatabase = cDatabaseHandler.instance();
     if (oFile.getName().endsWith("passport"))
@@ -85,7 +85,8 @@ public class cDigitalPassport
     else 
     {
       // create a new passport
-      m_oPASSPORT_ID = m_oDatabase.uploadPassport(oFile.getName(), "");
+      m_oDatabase.uploadPassport(oFile.getName(), sUsername);
+      m_oPASSPORT_ID = Integer.parseInt(m_oDatabase.getPassportID(oFile.getName()));
       m_oPASSPORT_PAYLOAD = oFile;
       m_oPASSPORT_Provenance = new cProvenanceData(m_oPASSPORT_PAYLOAD);
       
@@ -95,7 +96,7 @@ public class cDigitalPassport
     }
   }
 
-  public static cDigitalPassport createPassport(File oPayload, boolean bDeletePayloadFile)
+  public static cDigitalPassport createPassport(File oPayload, String sUsername, boolean bDeletePayloadFile)
   {
     cDigitalPassport oPassport = null;
     try
@@ -104,7 +105,7 @@ public class cDigitalPassport
       {
         Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO, 
                 "Creating passport for payload: {0}", oPayload.getName());
-        oPassport = new cDigitalPassport(oPayload);
+        oPassport = new cDigitalPassport(oPayload, sUsername);
         if (!oPassport.compilePassport(bDeletePayloadFile))
         {
           oPassport = null;
@@ -120,14 +121,14 @@ public class cDigitalPassport
     return oPassport;
   }
   
-  public static cDigitalPassport openPassport(File oDigitalPassport, boolean bOpenPayload)
+  public static cDigitalPassport openPassport(File oDigitalPassport, String sUsername, boolean bOpenPayload)
   {
     cDigitalPassport oPassport = null;
     try
     {
       Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO,
               "Opening passport: {0}", oDigitalPassport.getName());
-      oPassport = new cDigitalPassport(oDigitalPassport);
+      oPassport = new cDigitalPassport(oDigitalPassport, sUsername);
       
       g_oOpenPassports.put(oPassport.getID(), oPassport);
 
