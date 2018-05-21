@@ -65,14 +65,17 @@ public class cTransactionManagement
     cResponse oResponse = null;
     try
     {
+      String sValue = ""+value;
+      String sPercent = ""+percent;
+      
       TreeMap oParameters = new TreeMap();
-      oParameters.put("name", "share 3");
-      oParameters.put("kind", "user_to_user");
-      oParameters.put("currency", "BT");
+      oParameters.put("name", sName);
+      oParameters.put("kind", eKind.name());
+      oParameters.put("currency", eType.name());
       oParameters.put("arbitrary_amount", false);
-      oParameters.put("amount", "4");
-//      oParameters.put("arbitrary_commission", false);
-//      oParameters.put("commission_percent", percent);
+      oParameters.put("amount", sValue);
+      oParameters.put("arbitrary_commission", false);
+      oParameters.put("commission_percent", sPercent);
       
       String sResponse = cAPIClient.post_sandbox("/actions", oParameters);
       System.out.println(sResponse);
@@ -86,22 +89,26 @@ public class cTransactionManagement
     return oResponse;
   }
   
-  public cResponse editTransaction(String client_transaction_id, 
+  public cResponse editTransaction_sandbox(String client_transaction_id, 
           String sName, eTransactionKind eKind, eCurrencyType eType,
           float value, float percent)
   {
     cResponse oResponse = null;
     try
     {
-      TreeMap oParameters = new TreeMap();
-      oParameters.put(g_sPARAM_CLIENT_TRANSACTION_ID, client_transaction_id);
-      oParameters.put(g_sPARAM_NAME, sName);
-      oParameters.put(g_sPARAM_KIND, eKind.name());
-      oParameters.put(g_sPARAM_CURRENCY_TYPE, eType.name());
-      oParameters.put(g_sPARAM_CURRENCY_VALUE, value);
-      oParameters.put(g_sPARAM_COMMISSION_PERCENT, percent);
+      String sValue = ""+value;
+      String sPercent = ""+percent;
       
-      String sResponse = cAPIClient.post(g_sPATH_TRANSACTION_TYPES_EDIT, oParameters);
+      TreeMap oParameters = new TreeMap();
+      oParameters.put("name", sName);
+      oParameters.put("kind", eKind.name());
+      oParameters.put("currency", eType.name());
+      oParameters.put("arbitrary_amount", false);
+      oParameters.put("amount", sValue);
+      oParameters.put("arbitrary_commission", false);
+      oParameters.put("commission_percent", sPercent);
+      
+      String sResponse = cAPIClient.post_sandbox("/actions/" + client_transaction_id, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
       System.out.println(oResponse.toString());

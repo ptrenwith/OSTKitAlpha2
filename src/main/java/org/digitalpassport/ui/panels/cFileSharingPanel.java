@@ -33,6 +33,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
   private cRegisterFrame m_oRegistrationFrame = null;
   private boolean m_bLogin = false;
   private String m_sUsername = "";
+  private String m_sDisplayName = "";
   
   private JPopupMenu m_oPopupMenu = new JPopupMenu("Popup");
   private JMenuItem m_oShareMenuItem = new JMenuItem("Share");
@@ -97,7 +98,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         String sTransaction = sOriginal + " " + iID; 
         if (!cTransactionManagement.m_oTransactions.containsKey(sTransaction))
         {
-          System.out.println("Share with: " + sTransaction);
+          System.out.println("Transaction already exists! : " + sTransaction);
         }
         else
         {
@@ -110,7 +111,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setTitle("Share");
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(txtUsername.getText());
+        m_oSelectUser.setUsersExcluding(m_sDisplayName);
         
         m_oSelectUser.setVisible(true);
       }
@@ -123,7 +124,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         String sTransaction = sOriginal + " " + iID; 
         if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
         {
-          System.out.println("Share with: " + sTransaction);
+          System.out.println("Transcation already exists! : " + sTransaction);
         }
         else
         {
@@ -136,7 +137,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setTitle("Like");
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(txtUsername.getText());
+        m_oSelectUser.setUsersExcluding(m_sDisplayName);
         
         m_oSelectUser.setVisible(true);
       }
@@ -149,7 +150,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         String sTransaction = sOriginal + " " + iID; 
         if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
         {
-          System.out.println("Access item: " + sTransaction);
+          System.out.println("Transcation already exists! : " + sTransaction);
         }
         else
         {
@@ -162,7 +163,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setTitle("Access");
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(txtUsername.getText());
+        m_oSelectUser.setUsersExcluding(m_sDisplayName);
         
         m_oSelectUser.setVisible(true);
       }
@@ -175,7 +176,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         String sTransaction = sOriginal + " " + iID; 
 //        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
 //        {
-//          System.out.println("History of: " + sTransaction);
+//          System.out.println("Transcation already exists! : " + sTransaction);
 //        }
 //        else
 //        {
@@ -188,7 +189,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setTitle("History");
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(txtUsername.getText());
+        m_oSelectUser.setUsersExcluding(m_sDisplayName);
         
         m_oSelectUser.setVisible(true);
       }
@@ -370,8 +371,9 @@ public class cFileSharingPanel extends javax.swing.JPanel
       String sPasswordHash = cHashing.hash(cPassword);
       cDatabaseHandler oDatabase = cDatabaseHandler.instance();
       String sDisplayName = oDatabase.login(m_sUsername, sPasswordHash);
+      m_sDisplayName = sDisplayName;
       if (!sDisplayName.isEmpty())
-      {
+      { 
         m_bLogin = true;
         setLogin();
       }

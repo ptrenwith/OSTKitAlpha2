@@ -38,6 +38,13 @@ public class cSelectUser extends javax.swing.JFrame
     lblQuestion.setText("With Whom?");
 
     btnOK.setText("OK");
+    btnOK.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnOKActionPerformed(evt);
+      }
+    });
 
     btnCancel.setText("Cancel");
     btnCancel.addActionListener(new java.awt.event.ActionListener()
@@ -85,6 +92,12 @@ public class cSelectUser extends javax.swing.JFrame
   {//GEN-HEADEREND:event_btnCancelActionPerformed
     setVisible(false);
   }//GEN-LAST:event_btnCancelActionPerformed
+
+  private void btnOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnOKActionPerformed
+  {//GEN-HEADEREND:event_btnOKActionPerformed
+    
+    setVisible(false);
+  }//GEN-LAST:event_btnOKActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnCancel;

@@ -1329,8 +1329,8 @@ public class cTokenManagementPanel extends javax.swing.JPanel
             String sCurrencyValue = txtCurrencyValue.getText();
             String sCommissionPercentage = ""+spnCommissionPercentage.getValue();
 
-            cResponse oResponse = m_oTransactionManagement.editTransaction(sTransactionId, sTransactionName, oTransactionKind, oCurrencyType,
-              Float.parseFloat(sCurrencyValue), Float.parseFloat(sCommissionPercentage));
+            cResponse oResponse = m_oTransactionManagement.editTransaction_sandbox(sTransactionId, sTransactionName, oTransactionKind, oCurrencyType,
+                          Float.parseFloat(sCurrencyValue), Float.parseFloat(sCommissionPercentage));
             if (oResponse.getsuccess())
             {
               btnListTransactions.doClick();
