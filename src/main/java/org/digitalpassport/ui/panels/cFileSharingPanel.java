@@ -28,7 +28,7 @@ import org.digitalpassport.ui.cSelectUser;
  */
 public class cFileSharingPanel extends javax.swing.JPanel
 {
-  private cSelectUser m_oSelectUser = new cSelectUser();
+  private cSelectUser m_oSelectUser = null;
   private cTransactionManagement m_oTransactionManagement = null;
   private cRegisterFrame m_oRegistrationFrame = null;
   private boolean m_bLogin = false;
@@ -84,12 +84,13 @@ public class cFileSharingPanel extends javax.swing.JPanel
   {
     initComponents();
 
-    m_oSelectUser = new cSelectUser();
-    m_oSelectUser.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    
     btnLogin.setActionCommand("login");
     m_oTransactionManagement = new cTransactionManagement();
     m_oRegistrationFrame = new cRegisterFrame(this, m_oTransactionManagement);
-
+    m_oSelectUser = new cSelectUser(m_oTransactionManagement);
+    m_oSelectUser.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    
     m_oShareMenuItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int iRow = tblFiles.getSelectedRow();
@@ -112,7 +113,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        
+        m_oSelectUser.setTransactionName(sTransaction);
         m_oSelectUser.setVisible(true);
       }
     });
@@ -138,7 +139,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        
+        m_oSelectUser.setTransactionName(sTransaction);
         m_oSelectUser.setVisible(true);
       }
     });
@@ -164,7 +165,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        
+        m_oSelectUser.setTransactionName(sTransaction);
         m_oSelectUser.setVisible(true);
       }
     });
@@ -190,7 +191,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
                   m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        
+        m_oSelectUser.setTransactionName(sTransaction);
         m_oSelectUser.setVisible(true);
       }
     });

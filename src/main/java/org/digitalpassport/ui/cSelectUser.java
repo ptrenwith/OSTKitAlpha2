@@ -2,7 +2,11 @@
 package org.digitalpassport.ui;
 
 import java.util.Iterator;
+import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.cUserManagement;
+import org.digitalpassport.deserialize.json.cResponse;
+import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
+import org.digitalpassport.ui.panels.cTokenManagementPanel;
 
 /**
  *
@@ -10,12 +14,14 @@ import org.digitalpassport.api.commands.cUserManagement;
  */
 public class cSelectUser extends javax.swing.JFrame
 {
-
-  /**
-   * Creates new form cSelectUser
-   */
-  public cSelectUser()
+  private cTransactionManagement m_oTransactionManagement = null;
+  private String m_sTransactionName = "";
+  private String m_sFromUUID = "";
+  private String m_sToUUID = "";
+  
+  public cSelectUser(cTransactionManagement oTransactionManagement)
   {
+    m_oTransactionManagement = oTransactionManagement;
     initComponents();
   }
 
@@ -95,7 +101,20 @@ public class cSelectUser extends javax.swing.JFrame
 
   private void btnOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnOKActionPerformed
   {//GEN-HEADEREND:event_btnOKActionPerformed
-    
+    String sUser = cmbUsers.getSelectedItem()+"";//sUsernameFromUsers + " (" + cUserManagement.m_oUsers.get(sUsernameFromUsers) + ")";
+    int iIndex = sUser.indexOf("(");
+    m_sToUUID = sUser.substring(iIndex+1, sUser.length()-1);
+    cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(m_sTransactionName);
+    String sTransactionId = oTransaction.getid();
+    cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(m_sFromUUID, m_sToUUID, sTransactionId);
+    if (oResponse.geterr() != null && !oResponse.getsuccess())
+    {
+      cTokenManagementPanel.showError(oResponse.geterr(), "Transaction failed to execute!");
+    }
+    else
+    {
+      cTokenManagementPanel.showInfo("Transaction complete!");
+    }
     setVisible(false);
   }//GEN-LAST:event_btnOKActionPerformed
 
@@ -118,6 +137,15 @@ public class cSelectUser extends javax.swing.JFrame
         String sUser = sUsernameFromUsers + " (" + cUserManagement.m_oUsers.get(sUsernameFromUsers) + ")";
         cmbUsers.addItem(sUser);
       }
+      else
+      {
+        m_sFromUUID = cUserManagement.m_oUsers.get(sUsernameFromUsers);
+      }
     }
+  }
+  
+  public void setTransactionName(String sName)
+  {
+    m_sTransactionName = sName;
   }
 }

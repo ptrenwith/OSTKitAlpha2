@@ -4,7 +4,6 @@ package org.digitalpassport.api.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -150,6 +149,29 @@ public class cTransactionManagement
       oParameters.put(g_sPARAM_TRANSACTION_KIND, transaction_kind);
       
       String sResponse = cAPIClient.post(g_sPATH_TRANSACTION_TYPES_EXECUTE, oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
+  public cResponse executeTransaction_sandbox(String from_uuid, 
+          String to_uuid, String sActionId)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put("from_user_id", from_uuid);
+      oParameters.put("to_user_id", to_uuid);
+      oParameters.put("action_id", sActionId);
+      
+      String sResponse = cAPIClient.post_sandbox("/transactions", oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
       System.out.println(oResponse.toString());
