@@ -190,7 +190,8 @@ public class cRegisterFrame extends javax.swing.JFrame
 
   private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRegisterActionPerformed
   {//GEN-HEADEREND:event_btnRegisterActionPerformed
-    new Thread(()->{register();}).start();
+    register();
+    close();
   }//GEN-LAST:event_btnRegisterActionPerformed
 
   public void register()
@@ -218,13 +219,12 @@ public class cRegisterFrame extends javax.swing.JFrame
         else
         {
           String sUsername = txtUsername.getText();
-          String sPasswordHash = cHashing.hash(txtPassword1.getPassword());
           String sDisplayName = txtName.getText() + " " + txtSurname.getText();
+          String sPasswordHash = cHashing.hash(txtPassword1.getPassword());
+
           bRegistered = oDatabase.register(sUsername, sPasswordHash, sDisplayName);
-          
           if (bRegistered)
           {
-            m_oParent.setUsername(sUsername);
             // create the user in the DPT economy
             cResponse oResponse = m_oUserManagement.createUser(sDisplayName);
             if (oResponse != null && !oResponse.getsuccess())
@@ -250,7 +250,6 @@ public class cRegisterFrame extends javax.swing.JFrame
             }
             else
             {
-              showInfo("User Registered :-)");
               if (oResponse != null && oResponse.getdata() != null && 
                   oResponse.getdata().geteconomy_users() != null && 
                   oResponse.getdata().geteconomy_users().length > 0)
@@ -261,6 +260,9 @@ public class cRegisterFrame extends javax.swing.JFrame
                 {
                   m_oUserManagement.sendAirdropTo_sandbox(sUuid, 10);
                 }
+                m_oParent.setUsername(sUsername);
+                oDatabase.setUUID(sUsername, sUuid);
+                showInfo("User Registered :-)");
               }
             }
           }

@@ -2,6 +2,7 @@
 package org.digitalpassport.api.commands;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -22,6 +23,7 @@ public class cUserManagement
 {
   private static final JsonFactory m_oJsonFactory = new MappingJsonFactory();
   private static final ObjectMapper oMapper = new ObjectMapper(m_oJsonFactory);
+  public static final HashMap<String, String> m_oUsers = new HashMap();
   
   public cUserManagement()
   {
@@ -38,7 +40,7 @@ public class cUserManagement
       oParameters.put(g_sPARAM_NAME, sNewName);
       
       String sResponse = cAPIClient.post(g_sPATH_USERS_EDIT, oParameters);
-      
+      System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
       System.out.println(oResponse.toString());
     }
@@ -120,6 +122,7 @@ public class cUserManagement
     {
       TreeMap oParameters = new TreeMap();
       oParameters.put("user_ids", sAirdropTo);
+      oParameters.put("airdropped", false);
       oParameters.put(g_sPARAM_AMOUNT, iAmount);
       
       String sResponse = cAPIClient.post_sandbox("/airdrops", oParameters);

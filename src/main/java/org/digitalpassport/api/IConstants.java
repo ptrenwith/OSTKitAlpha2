@@ -101,6 +101,7 @@ public interface IConstants
   
   public static final String g_sPARAM_AMOUNT                = "amount";
   public static final String g_sPARAM_LIST_TYPE             = "list_type";
+  public static final String g_sPARAM_PARAMETER             = "parameter";
   
   public static final String g_sPARAM_AIRDROP_USERS_IDENTIFIED    = "users_identified";
   public static final String g_sPARAM_AIRDROP_TOKENS_TRANSFERED   = "tokens_transfered";

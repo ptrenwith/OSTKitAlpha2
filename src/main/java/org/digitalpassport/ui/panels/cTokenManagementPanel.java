@@ -33,6 +33,7 @@ import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
 import org.digitalpassport.serialization.cSerializationFactory;
 import org.digitalpassport.transactions.cStatusRenderer;
 import org.digitalpassport.deserialize.json.transactiontypes.eStatus;
+import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.ui.cAirdropList;
 import org.digitalpassport.ui.cTransactionList;
 
@@ -1449,11 +1450,14 @@ public class cTokenManagementPanel extends javax.swing.JPanel
           
           cmbFromUser.removeAllItems();
           cmbToUser.removeAllItems();
-          
+          cUserManagement.m_oUsers.clear();
           DefaultTableModel oUserModel = (DefaultTableModel) tblUsers.getModel();
           int iItem = 0;
           for (cEconomyUser oUser : m_lsUsers)
           {
+            cUserManagement.m_oUsers.put(oUser.getName(), oUser.getUuid());
+            cDatabaseHandler.instance().setUUID(oUser.getName(), oUser.getUuid());
+            
             Vector<Object> vRow = new Vector<Object>();
             int iRowNumber = oUserModel.getRowCount();
             oUserModel.addRow(vRow);

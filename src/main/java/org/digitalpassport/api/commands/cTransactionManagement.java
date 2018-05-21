@@ -59,6 +59,33 @@ public class cTransactionManagement
     return oResponse;
   }
   
+  public cResponse createTransaction_sandbox(String sName, eTransactionKind eKind, eCurrencyType eType,
+          float value, float percent)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put("name", "share 3");
+      oParameters.put("kind", "user_to_user");
+      oParameters.put("currency", "BT");
+      oParameters.put("arbitrary_amount", false);
+      oParameters.put("amount", "4");
+//      oParameters.put("arbitrary_commission", false);
+//      oParameters.put("commission_percent", percent);
+      
+      String sResponse = cAPIClient.post_sandbox("/actions", oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
   public cResponse editTransaction(String client_transaction_id, 
           String sName, eTransactionKind eKind, eCurrencyType eType,
           float value, float percent)

@@ -66,18 +66,18 @@ public class cDatabaseHandler
     }
   }
 
-  public boolean login(String sUsername, String sPasswordHash)
+  public String login(String sUsername, String sPasswordHash)
   {
-    boolean bResult = false;
+    String sDisplayName = "";
     PreparedStatement oStatement = null;
     try
     {
       oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sUsername + "' AND " + 
           " Password='" + sPasswordHash + "';");
-      ResultSet executeQuery = oStatement.executeQuery();
-      if (executeQuery.next())
+      ResultSet oResult = oStatement.executeQuery();
+      if (oResult.next())
       {
-        bResult = true;
+        sDisplayName = oResult.getString("DisplayName");
       }
     }
     catch (SQLException ex)
@@ -99,7 +99,7 @@ public class cDatabaseHandler
         }
       }
     }
-    return bResult;
+    return sDisplayName;
   }
   
   public boolean register(String sUsername, String sPasswordHash, String sDisplayName)
@@ -381,5 +381,69 @@ public class cDatabaseHandler
       }
     }
     return bResult;
+  }
+
+  public void setUUID(String sUsername, String sUuid)
+  {
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("UPDATE dpt_users SET DptUUID='" + sUuid + "' WHERE DisplayName='" + sUsername + "';");
+      oStatement.execute();
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+  }
+  
+  public String getUuid(String sUsername)
+  {
+    String sResult = "";
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE DisplayName='" + sUsername + "';");
+      ResultSet executeQuery = oStatement.executeQuery();
+      if (executeQuery.next())
+      {
+        sResult = executeQuery.getString("DptUUID");
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return sResult;
   }
 }

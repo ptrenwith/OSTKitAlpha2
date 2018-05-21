@@ -1,6 +1,9 @@
 
 package org.digitalpassport.ui;
 
+import java.util.Iterator;
+import org.digitalpassport.api.commands.cUserManagement;
+
 /**
  *
  * @author Philip
@@ -26,7 +29,7 @@ public class cSelectUser extends javax.swing.JFrame
   {
 
     lblQuestion = new javax.swing.JLabel();
-    lblUsers = new javax.swing.JComboBox<>();
+    cmbUsers = new javax.swing.JComboBox<>();
     btnOK = new javax.swing.JButton();
     btnCancel = new javax.swing.JButton();
 
@@ -53,7 +56,7 @@ public class cSelectUser extends javax.swing.JFrame
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(lblQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(lblUsers, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(cmbUsers, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addGap(0, 379, Short.MAX_VALUE)
             .addComponent(btnCancel)
@@ -67,7 +70,7 @@ public class cSelectUser extends javax.swing.JFrame
         .addContainerGap()
         .addComponent(lblQuestion)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(lblUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(cmbUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(17, 17, 17)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(btnOK)
@@ -86,7 +89,22 @@ public class cSelectUser extends javax.swing.JFrame
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnCancel;
   private javax.swing.JButton btnOK;
+  public static javax.swing.JComboBox<String> cmbUsers;
   private javax.swing.JLabel lblQuestion;
-  public static javax.swing.JComboBox<String> lblUsers;
   // End of variables declaration//GEN-END:variables
+
+  public void setUsersExcluding(String sUsername)
+  {
+    cmbUsers.removeAllItems();
+    Iterator<String> oIterator = cUserManagement.m_oUsers.keySet().iterator();
+    while (oIterator.hasNext())
+    {
+      String sUsernameFromUsers = oIterator.next();
+      if (!sUsernameFromUsers.equalsIgnoreCase(sUsername))
+      {
+        String sUser = sUsernameFromUsers + " (" + cUserManagement.m_oUsers.get(sUsernameFromUsers) + ")";
+        cmbUsers.addItem(sUser);
+      }
+    }
+  }
 }
