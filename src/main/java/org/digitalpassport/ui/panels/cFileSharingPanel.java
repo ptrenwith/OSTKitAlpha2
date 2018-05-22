@@ -19,6 +19,7 @@ import org.digitalpassport.cryptography.cHashing;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.passport.cDatabaseFile;
+import org.digitalpassport.ui.cHistoryFrame;
 import org.digitalpassport.ui.cRegisterFrame;
 import org.digitalpassport.ui.cSelectUser;
 
@@ -28,7 +29,7 @@ import org.digitalpassport.ui.cSelectUser;
  */
 public class cFileSharingPanel extends javax.swing.JPanel
 {
-
+  private cHistoryFrame m_oHistoryFrame = new cHistoryFrame();
   private cSelectUser m_oSelectUser = null;
   private cTransactionManagement m_oTransactionManagement = null;
   private cRegisterFrame m_oRegistrationFrame = null;
@@ -45,7 +46,6 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
   class cYourPopupTriggerListener implements MouseListener
   {
-
     public cYourPopupTriggerListener()
     {
     }
@@ -82,7 +82,6 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
   class cOtherPopupTriggerListener implements MouseListener
   {
-
     public cOtherPopupTriggerListener()
     {
     }
@@ -124,6 +123,8 @@ public class cFileSharingPanel extends javax.swing.JPanel
   {
     initComponents();
 
+    m_oHistoryFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    
     btnLogin.setActionCommand("login");
     m_oTransactionManagement = new cTransactionManagement();
     m_oRegistrationFrame = new cRegisterFrame(this, m_oTransactionManagement);
@@ -163,8 +164,9 @@ public class cFileSharingPanel extends javax.swing.JPanel
       public void actionPerformed(ActionEvent e) {
         int iRow = tblYourFiles.getSelectedRow();
         int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0)+"");
+        String sFile = tblYourFiles.getValueAt(iRow, 1)+"";
         String sOriginal = "history";
-        String sTransaction = sOriginal + " " + iID; 
+//        String sTransaction = sOriginal + " " + iID; 
 //        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
 //        {
 //          System.out.println("Transcation already exists! : " + sTransaction);
@@ -177,12 +179,11 @@ public class cFileSharingPanel extends javax.swing.JPanel
 //              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
 //              Float.parseFloat(oTransaction.getcommission_percent()));
 //        }
-        m_oSelectUser.setTitle("History");
-        m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
-                  m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        m_oSelectUser.setTransactionName(sTransaction);
-        m_oSelectUser.setVisible(true);
+        m_oHistoryFrame.setTitle("History");
+        m_oHistoryFrame.setBounds(getX()+50, getY()+150,  getWidth(), getHeight());
+        m_oHistoryFrame.setFile(sFile);
+        m_oHistoryFrame.getHistoryOfFile(iID);
+        m_oHistoryFrame.setVisible(true);
       }
     });
 
