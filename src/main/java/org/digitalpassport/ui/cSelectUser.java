@@ -6,6 +6,7 @@ import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.cUserManagement;
 import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
+import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.ui.panels.cTokenManagementPanel;
 
 /**
@@ -114,6 +115,8 @@ public class cSelectUser extends javax.swing.JFrame
     else
     {
       cTokenManagementPanel.showInfo("Transaction complete!");
+      String transaction_uuid = oResponse.getdata().gettransaction().getid();
+      cDatabaseHandler.instance().saveTransaction(transaction_uuid);
     }
     setVisible(false);
   }//GEN-LAST:event_btnOKActionPerformed

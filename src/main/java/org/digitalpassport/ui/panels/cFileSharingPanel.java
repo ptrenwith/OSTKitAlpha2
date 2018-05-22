@@ -28,22 +28,25 @@ import org.digitalpassport.ui.cSelectUser;
  */
 public class cFileSharingPanel extends javax.swing.JPanel
 {
+
   private cSelectUser m_oSelectUser = null;
   private cTransactionManagement m_oTransactionManagement = null;
   private cRegisterFrame m_oRegistrationFrame = null;
   private boolean m_bLogin = false;
   private String m_sUsername = "";
   private String m_sDisplayName = "";
-  
-  private JPopupMenu m_oPopupMenu = new JPopupMenu("Popup");
+
+  private JPopupMenu m_oYourPopupMenu = new JPopupMenu("YourPopup");
+  private JPopupMenu m_oOtherPopupMenu = new JPopupMenu("OtherPopup");
   private JMenuItem m_oShareMenuItem = new JMenuItem("Share");
   private JMenuItem m_oLikeMenuItem = new JMenuItem("Like");
   private JMenuItem m_oAccessMenuItem = new JMenuItem("Access");
   private JMenuItem m_oHistoryMenuItem = new JMenuItem("History");
 
-  class PopupTriggerListener implements MouseListener
+  class cYourPopupTriggerListener implements MouseListener
   {
-    public PopupTriggerListener()
+
+    public cYourPopupTriggerListener()
     {
     }
 
@@ -52,7 +55,44 @@ public class cFileSharingPanel extends javax.swing.JPanel
     {
       if (ev.getButton() == BUTTON3)
       {
-        m_oPopupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
+        m_oYourPopupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
+      }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent ev)
+    {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent ev)
+    {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e)
+    {
+    }
+  }
+
+  class cOtherPopupTriggerListener implements MouseListener
+  {
+
+    public cOtherPopupTriggerListener()
+    {
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent ev)
+    {
+      if (ev.getButton() == BUTTON3)
+      {
+        m_oOtherPopupMenu.show(ev.getComponent(), ev.getX(), ev.getY());
       }
     }
 
@@ -84,19 +124,20 @@ public class cFileSharingPanel extends javax.swing.JPanel
   {
     initComponents();
 
-    
     btnLogin.setActionCommand("login");
     m_oTransactionManagement = new cTransactionManagement();
     m_oRegistrationFrame = new cRegisterFrame(this, m_oTransactionManagement);
     m_oSelectUser = new cSelectUser(m_oTransactionManagement);
     m_oSelectUser.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    
-    m_oShareMenuItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        int iRow = tblFiles.getSelectedRow();
-        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
+
+    m_oShareMenuItem.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        int iRow = tblYourFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
         String sOriginal = "share";
-        String sTransaction = sOriginal + " " + iID; 
+        String sTransaction = sOriginal + " " + iID;
         if (!cTransactionManagement.m_oTransactions.containsKey(sTransaction))
         {
           System.out.println("Transaction already exists! : " + sTransaction);
@@ -105,74 +146,23 @@ public class cFileSharingPanel extends javax.swing.JPanel
         {
           cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
           System.out.println("Create Transaction: " + sTransaction);
-          m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()), 
-              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
-              Float.parseFloat(oTransaction.getcommission_percent()));
+          m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
+                  eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+                  Float.parseFloat(oTransaction.getcommission_percent()));
         }
         m_oSelectUser.setTitle("Share");
-        m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
-                  m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
+        m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
+                m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
         m_oSelectUser.setTransactionName(sTransaction);
         m_oSelectUser.setVisible(true);
       }
     });
-    m_oLikeMenuItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        int iRow = tblFiles.getSelectedRow();
-        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
-        String sOriginal = "like";
-        String sTransaction = sOriginal + " " + iID; 
-        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
-        {
-          System.out.println("Transcation already exists! : " + sTransaction);
-        }
-        else
-        {
-          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
-          System.out.println("Create Transaction: " + sTransaction);
-          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()), 
-              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
-              Float.parseFloat(oTransaction.getcommission_percent()));
-        }
-        m_oSelectUser.setTitle("Like");
-        m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
-                  m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        m_oSelectUser.setTransactionName(sTransaction);
-        m_oSelectUser.setVisible(true);
-      }
-    });
-    m_oAccessMenuItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        int iRow = tblFiles.getSelectedRow();
-        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
-        String sOriginal = "access";
-        String sTransaction = sOriginal + " " + iID; 
-        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
-        {
-          System.out.println("Transcation already exists! : " + sTransaction);
-        }
-        else
-        {
-          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
-          System.out.println("Create Transaction: " + sTransaction);
-          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()), 
-              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
-              Float.parseFloat(oTransaction.getcommission_percent()));
-        }
-        m_oSelectUser.setTitle("Access");
-        m_oSelectUser.setBounds(getX() + getWidth()/2, getY() + getHeight()/2, 
-                  m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        m_oSelectUser.setTransactionName(sTransaction);
-        m_oSelectUser.setVisible(true);
-      }
-    });
+    
     m_oHistoryMenuItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        int iRow = tblFiles.getSelectedRow();
-        int iID = Integer.parseInt(tblFiles.getValueAt(iRow, 0)+"");
+        int iRow = tblYourFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0)+"");
         String sOriginal = "history";
         String sTransaction = sOriginal + " " + iID; 
 //        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
@@ -195,12 +185,72 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setVisible(true);
       }
     });
-    
-    m_oPopupMenu.add(m_oShareMenuItem);
-    //m_oPopupMenu.add(m_oLikeMenuItem);
-    //m_oPopupMenu.add(m_oAccessMenuItem);
-    m_oPopupMenu.add(m_oHistoryMenuItem);
-    tblFiles.addMouseListener(new PopupTriggerListener());
+
+    m_oLikeMenuItem.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        int iRow = tblYourFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
+        String sOriginal = "like";
+        String sTransaction = sOriginal + " " + iID;
+        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+        {
+          System.out.println("Transcation already exists! : " + sTransaction);
+        }
+        else
+        {
+          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
+          System.out.println("Create Transaction: " + sTransaction);
+          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
+                  eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+                  Float.parseFloat(oTransaction.getcommission_percent()));
+        }
+        m_oSelectUser.setTitle("Like");
+        m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
+                m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
+        m_oSelectUser.setUsersExcluding(m_sDisplayName);
+        m_oSelectUser.setTransactionName(sTransaction);
+        m_oSelectUser.setVisible(true);
+      }
+    });
+
+    m_oAccessMenuItem.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        int iRow = tblYourFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
+        String sOriginal = "access";
+        String sTransaction = sOriginal + " " + iID;
+        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+        {
+          System.out.println("Transcation already exists! : " + sTransaction);
+        }
+        else
+        {
+          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
+          System.out.println("Create Transaction: " + sTransaction);
+          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
+                  eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+                  Float.parseFloat(oTransaction.getcommission_percent()));
+        }
+        m_oSelectUser.setTitle("Access");
+        m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
+                m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
+        m_oSelectUser.setUsersExcluding(m_sDisplayName);
+        m_oSelectUser.setTransactionName(sTransaction);
+        m_oSelectUser.setVisible(true);
+      }
+    });
+
+    m_oYourPopupMenu.add(m_oShareMenuItem);
+    m_oYourPopupMenu.add(m_oHistoryMenuItem);
+    tblYourFiles.addMouseListener(new cYourPopupTriggerListener());
+
+    m_oOtherPopupMenu.add(m_oLikeMenuItem);
+    m_oOtherPopupMenu.add(m_oAccessMenuItem);
+    tblOtherFiles.addMouseListener(new cOtherPopupTriggerListener());
   }
 
   public void setUsername(String sUsername)
@@ -212,35 +262,58 @@ public class cFileSharingPanel extends javax.swing.JPanel
   }
 
   /**
-   * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
-   * content of this method is always regenerated by the Form Editor.
+   * This method is called from within the constructor to initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is always
+   * regenerated by the Form Editor.
    */
   @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents()
   {
 
-    btnUploadFile = new javax.swing.JButton();
-    jScrollPane1 = new javax.swing.JScrollPane();
-    tblFiles = new javax.swing.JTable();
     btnLogin = new javax.swing.JButton();
     lblPassword = new javax.swing.JLabel();
     txtUsername = new javax.swing.JTextField();
     lblUsername = new javax.swing.JLabel();
     btnRegister = new javax.swing.JButton();
     txtPassword = new javax.swing.JPasswordField();
+    jTabbedPane1 = new javax.swing.JTabbedPane();
+    pnlYourFiles = new javax.swing.JPanel();
+    jScrollPane1 = new javax.swing.JScrollPane();
+    tblYourFiles = new javax.swing.JTable();
+    btnUploadFile = new javax.swing.JButton();
+    pnlOtherFiles = new javax.swing.JPanel();
+    jScrollPane2 = new javax.swing.JScrollPane();
+    tblOtherFiles = new javax.swing.JTable();
 
-    btnUploadFile.setText("Upload");
-    btnUploadFile.setEnabled(false);
-    btnUploadFile.addActionListener(new java.awt.event.ActionListener()
+    btnLogin.setText("Login");
+    btnLogin.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
       {
-        btnUploadFileActionPerformed(evt);
+        btnLoginActionPerformed(evt);
       }
     });
 
-    tblFiles.setModel(new javax.swing.table.DefaultTableModel(
+    lblPassword.setText("Password:");
+
+    txtUsername.setText("philipt");
+
+    lblUsername.setText("Username:");
+
+    btnRegister.setText("Register");
+    btnRegister.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        btnRegisterActionPerformed(evt);
+      }
+    });
+
+    txtPassword.setText("1234");
+    txtPassword.setToolTipText("");
+
+    tblYourFiles.setModel(new javax.swing.table.DefaultTableModel(
       new Object [][]
       {
 
@@ -270,61 +343,105 @@ public class cFileSharingPanel extends javax.swing.JPanel
         return canEdit [columnIndex];
       }
     });
-    tblFiles.setEnabled(false);
-    jScrollPane1.setViewportView(tblFiles);
+    tblYourFiles.setEnabled(false);
+    jScrollPane1.setViewportView(tblYourFiles);
 
-    btnLogin.setText("Login");
-    btnLogin.addActionListener(new java.awt.event.ActionListener()
+    btnUploadFile.setText("Upload");
+    btnUploadFile.setEnabled(false);
+    btnUploadFile.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
       {
-        btnLoginActionPerformed(evt);
+        btnUploadFileActionPerformed(evt);
       }
     });
 
-    lblPassword.setText("Password:");
+    javax.swing.GroupLayout pnlYourFilesLayout = new javax.swing.GroupLayout(pnlYourFiles);
+    pnlYourFiles.setLayout(pnlYourFilesLayout);
+    pnlYourFilesLayout.setHorizontalGroup(
+      pnlYourFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 972, Short.MAX_VALUE)
+      .addGroup(pnlYourFilesLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(btnUploadFile)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+    pnlYourFilesLayout.setVerticalGroup(
+      pnlYourFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(pnlYourFilesLayout.createSequentialGroup()
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(btnUploadFile)
+        .addContainerGap())
+    );
 
-    txtUsername.setText("philipt");
+    jTabbedPane1.addTab("Your Files", pnlYourFiles);
 
-    lblUsername.setText("Username:");
-
-    btnRegister.setText("Register");
-    btnRegister.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+    tblOtherFiles.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][]
       {
-        btnRegisterActionPerformed(evt);
+
+      },
+      new String []
+      {
+        "ID", "Filename", "Owner"
+      }
+    )
+    {
+      Class[] types = new Class []
+      {
+        java.lang.String.class, java.lang.String.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean []
+      {
+        false, false, false
+      };
+
+      public Class getColumnClass(int columnIndex)
+      {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex)
+      {
+        return canEdit [columnIndex];
       }
     });
+    tblOtherFiles.setEnabled(false);
+    jScrollPane2.setViewportView(tblOtherFiles);
 
-    txtPassword.setText("1234");
-    txtPassword.setToolTipText("");
+    javax.swing.GroupLayout pnlOtherFilesLayout = new javax.swing.GroupLayout(pnlOtherFiles);
+    pnlOtherFiles.setLayout(pnlOtherFilesLayout);
+    pnlOtherFilesLayout.setHorizontalGroup(
+      pnlOtherFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 972, Short.MAX_VALUE)
+    );
+    pnlOtherFilesLayout.setVerticalGroup(
+      pnlOtherFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+    );
+
+    jTabbedPane1.addTab("Other Files", pnlOtherFiles);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 953, Short.MAX_VALUE)
-          .addGroup(layout.createSequentialGroup()
-            .addComponent(btnUploadFile)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addComponent(lblUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(lblPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(8, 8, 8)
-            .addComponent(btnLogin)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(btnRegister)))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(lblUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(lblPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(8, 8, 8)
+        .addComponent(btnLogin)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(btnRegister)
         .addContainerGap())
+      .addComponent(jTabbedPane1)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,17 +455,14 @@ public class cFileSharingPanel extends javax.swing.JPanel
           .addComponent(btnRegister)
           .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(btnUploadFile)
-        .addContainerGap())
+        .addComponent(jTabbedPane1))
     );
   }// </editor-fold>//GEN-END:initComponents
 
   private void btnUploadFileActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnUploadFileActionPerformed
   {//GEN-HEADEREND:event_btnUploadFileActionPerformed
     JFileChooser fileChooser = new JFileChooser();
-    int result = fileChooser.showOpenDialog(tblFiles);
+    int result = fileChooser.showOpenDialog(tblYourFiles);
     if (result == JFileChooser.APPROVE_OPTION)
     {
       File oFile = fileChooser.getSelectedFile();
@@ -374,7 +488,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
       String sDisplayName = oDatabase.login(m_sUsername, sPasswordHash);
       m_sDisplayName = sDisplayName;
       if (!sDisplayName.isEmpty())
-      { 
+      {
         m_bLogin = true;
         setLogin();
       }
@@ -404,7 +518,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
     lblUsername.setEnabled(!m_bLogin);
     txtUsername.setEnabled(!m_bLogin);
     btnRegister.setEnabled(!m_bLogin);
-    tblFiles.setEnabled(m_bLogin);
+    tblYourFiles.setEnabled(m_bLogin);
     btnUploadFile.setEnabled(m_bLogin);
 
     loadFiles();
@@ -418,22 +532,44 @@ public class cFileSharingPanel extends javax.swing.JPanel
       public void run()
       {
         cDatabaseHandler oDatabase = cDatabaseHandler.instance();
-        ArrayList<cDatabaseFile> lsFiles = new ArrayList();
+        ArrayList<cDatabaseFile> lsYourFiles = new ArrayList();
         if (m_bLogin)
         {
-          lsFiles = oDatabase.getFilesForOwner(m_sUsername);
+          lsYourFiles = oDatabase.getYourFiles(m_sUsername);
         }
-        int rowCount = tblFiles.getRowCount();
-        DefaultTableModel model = (DefaultTableModel) tblFiles.getModel();
-        for (int i = 0; i < rowCount; i++)
+        
+        int iYourRowCount = tblYourFiles.getRowCount();
+        DefaultTableModel oYourModel = (DefaultTableModel) tblYourFiles.getModel();
+        for (int i = 0; i < iYourRowCount; i++)
         {
-          model.removeRow(0);
+          oYourModel.removeRow(0);
         }
-
-        for (cDatabaseFile oFile : lsFiles)
+        
+        for (cDatabaseFile oFile : lsYourFiles)
         {
           // Append a row 
-          model.addRow(new Object[]
+          oYourModel.addRow(new Object[]
+          {
+            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sOwner
+          });
+        }
+        
+        ArrayList<cDatabaseFile> lsOtherFiles = new ArrayList();
+        if (m_bLogin)
+        {
+          lsOtherFiles = oDatabase.getOtherFiles(m_sUsername);
+        }
+        int iOtherFiles = tblOtherFiles.getRowCount();
+        DefaultTableModel oOtherModel = (DefaultTableModel) tblOtherFiles.getModel();
+        for (int i = 0; i < iOtherFiles; i++)
+        {
+          oOtherModel.removeRow(0);
+        }
+
+        for (cDatabaseFile oFile : lsOtherFiles)
+        {
+          // Append a row 
+          oOtherModel.addRow(new Object[]
           {
             oFile.m_sFileID, oFile.m_sFilename, oFile.m_sOwner
           });
@@ -447,9 +583,14 @@ public class cFileSharingPanel extends javax.swing.JPanel
   private javax.swing.JButton btnRegister;
   private javax.swing.JButton btnUploadFile;
   private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JScrollPane jScrollPane2;
+  private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JLabel lblPassword;
   private javax.swing.JLabel lblUsername;
-  private javax.swing.JTable tblFiles;
+  private javax.swing.JPanel pnlOtherFiles;
+  private javax.swing.JPanel pnlYourFiles;
+  private javax.swing.JTable tblOtherFiles;
+  private javax.swing.JTable tblYourFiles;
   private javax.swing.JPasswordField txtPassword;
   private javax.swing.JTextField txtUsername;
   // End of variables declaration//GEN-END:variables

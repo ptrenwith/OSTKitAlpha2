@@ -12,16 +12,20 @@ import static org.digitalpassport.api.IConstants.*;
  */
 public class cTransaction
 {
-  private String id;
-  private String client_id;
-  private String name;
-  private String kind;
-  private String currency_type;
-  private String currency_value;
-  private String commission_percent;
-  private String status;
-  private long uts;
+  @JsonIgnore private String id;
+  @JsonIgnore private String client_id;
+  @JsonIgnore private String name;
+  @JsonIgnore private String kind;
+  @JsonIgnore private String currency_type;
+  @JsonIgnore private String currency_value;
+  @JsonIgnore private String commission_percent;
+  @JsonIgnore private String status;
+  @JsonIgnore private long uts;
   
+  @JsonIgnore private String commission_amount;
+  @JsonIgnore private String amount;
+  @JsonIgnore private String timestamp;
+  @JsonIgnore private String action_id;
   @JsonIgnore private String transaction_uuid;
   @JsonIgnore private String transaction_hash;
   @JsonIgnore private String from_user_id;
@@ -38,6 +42,10 @@ public class cTransaction
   
   @JsonCreator
   public static cTransaction of(
+          @JsonProperty("commission_amount") String commission_amount,
+          @JsonProperty("amount") String amount,
+          @JsonProperty("timestamp") String timestamp,
+          @JsonProperty("action_id") String action_id,
           @JsonProperty(g_sPARAM_ID) String id,
           @JsonProperty(g_sPARAM_CLIENT_ID) String client_id,
           @JsonProperty(g_sPARAM_NAME) String name,

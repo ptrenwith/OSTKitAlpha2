@@ -78,6 +78,13 @@ public class cTokenManagementPanel extends javax.swing.JPanel
   {
     initComponents();
     
+    ArrayList<String> lsTransactions = cDatabaseHandler.instance().getTransactions();
+    
+    for (String sItem: lsTransactions)
+    {
+      cmbTransactionHistory.addItem(sItem);
+    }
+    
     spnPage.setValue(1);
     spnPage.addChangeListener(new ChangeListener()
     {
@@ -1211,15 +1218,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
           cResponse oResponse = m_oTransactionManagement.getTransactionStatus(id);
 
           if (oResponse.getsuccess())
-          {
-            cTransaction[] transactions = oResponse.getdata().gettransactions();
-            cTransaction transaction = null;
-            String sDate = "";
-            if (transactions != null && transactions.length>0)
-            {
-              transaction = oResponse.getdata().gettransactions()[0];
-              sDate = m_oSimpleDateFormat.format(new Date(transaction.gettransaction_timestamp()));
-            }
+          {            
             cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
             cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
             cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
@@ -1236,9 +1235,12 @@ public class cTokenManagementPanel extends javax.swing.JPanel
             oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Commission Percent"));
             oTransactionModel.setValueAt(fromUser.getName() + " (" + fromUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
             oTransactionModel.setValueAt(toUser.getName() + " (" + toUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
-            oTransactionModel.setValueAt(sDate, iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Time"));
+            
+            cTransaction transaction = oResponse.getdata().gettransaction();
             if (transaction != null)
             {
+              String sDate = m_oSimpleDateFormat.format(new Date(transaction.gettransaction_timestamp()));
+              oTransactionModel.setValueAt(sDate, iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Time"));
               oTransactionModel.setValueAt(transaction.getblock_number(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Block"));
               oTransactionModel.setValueAt(transaction.gettransaction_hash(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Hash"));
               oTransactionModel.setValueAt(transaction.gettransaction_fee(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Fee"));
@@ -1397,9 +1399,13 @@ public class cTokenManagementPanel extends javax.swing.JPanel
             if (oResponse.getsuccess())
             {
               //{"success":true,"data":{"transaction_uuid":"4d30bdeb-e156-4746-baa3-f6a8d5d99eff","transaction_hash":null,"from_uuid":"06efebcc-2422-4fb1-a2da-a654e7992fc6","to_uuid":"8613864a-97b5-4802-a745-a4bc72511cd3","transaction_kind":"like"}}
-              m_oTransactions.addTransactionUuid(oResponse.getdata().gettransaction_uuid());
-              cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
+//              m_oTransactions.addTransactionUuid(oResponse.getdata().gettransaction_uuid());
+//              cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
 
+              String transaction_uuid = oResponse.getdata().gettransaction().getid();
+              cDatabaseHandler.instance().saveTransaction(transaction_uuid);
+              cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
+              
               showInfo("Transaction Successfully executed! :-)");
             }
             else

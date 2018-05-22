@@ -27,7 +27,7 @@ public class cData
   @JsonIgnore private String[] steps_complete;
   
   // parameters for transactions
-  @JsonIgnore private cTransaction[] transactions;
+  @JsonIgnore private cTransaction transaction;
   @JsonIgnore private cTransactionTypes[] transaction_types;
   @JsonIgnore private cPricePoints price_points;
   @JsonIgnore private cClientTokens client_tokens;
@@ -49,7 +49,7 @@ public class cData
           @JsonProperty(g_sPARAM_CURRENT_STATUS) String current_status,
           @JsonProperty(g_sPARAM_STEPS_COMPLETED) String[] steps_complete,
           @JsonProperty(g_sPARAM_RESULT_TYPE) String result_type,
-          @JsonProperty(g_sPARAM_TRANSACTIONS) cTransaction[] transactions,
+          @JsonProperty(g_sPARAM_TRANSACTION) cTransaction transaction,
           @JsonProperty(g_sPARAM_TRANSACTION_TYPES) cTransactionTypes[] transaction_types,
           @JsonProperty(g_sPARAM_TRANSACTION_UUID) String transaction_uuid,
           @JsonProperty(g_sPARAM_TRANSACTION_HASH) String transaction_hash,
@@ -62,7 +62,7 @@ public class cData
           @JsonProperty(g_sPARAM_META) cMeta meta)
   {
     return new cData(client_id, airdrop_uuid, current_status, steps_complete, 
-            result_type, transactions, transaction_types, transaction_uuid, 
+            result_type, transaction, transaction_types, transaction_uuid, 
             transaction_hash, from_uuid, to_uuid, transaction_kind,
             price_points, client_tokens, economy_users, meta);
   }
@@ -92,10 +92,10 @@ public class cData
   {
     return result_type;
   }
-  @JsonProperty(g_sPARAM_TRANSACTIONS)
-  public cTransaction[] gettransactions()
+  @JsonProperty(g_sPARAM_TRANSACTION)
+  public cTransaction gettransaction()
   {
-    return transactions;
+    return transaction;
   }
   @JsonProperty(g_sPARAM_TRANSACTION_TYPES)
   public cTransactionTypes[] gettransaction_types()
@@ -149,7 +149,7 @@ public class cData
   }
 
   public cData(int client_id, String airdrop_uuid, String current_status, 
-          String[] steps_complete, String result_type, cTransaction[] transactions, 
+          String[] steps_complete, String result_type, cTransaction transaction, 
           cTransactionTypes[] transaction_types, String transaction_uuid,
           String transaction_hash, String from_uuid, String to_uuid,
           String transaction_kind, cPricePoints price_points, cClientTokens client_tokens,
@@ -160,7 +160,7 @@ public class cData
     this.current_status = current_status;
     this.steps_complete = steps_complete;
     this.result_type = result_type;
-    this.transactions = transactions;
+    this.transaction = transaction;
     this.transaction_types = transaction_types;
     this.transaction_uuid = transaction_uuid;
     this.transaction_hash = transaction_hash;
@@ -191,7 +191,7 @@ public class cData
     }
     
     return "cData{" + "airdrop_uuid=" + airdrop_uuid + ", current_status=" + current_status + 
-            ", steps_complete=" + steps_complete + ", transactions=" + transactions + 
+            ", steps_complete=" + steps_complete + ", transaction=" + transaction + 
             ", transaction_types=" + transaction_types + ", price_points=" + price_points + 
             ", client_tokens=" + client_tokens + ", client_id=" + client_id + 
             ", transaction_uuid=" + transaction_uuid + ", transaction_hash=" + transaction_hash + 

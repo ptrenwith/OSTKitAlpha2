@@ -42,7 +42,7 @@ public interface IConstants
   public static final String g_sPARAM_COMMISSION_PERCENT    = "commission_percent";
   public static final String g_sPARAM_STATUS                = "status";
   public static final String g_sPARAM_TIMESTAMP             = "uts";
-  public static final String g_sPARAM_TRANSACTIONS          = "transactions";
+  public static final String g_sPARAM_TRANSACTION          = "transaction";
   public static final String g_sPARAM_TRANSACTION_UUIDS     = "transaction_uuids";
   public static final String g_sPARAM_TRANSACTION_TYPES     = "transaction_types";
   

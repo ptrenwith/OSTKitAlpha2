@@ -135,23 +135,16 @@ public class cDatabaseHandler
     return bResult;
   }
   
-  public ArrayList<cDatabaseFile> getFilesForOwner(String sUsername)
+  public boolean saveTransaction(String sTransactionUuid)
   {
-    ArrayList<cDatabaseFile> lsFiles = new ArrayList();
-    
+    boolean bResult = false;
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Owner='" + sUsername + "';");
-      ResultSet oResultSet = oStatement.executeQuery();
-      while (oResultSet.next())
-      {
-        cDatabaseFile oDatabase = new cDatabaseFile();
-        oDatabase.m_sFileID = oResultSet.getString("ID");
-        oDatabase.m_sFilename = oResultSet.getString("Filename");
-        oDatabase.m_sOwner = oResultSet.getString("Owner");
-        lsFiles.add(oDatabase);
-      }
+      oStatement = m_oConnection.prepareStatement("INSERT INTO transactions (transaction_uuid) values ('" + 
+          sTransactionUuid + "');");
+      oStatement.execute();
+      bResult = true;
     }
     catch (SQLException ex)
     {
@@ -172,8 +165,7 @@ public class cDatabaseHandler
         }
       }
     }
-    
-    return lsFiles;
+    return bResult;
   }
   
   private ResultSet executeQuery(Statement oStatement, String sQuery)
@@ -445,5 +437,124 @@ public class cDatabaseHandler
       }
     }
     return sResult;
+  }
+
+  public ArrayList<String> getTransactions()
+  {
+    ArrayList<String> lsFiles = new ArrayList();
+    
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM transactions ;");
+      ResultSet oResultSet = oStatement.executeQuery();
+      while (oResultSet.next())
+      {
+        lsFiles.add(oResultSet.getString("transaction_uuid"));
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    
+    return lsFiles;
+  }
+
+  public ArrayList<cDatabaseFile> getYourFiles(String sUsername)
+  {
+    ArrayList<cDatabaseFile> lsFiles = new ArrayList();
+    
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Owner='" + sUsername + "';");
+      ResultSet oResultSet = oStatement.executeQuery();
+      while (oResultSet.next())
+      {
+        cDatabaseFile oDatabase = new cDatabaseFile();
+        oDatabase.m_sFileID = oResultSet.getString("ID");
+        oDatabase.m_sFilename = oResultSet.getString("Filename");
+        oDatabase.m_sOwner = oResultSet.getString("Owner");
+        lsFiles.add(oDatabase);
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    
+    return lsFiles;
+  }
+
+  public ArrayList<cDatabaseFile> getOtherFiles(String sUsername)
+  {
+    ArrayList<cDatabaseFile> lsFiles = new ArrayList();
+    
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Owner!='" + sUsername + "';");
+      ResultSet oResultSet = oStatement.executeQuery();
+      while (oResultSet.next())
+      {
+        cDatabaseFile oDatabase = new cDatabaseFile();
+        oDatabase.m_sFileID = oResultSet.getString("ID");
+        oDatabase.m_sFilename = oResultSet.getString("Filename");
+        oDatabase.m_sOwner = oResultSet.getString("Owner");
+        lsFiles.add(oDatabase);
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    
+    return lsFiles;
   }
 }
