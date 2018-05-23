@@ -7,8 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 import org.digitalpassport.passport.cDatabaseFile;
 import org.digitalpassport.passport.cDigitalPassport;
 
@@ -478,7 +480,7 @@ public class cDatabaseHandler
     return lsFiles;
   }
 
-  public ArrayList<cDatabaseFile> getYourFiles(String sUsername)
+  public ArrayList<cDatabaseFile> getYourFiles(String sUsername, DefaultTableModel oYourModel)
   {
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
 
@@ -500,6 +502,11 @@ public class cDatabaseHandler
         oDatabase.m_sDisplayName = oOtherResultSet.getString("DisplayName");
         oOtherStatement.close();
         lsFiles.add(oDatabase);
+        
+        oYourModel.addRow(new Object[]
+        {
+          oDatabase.m_sFileID, oDatabase.m_sFilename, oDatabase.m_sDisplayName
+        });
       }
     }
     catch (SQLException ex)
@@ -643,7 +650,7 @@ public class cDatabaseHandler
     return bResult;
   }
 
-  public ArrayList<cDatabaseFile> getSharedFiles(String sDisplayName)
+  public ArrayList<cDatabaseFile> getSharedFiles(String sDisplayName, DefaultTableModel oYourModel)
   {
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
 
@@ -672,6 +679,11 @@ public class cDatabaseHandler
         oResultSet.close();
 
         lsFiles.add(oDatabase);
+        
+        oYourModel.addRow(new Object[]
+        {
+          oDatabase.m_sFileID, oDatabase.m_sFilename, oDatabase.m_sDisplayName
+        });
       }
     }
     catch (SQLException ex)
