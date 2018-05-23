@@ -1,4 +1,3 @@
-
 package org.digitalpassport.deserialize.json.transactiontypes;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -14,6 +13,7 @@ import static org.digitalpassport.api.IConstants.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class cTransactionTypes
 {
+
   private String id;
   private String name;
   private String kind;
@@ -21,74 +21,84 @@ public class cTransactionTypes
   private String currency_value;
   private String commission_percent;
   private String status;
-  @JsonIgnore private String client_transaction_id;
-  @JsonIgnore private long uts;
+  @JsonIgnore
+  private String client_transaction_id;
+  @JsonIgnore
+  private long uts;
 
   @JsonCreator
   public static cTransactionTypes of(
-          @JsonProperty(g_sPARAM_ID) String id,
-          @JsonProperty(g_sPARAM_NAME) String name,
-          @JsonProperty(g_sPARAM_KIND) String kind,
-          @JsonProperty(g_sPARAM_CURRENCY_TYPE) String currency_type,
-          @JsonProperty(g_sPARAM_CURRENCY_VALUE) String currency_value,
-          @JsonProperty(g_sPARAM_COMMISSION_PERCENT) String commission_percent,
-          @JsonProperty(g_sPARAM_STATUS) String status,
-          @JsonProperty(g_sPARAM_CLIENT_TRANSACTION_ID) String client_transaction_id,
-          @JsonProperty(g_sPARAM_TIMESTAMP) long uts)
+      @JsonProperty(g_sPARAM_ID) String id,
+      @JsonProperty(g_sPARAM_NAME) String name,
+      @JsonProperty(g_sPARAM_KIND) String kind,
+      @JsonProperty(g_sPARAM_CURRENCY_TYPE) String currency_type,
+      @JsonProperty(g_sPARAM_CURRENCY_VALUE) String currency_value,
+      @JsonProperty(g_sPARAM_COMMISSION_PERCENT) String commission_percent,
+      @JsonProperty(g_sPARAM_STATUS) String status,
+      @JsonProperty(g_sPARAM_CLIENT_TRANSACTION_ID) String client_transaction_id,
+      @JsonProperty(g_sPARAM_TIMESTAMP) long uts)
   {
     return new cTransactionTypes(id, name, kind, currency_type, currency_value,
-            commission_percent, status, client_transaction_id, uts);
+        commission_percent, status, client_transaction_id, uts);
   }
-  
+
   @JsonProperty(g_sPARAM_ID)
   public String getid()
   {
     return id;
   }
+
   @JsonProperty(g_sPARAM_CLIENT_TRANSACTION_ID)
   public String getclient_transaction_id()
   {
     return client_transaction_id;
   }
+
   @JsonProperty(g_sPARAM_NAME)
   public String getname()
   {
     return name;
   }
+
   @JsonProperty(g_sPARAM_KIND)
   public String getkind()
   {
     return kind;
   }
+
   @JsonProperty(g_sPARAM_CURRENCY_TYPE)
   public String getcurrency_type()
   {
     return currency_type;
   }
+
   @JsonProperty(g_sPARAM_CURRENCY_VALUE)
   public String getcurrency_value()
   {
     return currency_value;
   }
+
   @JsonProperty(g_sPARAM_COMMISSION_PERCENT)
   public String getcommission_percent()
   {
     return commission_percent;
   }
+
   @JsonProperty(g_sPARAM_STATUS)
   public String getstatus()
   {
     return status;
   }
+
   @JsonProperty(g_sPARAM_TIMESTAMP)
   public long getuts()
   {
     return uts;
   }
 
-  public cTransactionTypes(String id, String name, String kind, 
-          String currency_type, String currency_value, String commission_percent, 
-          String status, String client_transaction_id, long uts)
+  public cTransactionTypes(String id, String name, String kind,
+      String currency_type, String currency_value, String commission_percent,
+      String status, String client_transaction_id, long uts)
   {
     this.id = id;
     this.name = name;
@@ -104,9 +114,9 @@ public class cTransactionTypes
   @Override
   public String toString()
   {
-    return "cTransactionTypes{" + "id=" + id + ", name=" + name + ", kind=" + kind + 
-            ", currency_type=" + currency_type + ", currency_value=" + currency_value + 
-            ", commission_percent=" + commission_percent + ", status=" + status + 
-            ", client_transaction_id=" + client_transaction_id + ", uts=" + uts + '}';
+    return "cTransactionTypes{" + "id=" + id + ", name=" + name + ", kind=" + kind
+        + ", currency_type=" + currency_type + ", currency_value=" + currency_value
+        + ", commission_percent=" + commission_percent + ", status=" + status
+        + ", client_transaction_id=" + client_transaction_id + ", uts=" + uts + '}';
   }
 }

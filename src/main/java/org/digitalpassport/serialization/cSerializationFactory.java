@@ -30,15 +30,17 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class cSerializationFactory
 {
+
   private static final String g_sAlgorithm = "AES";
-  
+
   private byte[] getKey()
   {
     return null;
   }
-  
+
   /**
    * Serialize the object to byte array
+   *
    * @param oObj the Serializable object to serialize
    * @param bIsEncrypted true if the serialized object should be encrypted
    * @return the serialized data in byte[] format
@@ -69,15 +71,15 @@ public class cSerializationFactory
         oOutputStream = new ObjectOutputStream(oByteArrayOutputStream);
         oOutputStream.writeObject(oObj);
       }
-      
+
       oOutputStream.flush();
       yReturn = oByteArrayOutputStream.toByteArray();
     }
-    catch (InvalidKeyException | NoSuchAlgorithmException | 
-            NoSuchPaddingException | IOException | IllegalBlockSizeException ex)
+    catch (InvalidKeyException | NoSuchAlgorithmException
+        | NoSuchPaddingException | IOException | IllegalBlockSizeException ex)
     {
       Logger.getLogger(cSerializationFactory.class.getName()).log(Level.SEVERE, null, ex);
-    }  
+    }
     finally
     {
       if (oOutputStream != null)
@@ -94,9 +96,10 @@ public class cSerializationFactory
     }
     return yReturn;
   }
-  
+
   /**
    * Serialize the object to file
+   *
    * @param oObj the Serializable object to serialize
    * @param oOutputFile The file that should be used as output
    * @param bIsEncrypted true if the serialized object should be encrypted
@@ -112,9 +115,9 @@ public class cSerializationFactory
       {
         oOutputFile.getParentFile().mkdirs();
       }
-      FileOutputStream oFileOutputStream = new FileOutputStream(oOutputFile);    
+      FileOutputStream oFileOutputStream = new FileOutputStream(oOutputFile);
       BufferedOutputStream oBufferedOutputStream = new BufferedOutputStream(oFileOutputStream);
-      
+
       if (bIsEncrypted)
       {
         // if bIsEncrypted -> get the key from the keystore, ask the user for a password to access the keystore.
@@ -134,15 +137,15 @@ public class cSerializationFactory
         oOutputStream = new ObjectOutputStream(oBufferedOutputStream);
         oOutputStream.writeObject(oObj);
       }
-      
+
       oOutputStream.flush();
       bReturn = true;
     }
-    catch (InvalidKeyException | NoSuchAlgorithmException | 
-            NoSuchPaddingException | IOException | IllegalBlockSizeException ex)
+    catch (InvalidKeyException | NoSuchAlgorithmException
+        | NoSuchPaddingException | IOException | IllegalBlockSizeException ex)
     {
       Logger.getLogger(cSerializationFactory.class.getName()).log(Level.SEVERE, null, ex);
-    }    
+    }
     finally
     {
       if (oOutputStream != null)
@@ -160,9 +163,10 @@ public class cSerializationFactory
     }
     return bReturn;
   }
-  
+
   /**
    * Deserialize the object from file
+   *
    * @param oFile the file on disc that contains the serialized data
    * @param bIsEncrypted true if the serialized object is encrypted
    * @return the deserialized object
@@ -172,9 +176,9 @@ public class cSerializationFactory
     Serializable oReturn = null;
     try
     {
-      FileInputStream oFileInputStreamout = new FileInputStream(oFile);    
+      FileInputStream oFileInputStreamout = new FileInputStream(oFile);
       BufferedInputStream oBufferedInputStream = new BufferedInputStream(oFileInputStreamout);
-      
+
       if (bIsEncrypted)
       {
         // if bIsEncrypted -> get the key from the keystore, ask the user for a password to access the keystore.
@@ -186,28 +190,29 @@ public class cSerializationFactory
         CipherInputStream oCipherInputStream = new CipherInputStream(oBufferedInputStream, oCipher);
         ObjectInputStream oInputStream = new ObjectInputStream(oCipherInputStream);
         SealedObject oSealedObject = (SealedObject) oInputStream.readObject();
-        oReturn = (Serializable)oSealedObject.getObject(oCipher);
+        oReturn = (Serializable) oSealedObject.getObject(oCipher);
       }
       else
       {
         try (ObjectInputStream oInputStream = new ObjectInputStream(oBufferedInputStream))
         {
-          oReturn = (Serializable)oInputStream.readObject();
+          oReturn = (Serializable) oInputStream.readObject();
         }
       }
     }
-    catch (NoSuchAlgorithmException | NoSuchPaddingException | 
-            InvalidKeyException | IOException | ClassNotFoundException | 
-            IllegalBlockSizeException | BadPaddingException ex)
+    catch (NoSuchAlgorithmException | NoSuchPaddingException
+        | InvalidKeyException | IOException | ClassNotFoundException
+        | IllegalBlockSizeException | BadPaddingException ex)
     {
       Logger.getLogger(cSerializationFactory.class.getName()).log(Level.SEVERE, null, ex);
     }
-    
+
     return oReturn;
   }
-  
+
   /**
    * Deserialize the byte array
+   *
    * @param yData the byte array that contains the serialized data
    * @param bIsEncrypted true if the serialized object is encrypted
    * @return the deserialized object
@@ -241,13 +246,13 @@ public class cSerializationFactory
         }
       }
     }
-    catch (NoSuchAlgorithmException | NoSuchPaddingException | 
-            InvalidKeyException | IOException | ClassNotFoundException | 
-            IllegalBlockSizeException | BadPaddingException ex)
+    catch (NoSuchAlgorithmException | NoSuchPaddingException
+        | InvalidKeyException | IOException | ClassNotFoundException
+        | IllegalBlockSizeException | BadPaddingException ex)
     {
       Logger.getLogger(cSerializationFactory.class.getName()).log(Level.SEVERE, null, ex);
     }
-    
+
     return oReturn;
   }
 }

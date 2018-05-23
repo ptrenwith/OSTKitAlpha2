@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.digitalpassport.passport.cDatabaseFile;
@@ -17,16 +16,18 @@ import org.digitalpassport.passport.cDigitalPassport;
  *
  * @author PhilipT
  */
-public class cDatabaseHandler 
+public class cDatabaseHandler
 {
+
   private Connection m_oConnection = null;
   private static cDatabaseHandler g_oInstance = null;
+
   public static void main(String[] args)
   {
     cDatabaseHandler oDatabaseHandler = new cDatabaseHandler();
     oDatabaseHandler.init();
   }
-  
+
   public static cDatabaseHandler instance()
   {
     if (g_oInstance == null)
@@ -39,12 +40,12 @@ public class cDatabaseHandler
     g_oInstance.init();
     return g_oInstance;
   }
-  
+
   private cDatabaseHandler()
   {
     init();
   }
-      
+
   private void init()
   {
     try
@@ -73,8 +74,8 @@ public class cDatabaseHandler
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sUsername + "' AND " + 
-          " Password='" + sPasswordHash + "';");
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sUsername + "' AND "
+          + " Password='" + sPasswordHash + "';");
       ResultSet oResult = oStatement.executeQuery();
       if (oResult.next())
       {
@@ -85,7 +86,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -102,15 +103,15 @@ public class cDatabaseHandler
     }
     return sDisplayName;
   }
-  
+
   public boolean register(String sUsername, String sPasswordHash, String sDisplayName)
   {
     boolean bResult = false;
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users (Username, Password, DisplayName) VALUES ('" + 
-          sUsername + "', '" + sPasswordHash + "', '" + sDisplayName + "');");
+      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users (Username, Password, DisplayName) VALUES ('"
+          + sUsername + "', '" + sPasswordHash + "', '" + sDisplayName + "');");
       oStatement.execute();
       bResult = true;
     }
@@ -118,7 +119,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -135,15 +136,15 @@ public class cDatabaseHandler
     }
     return bResult;
   }
-  
+
   public boolean saveTransaction(String sTransactionUuid)
   {
     boolean bResult = false;
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("INSERT INTO transactions (transaction_uuid) values ('" + 
-          sTransactionUuid + "');");
+      oStatement = m_oConnection.prepareStatement("INSERT INTO transactions (transaction_uuid) values ('"
+          + sTransactionUuid + "');");
       oStatement.execute();
       bResult = true;
     }
@@ -151,7 +152,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -168,7 +169,7 @@ public class cDatabaseHandler
     }
     return bResult;
   }
-  
+
   private ResultSet executeQuery(Statement oStatement, String sQuery)
   {
     ResultSet oResultSet = null;
@@ -182,7 +183,7 @@ public class cDatabaseHandler
     }
     return oResultSet;
   }
-  
+
   private boolean update(Statement oStatement, String sQuery)
   {
     boolean execute = false;
@@ -197,7 +198,7 @@ public class cDatabaseHandler
     }
     return execute;
   }
-  
+
   public ResultSet select(String sQuery)
   {
     ResultSet oResultSet = null;
@@ -213,7 +214,7 @@ public class cDatabaseHandler
     }
     return oResultSet;
   }
-  
+
   public void terminate()
   {
     Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.INFO, "Terminating Database Handler");
@@ -229,7 +230,7 @@ public class cDatabaseHandler
       }
     }
   }
-  
+
   public boolean updatePassport(cDigitalPassport oPassport)
   {
     boolean bReturn = false;
@@ -275,8 +276,8 @@ public class cDatabaseHandler
     }
     catch (Exception ex)
     {
-      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, 
-              "Exception updating passport to database: " + ex.getMessage(), ex);
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE,
+          "Exception updating passport to database: " + ex.getMessage(), ex);
       ex.printStackTrace();
     }
     finally
@@ -292,7 +293,7 @@ public class cDatabaseHandler
           Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
       }
-      
+
       if (oStatement != null)
       {
         try
@@ -325,7 +326,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -349,8 +350,8 @@ public class cDatabaseHandler
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("INSERT INTO passports (Filename, Owner) VALUES ('" + 
-          sFilename + "', '" + sOwner + "');");
+      oStatement = m_oConnection.prepareStatement("INSERT INTO passports (Filename, Owner) VALUES ('"
+          + sFilename + "', '" + sOwner + "');");
       oStatement.execute();
       bResult = true;
     }
@@ -358,7 +359,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -388,7 +389,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -404,7 +405,7 @@ public class cDatabaseHandler
       }
     }
   }
-  
+
   public String getUuid(String sUsername)
   {
     String sResult = "";
@@ -422,7 +423,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -443,7 +444,7 @@ public class cDatabaseHandler
   public ArrayList<String> getTransactions()
   {
     ArrayList<String> lsFiles = new ArrayList();
-    
+
     PreparedStatement oStatement = null;
     try
     {
@@ -458,7 +459,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -473,14 +474,14 @@ public class cDatabaseHandler
         }
       }
     }
-    
+
     return lsFiles;
   }
 
   public ArrayList<cDatabaseFile> getYourFiles(String sUsername)
   {
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
-    
+
     PreparedStatement oStatement = null;
     try
     {
@@ -499,7 +500,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -514,14 +515,14 @@ public class cDatabaseHandler
         }
       }
     }
-    
+
     return lsFiles;
   }
 
   public ArrayList<cDatabaseFile> getOtherFiles(String sUsername)
   {
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
-    
+
     PreparedStatement oStatement = null;
     PreparedStatement oOtherStatement = null;
     try
@@ -534,7 +535,7 @@ public class cDatabaseHandler
         oDatabase.m_sFileID = oResultSet.getString("ID");
         oDatabase.m_sFilename = oResultSet.getString("Filename");
         oDatabase.m_sOwner = oResultSet.getString("Owner");
-        
+
         oOtherStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + oDatabase.m_sOwner + "';");
         ResultSet oOtherResultSet = oOtherStatement.executeQuery();
         oOtherResultSet.next();
@@ -547,7 +548,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -562,7 +563,7 @@ public class cDatabaseHandler
         }
       }
     }
-    
+
     return lsFiles;
   }
 
@@ -573,14 +574,15 @@ public class cDatabaseHandler
     try
     {
       String sUsername = sName.toLowerCase().replaceAll(" ", "");
-      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users (Username, Password, DisplayName, DptUUID) VALUES ('" + 
-          sUsername + "', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '" + sName + "', '" + sUuid + "');");
+      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users (Username, Password, DisplayName, DptUUID) VALUES ('"
+          + sUsername + "', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '" + sName + "', '" + sUuid + "');");
       oStatement.execute();
       bResult = true;
     }
     catch (SQLException ex)
-    { }
-    finally 
+    {
+    }
+    finally
     {
       if (oStatement != null)
       {
@@ -617,7 +619,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -638,7 +640,7 @@ public class cDatabaseHandler
   public ArrayList<cDatabaseFile> getSharedFiles(String sDisplayName)
   {
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
-    
+
     PreparedStatement oStatement = null;
     PreparedStatement oSharedStatement = null;
     try
@@ -649,20 +651,20 @@ public class cDatabaseHandler
       {
         cDatabaseFile oDatabase = new cDatabaseFile();
         oDatabase.m_sFileID = oSharedResultSet.getString("FileId");
-        
+
         oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE ID='" + oDatabase.m_sFileID + "';");
         ResultSet oResultSet = oStatement.executeQuery();
         oResultSet.next();
         String sOwner = oResultSet.getString("Owner");
         oDatabase.m_sFilename = oResultSet.getString("Filename");
         oResultSet.close();
-        
+
         oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sOwner + "';");
         oResultSet = oStatement.executeQuery();
         oResultSet.next();
         oDatabase.m_sOwner = oResultSet.getString("DisplayName") + " (shared)";
         oResultSet.close();
-        
+
         lsFiles.add(oDatabase);
       }
     }
@@ -670,7 +672,7 @@ public class cDatabaseHandler
     {
       Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
-    finally 
+    finally
     {
       if (oStatement != null)
       {
@@ -697,7 +699,7 @@ public class cDatabaseHandler
         }
       }
     }
-    
+
     return lsFiles;
   }
 }

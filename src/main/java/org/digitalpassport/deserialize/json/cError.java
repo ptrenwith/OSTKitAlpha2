@@ -1,4 +1,3 @@
-
 package org.digitalpassport.deserialize.json;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -10,51 +9,60 @@ import static org.digitalpassport.api.IConstants.*;
  *
  * @author Philip M. Trenwith
  */
-public class cError 
+public class cError
 {
+
   private String code;
   private String msg;
-  @JsonIgnore private String display_text;
-  @JsonIgnore private String display_heading;
+  @JsonIgnore
+  private String display_text;
+  @JsonIgnore
+  private String display_heading;
   private cErrorData[] error_data;
-  @JsonIgnore private String internal_id;
-  
+  @JsonIgnore
+  private String internal_id;
+
   @JsonCreator
   public static cError of(@JsonProperty(g_sPARAM_CODE) String code,
-          @JsonProperty(g_sPARAM_MSG) String msg,
-          @JsonProperty(g_sPARAM_DISPLAY_TEXT) String display_text,
-          @JsonProperty(g_sPARAM_DISPLAY_HEADING) String display_heading,
-          @JsonProperty(g_sPARAM_ERROR_DATA) cErrorData[] error_data,
-          @JsonProperty(g_sPARAM_INTERNAL_ID) String  internal_id)
+      @JsonProperty(g_sPARAM_MSG) String msg,
+      @JsonProperty(g_sPARAM_DISPLAY_TEXT) String display_text,
+      @JsonProperty(g_sPARAM_DISPLAY_HEADING) String display_heading,
+      @JsonProperty(g_sPARAM_ERROR_DATA) cErrorData[] error_data,
+      @JsonProperty(g_sPARAM_INTERNAL_ID) String internal_id)
   {
     return new cError(code, msg, display_heading, display_text, error_data, internal_id);
   }
-  
+
   @JsonProperty(g_sPARAM_CODE)
   public String getcode()
   {
     return code;
   }
+
   @JsonProperty(g_sPARAM_MSG)
   public String getmsg()
   {
     return msg;
   }
+
   @JsonProperty(g_sPARAM_DISPLAY_TEXT)
   public String getdisplay_text()
   {
     return display_text;
   }
+
   @JsonProperty(g_sPARAM_DISPLAY_HEADING)
   public String getdisplay_heading()
   {
     return display_heading;
   }
+
   @JsonProperty(g_sPARAM_ERROR_DATA)
   public cErrorData[] geterror_data()
   {
     return error_data;
   }
+
   @JsonProperty(g_sPARAM_INTERNAL_ID)
   public String getinternal_id()
   {
@@ -74,7 +82,7 @@ public class cError
   @Override
   public String toString()
   {
-    return "cError{" + "code=" + code + ", msg=" + msg + ", display_text=" + 
-            display_text + ", display_heading=" + display_heading + ", error_data=" + error_data + ", internal_id=" + internal_id + '}';
+    return "cError{" + "code=" + code + ", msg=" + msg + ", display_text="
+        + display_text + ", display_heading=" + display_heading + ", error_data=" + error_data + ", internal_id=" + internal_id + '}';
   }
 }

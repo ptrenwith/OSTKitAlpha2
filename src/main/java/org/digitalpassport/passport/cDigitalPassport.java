@@ -17,29 +17,30 @@ import org.digitalpassport.jdbc.cDatabaseHandler;
  */
 public class cDigitalPassport
 {
+
   private cDatabaseHandler m_oDatabase = null;
   private Process m_oProcess = null;
   private boolean m_bTerminate = false;
-  
+
   private static HashMap<Integer, cDigitalPassport> g_oOpenPassports = new HashMap();
-  
+
   private String m_sPassportName = "";
   private String m_sPassportPath = "";
-  
+
   private int m_oPASSPORT_ID = -1;
   private cProvenanceData m_oPASSPORT_Provenance = null;
   private File m_oPASSPORT_PAYLOAD = null;
-  
+
   public int getID()
   {
     return m_oPASSPORT_ID;
   }
-  
+
   public cProvenanceData getProvenance()
   {
     return m_oPASSPORT_Provenance;
   }
-  
+
   public File getPayload()
   {
     return m_oPASSPORT_PAYLOAD;
@@ -50,46 +51,46 @@ public class cDigitalPassport
     m_oDatabase = cDatabaseHandler.instance();
     if (oFile.getName().endsWith("passport"))
     {
-      try 
+      try
       {
         // open the passport
         m_sPassportPath = oFile.getParent() + File.separator;
         m_sPassportName = oFile.getName();
-        
+
         String sPath = oFile.getParent() + File.separator + oFile.getName().replace(".", "") + "_open";
         File oDir = new File(sPath);
         oDir.mkdirs();
         oDir.deleteOnExit();
-        
+
         cExtractZip oExtract = new cExtractZip();
         oExtract.unzip(oFile.getAbsolutePath(), sPath);
-        
+
         String sProvenance = sPath + File.separator + oFile.getName().replaceFirst(".passport", "_Provenance.xml");
         String sPayload = sPath + File.separator + oFile.getName().replaceFirst(".passport", "");
-        
+
         String sID = m_oDatabase.getPassportID(sPayload);
-        
+
         m_oPASSPORT_ID = Integer.parseInt(sID);
         m_oPASSPORT_PAYLOAD = new File(sPayload);
         m_oPASSPORT_Provenance = new cProvenanceData(m_oPASSPORT_PAYLOAD, sProvenance);
-        
+
 //        m_oPASSPORT_Provenance.generateLocationRecord(Main.bSERVER);
 //        m_oPassportLocation = cIPLookup.lookupGeoLocationFromIP(Main.Database, 
 //                cIPLookup.IPv4AddressToSingleNumber(cIPLookup.getIPAddressAssignedByISP()));
       }
-      catch (IOException ex) 
+      catch (IOException ex)
       {
         Logger.getLogger(cDigitalPassport.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
-    else 
+    else
     {
       // create a new passport
       m_oDatabase.uploadPassport(oFile.getName(), sUsername);
       m_oPASSPORT_ID = Integer.parseInt(m_oDatabase.getPassportID(oFile.getName()));
       m_oPASSPORT_PAYLOAD = oFile;
       m_oPASSPORT_Provenance = new cProvenanceData(m_oPASSPORT_PAYLOAD);
-      
+
 //      m_oPASSPORT_Provenance.generateLocationRecord(Main.bSERVER);
 //      m_oPassportLocation = cIPLookup.lookupGeoLocationFromIP(Main.Database, 
 //                cIPLookup.IPv4AddressToSingleNumber(cIPLookup.getIPAddressAssignedByISP()));
@@ -103,8 +104,8 @@ public class cDigitalPassport
     {
       if (oPayload != null)
       {
-        Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO, 
-                "Creating passport for payload: {0}", oPayload.getName());
+        Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO,
+            "Creating passport for payload: {0}", oPayload.getName());
         oPassport = new cDigitalPassport(oPayload, sUsername);
         if (!oPassport.compilePassport(bDeletePayloadFile))
         {
@@ -114,22 +115,22 @@ public class cDigitalPassport
     }
     catch (Exception ex)
     {
-      Logger.getLogger(cDigitalPassport.class.getName()).log(Level.SEVERE, 
-              "Exception creating passport: {0}", ex.getMessage());
+      Logger.getLogger(cDigitalPassport.class.getName()).log(Level.SEVERE,
+          "Exception creating passport: {0}", ex.getMessage());
       ex.printStackTrace();
     }
     return oPassport;
   }
-  
+
   public static cDigitalPassport openPassport(File oDigitalPassport, String sUsername, boolean bOpenPayload)
   {
     cDigitalPassport oPassport = null;
     try
     {
       Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO,
-              "Opening passport: {0}", oDigitalPassport.getName());
+          "Opening passport: {0}", oDigitalPassport.getName());
       oPassport = new cDigitalPassport(oDigitalPassport, sUsername);
-      
+
       g_oOpenPassports.put(oPassport.getID(), oPassport);
 
       if (bOpenPayload)
@@ -140,10 +141,10 @@ public class cDigitalPassport
     catch (Exception ex)
     {
       Logger.getLogger(cDigitalPassport.class.getName()).log(Level.SEVERE,
-              "Exception opening passport: {0}", ex.getMessage());
+          "Exception opening passport: {0}", ex.getMessage());
       ex.printStackTrace();
     }
-    finally 
+    finally
     {
       if (oPassport != null)
       {
@@ -155,8 +156,8 @@ public class cDigitalPassport
     }
     return oPassport;
   }
-  
-  private boolean compilePassport(boolean bDeletePayload) 
+
+  private boolean compilePassport(boolean bDeletePayload)
   {
     boolean bSuccess = false;
     try
@@ -164,14 +165,14 @@ public class cDigitalPassport
       Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO, "Compiling passport");
       m_sPassportPath = m_oPASSPORT_PAYLOAD.getParentFile().getAbsolutePath() + File.separator;
       m_sPassportName = m_oPASSPORT_PAYLOAD.getName() + ".passport";
-      
+
       boolean commit = true;// Main.Database.updatePassport(this);
-      
+
       if (commit)
       {
         cCreateZip zipFile = new cCreateZip(m_sPassportPath + File.separator + m_oPASSPORT_PAYLOAD.getName() + ".passport");
 
-        File oIdFile = new File(new File(m_oPASSPORT_Provenance.m_sPRFile).getParent() + File.separator + m_oPASSPORT_ID+"");
+        File oIdFile = new File(new File(m_oPASSPORT_Provenance.m_sPRFile).getParent() + File.separator + m_oPASSPORT_ID + "");
         try
         {
           oIdFile.createNewFile();
@@ -181,11 +182,11 @@ public class cDigitalPassport
           Logger.getLogger(cDigitalPassport.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        zipFile.addFile(m_oPASSPORT_ID+"", oIdFile.getAbsolutePath());
+        zipFile.addFile(m_oPASSPORT_ID + "", oIdFile.getAbsolutePath());
         zipFile.addFile(new File(m_oPASSPORT_Provenance.m_sPRFile).getName(), m_oPASSPORT_Provenance.m_sPRFile);
         zipFile.addFile(m_oPASSPORT_PAYLOAD.getName(), m_oPASSPORT_PAYLOAD.getAbsolutePath());
         zipFile.close();
-      
+
         if (bDeletePayload)
         {
           m_oPASSPORT_PAYLOAD.delete();
@@ -201,11 +202,11 @@ public class cDigitalPassport
         new File(m_oPASSPORT_Provenance.m_sPRFile).delete();
         Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO, "**** ERROR: Passport Compilation Failed!");
       }
-    } 
+    }
     catch (Exception ex)
     {
-      Logger.getLogger(cDigitalPassport.class.getName()).log(Level.SEVERE, 
-              "Exception creating passport: {0}", ex.getMessage());
+      Logger.getLogger(cDigitalPassport.class.getName()).log(Level.SEVERE,
+          "Exception creating passport: {0}", ex.getMessage());
       ex.printStackTrace();
     }
     return bSuccess;
@@ -219,7 +220,7 @@ public class cDigitalPassport
       m_oProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + sFILEPATH);
       Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO, "Waiting for process to complete...");
       Thread.sleep(1000);
-      
+
       while (!m_bTerminate)
       {
         try
@@ -266,17 +267,17 @@ public class cDigitalPassport
     finally
     {
       m_oPASSPORT_Provenance.generateModificationRecord();
-    }      
+    }
   }
-  
+
   public static void terminateAll()
   {
-    for (cDigitalPassport oPassport: g_oOpenPassports.values())
+    for (cDigitalPassport oPassport : g_oOpenPassports.values())
     {
       oPassport.terminate();
     }
   }
-  
+
   public void terminate()
   {
     Logger.getLogger(cDigitalPassport.class.getName()).log(Level.INFO, "Closing Passport: {0}", m_oPASSPORT_PAYLOAD.getName());

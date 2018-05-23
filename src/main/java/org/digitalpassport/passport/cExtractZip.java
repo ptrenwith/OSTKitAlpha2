@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
  */
 public class cExtractZip
 {
+
   public void unzip(String zipFilePath, String destDirectory) throws IOException
   {
     File destDir = new File(destDirectory);
@@ -24,7 +25,7 @@ public class cExtractZip
     {
       destDir.mkdir();
     }
-    
+
     ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
     ZipEntry entry = zipIn.getNextEntry();
     // iterates over entries in the zip file

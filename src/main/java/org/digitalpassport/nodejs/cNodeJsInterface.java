@@ -1,4 +1,3 @@
-
 package org.digitalpassport.nodejs;
 
 import java.io.BufferedReader;
@@ -16,13 +15,14 @@ import java.util.logging.Logger;
  */
 public class cNodeJsInterface
 {
+
   public static String hash(String sParameterString)
   {
     String sResponse = "";
     InputStream oInputStream = null;
     try
     {
-      
+
       File oFile = new File("nodejs\\hash.js");
       ProcessBuilder pb = new ProcessBuilder("nodejs\\node.exe", oFile.getAbsolutePath(), sParameterString);
 
@@ -33,7 +33,7 @@ public class cNodeJsInterface
       Process oProcess = pb.start();
       BufferedReader in = new BufferedReader(new InputStreamReader(oProcess.getInputStream()));
       String line;
-      while ((line = in.readLine()) != null) 
+      while ((line = in.readLine()) != null)
       {
         sResponse += line;
       }

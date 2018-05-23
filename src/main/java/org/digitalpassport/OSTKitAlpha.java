@@ -17,21 +17,20 @@ import org.digitalpassport.ui.panels.cTokenManagementPanel;
  */
 public class OSTKitAlpha
 {
+
   public static cFileSharingFrame m_oFileSharingFrame;
   public static cTokenManagementPanel m_oTokenManagementPanel;
   private cWindowBounds m_oWindowBounds;
   private cSerializationFactory m_oSerializationFactory = new cSerializationFactory();
-  
-    
   private File m_fBounds;
-  
+
   /**
    * @param args the command line arguments
    */
   public static void main(String[] args)
   {
-    boolean m_bManagement = (args.length > 0 && args[0].equals("-m"));  
-    
+    boolean m_bManagement = (args.length > 0 && args[0].equals("-m"));
+
     new OSTKitAlpha(m_bManagement);
   }
 
@@ -40,12 +39,12 @@ public class OSTKitAlpha
     m_fBounds = new File("bounds.ser");
     // default window bounds
     m_oWindowBounds = new cWindowBounds();
-    
+
     m_oWindowBounds.set_main_x(50);
     m_oWindowBounds.set_main_y(50);
     m_oWindowBounds.set_main_w(1200);
     m_oWindowBounds.set_main_h(800);
-    
+
     m_oWindowBounds.set_api_x(70);
     m_oWindowBounds.set_api_y(70);
     m_oWindowBounds.set_api_w(1200);
@@ -55,10 +54,10 @@ public class OSTKitAlpha
     {
       m_oWindowBounds = (cWindowBounds) m_oSerializationFactory.deserialize(m_fBounds, false);
     }
-    
+
     String sTitle = "Digital Passport";
     m_oTokenManagementPanel = new cTokenManagementPanel();
-    
+
     m_oFileSharingFrame = new cFileSharingFrame(m_oTokenManagementPanel, bManagement);
     m_oFileSharingFrame.setTitle(sTitle);
     m_oFileSharingFrame.setBounds(m_oWindowBounds.get_main_x(), m_oWindowBounds.get_main_y(), m_oWindowBounds.get_main_w(), m_oWindowBounds.get_main_h());
@@ -121,7 +120,7 @@ public class OSTKitAlpha
     m_oWindowBounds.set_main_y(m_oFileSharingFrame.getY());
     m_oWindowBounds.set_main_h(m_oFileSharingFrame.getHeight());
     m_oWindowBounds.set_main_w(m_oFileSharingFrame.getWidth());
-        
+
     if (m_oFileSharingFrame != null)
     {
       m_oFileSharingFrame.terminate();

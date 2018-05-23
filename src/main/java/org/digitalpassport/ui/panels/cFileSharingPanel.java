@@ -13,9 +13,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableModel;
 import org.digitalpassport.api.commands.cTransactionManagement;
+import static org.digitalpassport.api.commands.cTransactionManagement.m_oTransactions;
 import org.digitalpassport.api.commands.eCurrencyType;
 import org.digitalpassport.api.commands.eTransactionKind;
 import org.digitalpassport.cryptography.cHashing;
+import org.digitalpassport.deserialize.json.cError;
+import org.digitalpassport.deserialize.json.cErrorData;
 import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.jdbc.cDatabaseHandler;
@@ -24,6 +27,8 @@ import org.digitalpassport.ui.cFileSharingFrame;
 import org.digitalpassport.ui.cHistoryFrame;
 import org.digitalpassport.ui.cRegisterFrame;
 import org.digitalpassport.ui.cSelectUser;
+import static org.digitalpassport.ui.panels.cTokenManagementPanel.showError;
+import static org.digitalpassport.ui.panels.cTokenManagementPanel.showInfo;
 
 /**
  *
@@ -31,6 +36,7 @@ import org.digitalpassport.ui.cSelectUser;
  */
 public class cFileSharingPanel extends javax.swing.JPanel
 {
+
   private cHistoryFrame m_oHistoryFrame = new cHistoryFrame();
   private cSelectUser m_oSelectUser = null;
   private cTransactionManagement m_oTransactionManagement = null;
@@ -48,6 +54,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
   class cYourPopupTriggerListener implements MouseListener
   {
+
     public cYourPopupTriggerListener()
     {
     }
@@ -84,6 +91,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
   class cOtherPopupTriggerListener implements MouseListener
   {
+
     public cOtherPopupTriggerListener()
     {
     }
@@ -126,7 +134,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
     initComponents();
 
     m_oHistoryFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    
+
     btnLogin.setActionCommand("login");
     m_oTransactionManagement = new cTransactionManagement();
     m_oRegistrationFrame = new cRegisterFrame(this, m_oTransactionManagement);
@@ -135,6 +143,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
     m_oShareMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         int iRow = tblYourFiles.getSelectedRow();
@@ -150,27 +159,30 @@ public class cFileSharingPanel extends javax.swing.JPanel
           cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
           System.out.println("Create Transaction: " + sTransaction);
           m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-                  eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
-                  Float.parseFloat(oTransaction.getcommission_percent()));
+              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+              Float.parseFloat(oTransaction.getcommission_percent()));
         }
         m_oSelectUser.setTitle("Share");
         m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
         m_oSelectUser.setBounds(oParent.getX() + oParent.getWidth() / 2, oParent.getY() + oParent.getHeight() / 2,
-                m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
+            m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
         m_oSelectUser.setTransactionName(sTransaction);
         m_oSelectUser.setVisible(true);
       }
     });
-    
-    m_oHistoryMenuItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+
+    m_oHistoryMenuItem.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
         int iRow = tblYourFiles.getSelectedRow();
-        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0)+"");
-        String sFile = tblYourFiles.getValueAt(iRow, 1)+"";
-        
+        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
+        String sFile = tblYourFiles.getValueAt(iRow, 1) + "";
+
         m_oHistoryFrame.setTitle("History");
-        m_oHistoryFrame.setBounds(oParent.getX()+50, oParent.getY()+150, oParent.getWidth(), oParent.getHeight());
+        m_oHistoryFrame.setBounds(oParent.getX()+50, oParent.getY()+50, oParent.getWidth(), oParent.getHeight());
         m_oHistoryFrame.setFile(sFile);
         m_oHistoryFrame.getHistoryOfFile(iID);
         m_oHistoryFrame.setVisible(true);
@@ -179,13 +191,14 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
     m_oLikeMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         int iRow = tblOtherFiles.getSelectedRow();
         int iID = Integer.parseInt(tblOtherFiles.getValueAt(iRow, 0) + "");
-        String sOwner = tblOtherFiles.getValueAt(iRow, 2)+"";
+        String sOwner = tblOtherFiles.getValueAt(iRow, 2) + "";
         sOwner = sOwner.replaceAll("(shared)", "").trim();
-        
+
         String sOriginal = "like";
         String sTransaction = sOriginal + " " + iID;
         if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
@@ -197,12 +210,42 @@ public class cFileSharingPanel extends javax.swing.JPanel
           cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
           System.out.println("Create Transaction: " + sTransaction);
           m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-                  eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
-                  Float.parseFloat(oTransaction.getcommission_percent()));
+              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+              Float.parseFloat(oTransaction.getcommission_percent()));
         }
         String sFromUUID = cDatabaseHandler.instance().getUuid(m_sDisplayName);
         String sToUUID = cDatabaseHandler.instance().getUuid(sOwner);
-        cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, sTransaction);
+        cTransactionTypes oTransactionType = m_oTransactions.get(sTransaction);
+        cResponse oResponse = null;
+        if (oTransactionType != null)
+        {
+          oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, oTransactionType.getid());
+        }
+        if (oResponse != null && !oResponse.getsuccess())
+        {
+          String sErrorMsg = "";
+          cError oError = oResponse.geterr();
+          if (oError != null)
+          {
+            cErrorData[] error_data = oError.geterror_data();
+            if (error_data != null)
+            {
+              for (cErrorData oErr : error_data)
+              {
+                sErrorMsg += oErr.getname() + "\n";
+              }
+            }
+            showError(oResponse.geterr(), "Failed to like file: " + sErrorMsg);
+          }
+          else
+          {
+            showError(oResponse.geterr(), "Failed to like file");
+          }
+        }
+        else
+        {
+          showInfo("Transaction status: " + oResponse.getdata().gettransaction().getstatus());
+        }
       }
     });
 
@@ -210,10 +253,13 @@ public class cFileSharingPanel extends javax.swing.JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        int iRow = tblYourFiles.getSelectedRow();
-        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
+        int iRow = tblOtherFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblOtherFiles.getValueAt(iRow, 0) + "");
         String sOriginal = "access";
         String sTransaction = sOriginal + " " + iID;
+        String sOwner = tblOtherFiles.getValueAt(iRow, 2) + "";
+        sOwner = sOwner.replaceAll("(shared)", "").trim();
+        
         if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
         {
           System.out.println("Transcation already exists! : " + sTransaction);
@@ -223,16 +269,42 @@ public class cFileSharingPanel extends javax.swing.JPanel
           cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
           System.out.println("Create Transaction: " + sTransaction);
           m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-                  eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
-                  Float.parseFloat(oTransaction.getcommission_percent()));
+              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+              Float.parseFloat(oTransaction.getcommission_percent()));
         }
-        m_oSelectUser.setTitle("Access");
-        m_oSelectUser.setBounds(oParent.getX() + oParent.getWidth() / 2, oParent.getY() + oParent.getHeight() / 2,
-                m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
-        m_oSelectUser.setTransactionName(sTransaction);
-        m_oSelectUser.setVisible(true);
+        String sFromUUID = cDatabaseHandler.instance().getUuid(m_sDisplayName);
+        String sToUUID = cDatabaseHandler.instance().getUuid(sOwner);
+        cTransactionTypes oTransactionType = m_oTransactions.get(sTransaction);
+        cResponse oResponse = null;
+        if (oTransactionType != null)
+        {
+          oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, oTransactionType.getid());
+        }
+        if (oResponse != null && !oResponse.getsuccess())
+        {
+          String sErrorMsg = "";
+          cError oError = oResponse.geterr();
+          if (oError != null)
+          {
+            cErrorData[] error_data = oError.geterror_data();
+            if (error_data != null)
+            {
+              for (cErrorData oErr : error_data)
+              {
+                sErrorMsg += oErr.getname() + "\n";
+              }
+            }
+            showError(oResponse.geterr(), "Failed to access file: " + sErrorMsg);
+          }
+          else
+          {
+            showError(oResponse.geterr(), "Failed to access file");
+          }
+        }
+        else
+        {
+          showInfo("Access granted! :-) ");
+        }
       }
     });
 
@@ -254,9 +326,8 @@ public class cFileSharingPanel extends javax.swing.JPanel
   }
 
   /**
-   * This method is called from within the constructor to initialize the form.
-   * WARNING: Do NOT modify this code. The content of this method is always
-   * regenerated by the Form Editor.
+   * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
+   * content of this method is always regenerated by the Form Editor.
    */
   @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -478,6 +549,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
       String sPasswordHash = cHashing.hash(cPassword);
       cDatabaseHandler oDatabase = cDatabaseHandler.instance();
       String sDisplayName = oDatabase.login(m_sUsername, sPasswordHash);
+      loadFiles();
       m_sDisplayName = sDisplayName;
       if (!sDisplayName.isEmpty())
       {
@@ -512,8 +584,6 @@ public class cFileSharingPanel extends javax.swing.JPanel
     btnRegister.setEnabled(!m_bLogin);
     tblYourFiles.setEnabled(m_bLogin);
     btnUploadFile.setEnabled(m_bLogin);
-
-    loadFiles();
   }
 
   private void loadFiles()
@@ -530,23 +600,23 @@ public class cFileSharingPanel extends javax.swing.JPanel
           lsYourFiles = oDatabase.getYourFiles(m_sUsername);
           lsYourFiles.addAll(oDatabase.getSharedFiles(m_sDisplayName));
         }
-        
+
         int iYourRowCount = tblYourFiles.getRowCount();
         DefaultTableModel oYourModel = (DefaultTableModel) tblYourFiles.getModel();
         for (int i = 0; i < iYourRowCount; i++)
         {
           oYourModel.removeRow(0);
         }
-        
+
         for (cDatabaseFile oFile : lsYourFiles)
         {
           // Append a row 
           oYourModel.addRow(new Object[]
           {
-            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sOwner
+            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sDisplayName
           });
         }
-        
+
         ArrayList<cDatabaseFile> lsOtherFiles = new ArrayList();
         if (m_bLogin)
         {

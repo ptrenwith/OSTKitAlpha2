@@ -1,4 +1,3 @@
-
 package org.digitalpassport.deserialize.json.users.lists;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -11,14 +10,16 @@ import static org.digitalpassport.api.IConstants.*;
  */
 public class cMeta
 {
+
   private cNextPagePayload oNextPagePayload;
-  
+
   @JsonCreator
   public static cMeta of(
-          @JsonProperty(g_sPARAM_NEXT_PAGE) cNextPagePayload oNextPagePayload)
+      @JsonProperty(g_sPARAM_NEXT_PAGE) cNextPagePayload oNextPagePayload)
   {
     return new cMeta(oNextPagePayload);
   }
+
   @JsonProperty(g_sPARAM_NEXT_PAGE)
   public cNextPagePayload getoNextPagePayload()
   {
@@ -30,7 +31,7 @@ public class cMeta
   {
     return "cMeta{" + g_sPARAM_NEXT_PAGE + "=" + oNextPagePayload.toString() + '}';
   }
-  
+
   public cMeta(cNextPagePayload oNextPagePayload)
   {
     this.oNextPagePayload = oNextPagePayload;

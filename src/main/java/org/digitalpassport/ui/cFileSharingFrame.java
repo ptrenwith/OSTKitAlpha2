@@ -1,4 +1,3 @@
-
 package org.digitalpassport.ui;
 
 import java.awt.BorderLayout;
@@ -6,20 +5,20 @@ import javax.swing.JTabbedPane;
 import org.digitalpassport.ui.panels.cFileSharingPanel;
 import org.digitalpassport.ui.panels.cTokenManagementPanel;
 
-
 /**
  *
  * @author Philip M. Trenwith
  */
 public class cFileSharingFrame extends javax.swing.JFrame
 {
+
   private cFileSharingPanel m_oFileSharingPanel = null;
   private cTokenManagementPanel m_oTokenManagementPanel = null;
   private boolean m_bManagement;
-  
+
   public cFileSharingFrame(cTokenManagementPanel oTokenManagementPanel, boolean bManagement)
   {
-    initComponents();    
+    initComponents();
     m_oTokenManagementPanel = oTokenManagementPanel;
     m_bManagement = bManagement;
     m_oFileSharingPanel = new cFileSharingPanel(this);
@@ -71,6 +70,6 @@ public class cFileSharingFrame extends javax.swing.JFrame
 
   public void terminate()
   {
-    
+
   }
 }

@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+
 /**
  *
  * @author Philip M. Trenwith
@@ -27,7 +28,7 @@ public class cHashing
       md = MessageDigest.getInstance("SHA-256");
       md.update(yData);
       digest = md.digest();
-      return ByteToString( digest );
+      return ByteToString(digest);
     }
     catch (Exception ex)
     {
@@ -38,9 +39,9 @@ public class cHashing
 
   public static String ByteToString(byte[] bytes)
   {
-    return Hex.encodeHexString( bytes );
+    return Hex.encodeHexString(bytes);
   }
-  
+
   public static byte[] StringToByte(String string)
   {
     byte[] decodeHex = null;
@@ -55,7 +56,7 @@ public class cHashing
     }
     return decodeHex;
   }
-  
+
   public static void main(String[] args)
   {
     String s = "1234";

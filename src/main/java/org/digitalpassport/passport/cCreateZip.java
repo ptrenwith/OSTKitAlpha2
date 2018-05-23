@@ -16,11 +16,12 @@ import java.util.zip.ZipOutputStream;
  *
  * @author Philip M. Trenwith
  */
-public class cCreateZip 
+public class cCreateZip
 {
+
   static final int BUFFER = 4096;
   public ZipOutputStream outputFile;
-  
+
   public cCreateZip(String sPassportName)
   {
     try
@@ -33,36 +34,36 @@ public class cCreateZip
     {
       Logger.getLogger(cCreateZip.class.getName()).log(Level.SEVERE, null, ex);
     }
-  } 
-  
+  }
+
   public void addFile(String name, String filepath)
   {
-    try 
+    try
     {
       //out.setMethod(ZipOutputStream.DEFLATED);
       byte data[] = new byte[BUFFER];
       // get a list of files from current directory
       File f = new File(filepath);
       FileInputStream fi = new FileInputStream(f);
-      BufferedInputStream origin = new  BufferedInputStream(fi, BUFFER);
+      BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
       ZipEntry entry = new ZipEntry(name);
       outputFile.putNextEntry(entry);
       int count;
-      while((count = origin.read(data, 0, BUFFER)) != -1) 
+      while ((count = origin.read(data, 0, BUFFER)) != -1)
       {
-         outputFile.write(data, 0, count);
+        outputFile.write(data, 0, count);
       }
       origin.close();
-    } 
-    catch(Exception e) 
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
     }
   }
-  
-  public void close() 
+
+  public void close()
   {
-    try 
+    try
     {
       outputFile.close();
     }

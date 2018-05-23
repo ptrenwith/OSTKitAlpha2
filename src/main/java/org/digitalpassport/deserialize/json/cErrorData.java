@@ -1,4 +1,3 @@
-
 package org.digitalpassport.deserialize.json;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -12,11 +11,16 @@ import static org.digitalpassport.api.IConstants.*;
  */
 public class cErrorData
 {
-  @JsonIgnore private String name;
-  @JsonIgnore private String amount;
-  @JsonIgnore private String parameter;
-  @JsonIgnore private String msg;
-  
+
+  @JsonIgnore
+  private String name;
+  @JsonIgnore
+  private String amount;
+  @JsonIgnore
+  private String parameter;
+  @JsonIgnore
+  private String msg;
+
   @JsonCreator
   public static cErrorData of(@JsonProperty(g_sPARAM_NAME) String name,
       @JsonProperty(g_sPARAM_AMOUNT) String amount,
@@ -31,16 +35,19 @@ public class cErrorData
   {
     return name;
   }
+
   @JsonProperty(g_sPARAM_AMOUNT)
   public String getamount()
   {
     return amount;
   }
+
   @JsonProperty(g_sPARAM_PARAMETER)
   public String getparameter()
   {
     return parameter;
   }
+
   @JsonProperty(g_sPARAM_MSG)
   public String getmsg()
   {
@@ -58,8 +65,8 @@ public class cErrorData
   @Override
   public String toString()
   {
-    return "cErrorData{" + g_sPARAM_NAME + "=" + name + ", " + 
-        g_sPARAM_AMOUNT + "=" + amount + ", " + g_sPARAM_PARAMETER + "=" + parameter + 
-            ", " + g_sPARAM_MSG + "=" + msg + '}';
+    return "cErrorData{" + g_sPARAM_NAME + "=" + name + ", "
+        + g_sPARAM_AMOUNT + "=" + amount + ", " + g_sPARAM_PARAMETER + "=" + parameter
+        + ", " + g_sPARAM_MSG + "=" + msg + '}';
   }
 }

@@ -1,4 +1,3 @@
-
 package org.digitalpassport.deserialize.json.transactiontypes;
 
 import java.util.Objects;
@@ -12,20 +11,21 @@ import static org.digitalpassport.api.IConstants.*;
  */
 public class cToken
 {
+
   private String USD;
-  
+
   @JsonCreator
   public static cToken of(@JsonProperty(g_sPARAM_USD) String USD)
   {
     return new cToken(USD);
   }
-  
+
   @JsonProperty(g_sPARAM_CODE)
   public String getUSD()
   {
     return USD;
   }
-  
+
   public cToken(String USD)
   {
     this.USD = USD;

@@ -1,4 +1,3 @@
-
 package org.digitalpassport.ui;
 
 import java.util.Iterator;
@@ -15,13 +14,14 @@ import org.digitalpassport.ui.panels.cTokenManagementPanel;
  */
 public class cSelectUser extends javax.swing.JFrame
 {
+
   private cTransactionManagement m_oTransactionManagement = null;
   private String m_sTransactionName = "";
   private String m_sFromUUID = "";
   private String m_sToUUID = "";
   private String m_sOperation = "";
   private String m_sOwnerDisplayName = "";
-  
+
   public cSelectUser(cTransactionManagement oTransactionManagement)
   {
     m_oTransactionManagement = oTransactionManagement;
@@ -104,10 +104,10 @@ public class cSelectUser extends javax.swing.JFrame
 
   private void btnOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnOKActionPerformed
   {//GEN-HEADEREND:event_btnOKActionPerformed
-    String sUser = cmbUsers.getSelectedItem()+"";//sUsernameFromUsers + " (" + cUserManagement.m_oUsers.get(sUsernameFromUsers) + ")";
+    String sUser = cmbUsers.getSelectedItem() + "";//sUsernameFromUsers + " (" + cUserManagement.m_oUsers.get(sUsernameFromUsers) + ")";
     int iIndex = sUser.indexOf("(");
     String sSelectedUserDisplayName = sUser.substring(0, iIndex).trim();
-    m_sToUUID = sUser.substring(iIndex+1, sUser.length()-1);
+    m_sToUUID = sUser.substring(iIndex + 1, sUser.length() - 1);
     cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(m_sTransactionName);
     String sTransactionId = oTransaction.getid();
     cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(m_sFromUUID, m_sToUUID, sTransactionId);
@@ -166,7 +166,7 @@ public class cSelectUser extends javax.swing.JFrame
       }
     }
   }
-  
+
   public void setTransactionName(String sName)
   {
     m_sTransactionName = sName;

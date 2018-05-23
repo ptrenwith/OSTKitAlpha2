@@ -1,4 +1,3 @@
-
 package org.digitalpassport.api.commands;
 
 import java.io.IOException;
@@ -21,15 +20,16 @@ import org.digitalpassport.deserialize.json.cResponse;
  */
 public class cUserManagement
 {
+
   private static final JsonFactory m_oJsonFactory = new MappingJsonFactory();
   private static final ObjectMapper oMapper = new ObjectMapper(m_oJsonFactory);
   public static final HashMap<String, String> m_oUsers = new HashMap();
-  
+
   public cUserManagement()
   {
     oMapper.configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
   }
-  
+
   public cResponse editUser(String sUUID, String sNewName)
   {
     cResponse oResponse = null;
@@ -38,7 +38,7 @@ public class cUserManagement
       TreeMap oParameters = new TreeMap();
       oParameters.put(g_sPARAM_UUID, UUID.fromString(sUUID));
       oParameters.put(g_sPARAM_NAME, sNewName);
-      
+
       String sResponse = cAPIClient.post(g_sPATH_USERS_EDIT, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
@@ -50,7 +50,7 @@ public class cUserManagement
     }
     return oResponse;
   }
-  
+
   public cResponse listUsers(String sPage, String sFilter, String sOrderBy, String sOrder)
   {
     cResponse oResponse = null;
@@ -61,7 +61,7 @@ public class cUserManagement
       oParameters.put(g_sPARAM_FILTER, sFilter);
       oParameters.put(g_sPARAM_ORDER_BY, sOrderBy);
       oParameters.put(g_sPARAM_ORDER, sOrder);
-      
+
       String sResponse = cAPIClient.get(g_sPATH_USERS_LIST, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
@@ -72,7 +72,7 @@ public class cUserManagement
       Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
     }
     return oResponse;
-  }  
+  }
 
   public cResponse createUser(String sName)
   {
@@ -81,7 +81,7 @@ public class cUserManagement
     {
       TreeMap oParameters = new TreeMap();
       oParameters.put(g_sPARAM_NAME, sName);
-      
+
       String sResponse = cAPIClient.post(g_sPATH_USERS_CREATE, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
@@ -102,7 +102,7 @@ public class cUserManagement
       TreeMap oParameters = new TreeMap();
       oParameters.put(g_sPARAM_LIST_TYPE, sAirdropTo);
       oParameters.put(g_sPARAM_AMOUNT, iAmount);
-      
+
       String sResponse = cAPIClient.post(g_sPATH_USERS_AIRDROP_DROP, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
@@ -114,7 +114,7 @@ public class cUserManagement
     }
     return oResponse;
   }
-  
+
   public cResponse sendAirdropTo_sandbox(String sAirdropTo, int iAmount)
   {
     cResponse oResponse = null;
@@ -124,7 +124,7 @@ public class cUserManagement
       oParameters.put("user_ids", sAirdropTo);
       oParameters.put("airdropped", false);
       oParameters.put(g_sPARAM_AMOUNT, iAmount);
-      
+
       String sResponse = cAPIClient.post_sandbox("/airdrops", oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
@@ -136,7 +136,7 @@ public class cUserManagement
     }
     return oResponse;
   }
-  
+
   public cResponse airdropStatus(String sAirdropUUID)
   {
     cResponse oResponse = null;
@@ -144,7 +144,7 @@ public class cUserManagement
     {
       TreeMap oParameters = new TreeMap();
       oParameters.put(g_sPARAM_AIRDROP_UUID, sAirdropUUID);
-      
+
       String sResponse = cAPIClient.post(g_sPATH_USERS_AIRDROP_STATUS, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);

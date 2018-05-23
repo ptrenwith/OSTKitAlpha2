@@ -1,4 +1,3 @@
-
 package org.digitalpassport.ui;
 
 import java.io.Serializable;
@@ -9,12 +8,13 @@ import java.io.Serializable;
  */
 public class cWindowBounds implements Serializable
 {
-  private int main_x; 
+
+  private int main_x;
   private int main_y;
   private int main_w;
   private int main_h;
-  
-  private int api_x; 
+
+  private int api_x;
   private int api_y;
   private int api_w;
   private int api_h;
@@ -58,7 +58,7 @@ public class cWindowBounds implements Serializable
   {
     this.main_h = main_h;
   }
-  
+
   public int get_api_x()
   {
     return api_x;

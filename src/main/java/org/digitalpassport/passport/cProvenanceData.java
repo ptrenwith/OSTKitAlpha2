@@ -30,40 +30,39 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 /**
  *
  * @author Philip M. Trenwith
  */
-public class cProvenanceData 
+public class cProvenanceData
 {
+
   private Document m_oDocument = null;
   public String m_sPRFile = "";
   private String m_sIndexTagName = "IndexRecord";
   private Node m_oIndex = null;
   private int m_iNumber = 1;
   private File m_oPAYLOAD = null;
-  
-  
+
   public cProvenanceData(File oPayload)
   {
     m_oPAYLOAD = oPayload;
     m_sPRFile = m_oPAYLOAD.getParentFile().getAbsolutePath() + File.separator + oPayload.getName() + "_Provenance.xml";
     init();
   }
-  
+
   public cProvenanceData(File oPayload, String sProvenanceFile)
   {
     m_oPAYLOAD = oPayload;
     m_sPRFile = sProvenanceFile;
     init();
   }
-  
+
   public void init()
   {
-    getDocument();  
+    getDocument();
   }
-  
+
 //  public void verifyFile(Object oClientPublicKey)
 //  {
 //    String sError = "";
@@ -272,39 +271,45 @@ public class cProvenanceData
     {
       Logger.getLogger(cProvenanceData.class.getName()).log(Level.SEVERE, "nodeToString Transformer Exception");
     }
-    
+
     String sReturn = "";
     String sText = sw.toString();
     String[] sLines = sText.split("\n");
-    for (String sLine: sLines)
+    for (String sLine : sLines)
     {
       sReturn += sLine.trim() + "";
     }
     return sReturn;
   }
 
-  public static String getIPAddressAssignedByISP() {
-        try {
-            //"http://checkip.amazonaws.com"
-            URL whatismyip = new URL("http://checkip.amazonaws.com");
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    whatismyip.openStream()));
+  public static String getIPAddressAssignedByISP()
+  {
+    try
+    {
+      //"http://checkip.amazonaws.com"
+      URL whatismyip = new URL("http://checkip.amazonaws.com");
+      BufferedReader in = new BufferedReader(new InputStreamReader(
+          whatismyip.openStream()));
 
-            String ip = in.readLine(); //you get the IP as a String
-            return ip;
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(cProvenanceData.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(cProvenanceData.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+      String ip = in.readLine(); //you get the IP as a String
+      return ip;
     }
-  
+    catch (MalformedURLException ex)
+    {
+      Logger.getLogger(cProvenanceData.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cProvenanceData.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return null;
+  }
+
   public void generateModificationRecord()
   {
     modificationStub("Modification", getIPAddressAssignedByISP(), "ZA", "ptrenwith@gmail.com", "203n-PhilipMT3");
   }
-  
+
   public void generateLocationRecord(boolean bServer)
   {
     if (bServer)
@@ -316,7 +321,7 @@ public class cProvenanceData
       modificationStub("Location-Update", getIPAddressAssignedByISP(), "ZA", "ptrenwith@gmail.com", "203n-PhilipMT3");
     }
   }
-  
+
   private void modificationStub(String sType, String sIPAddress, String sJurisdiction, String sAccount, String sMachine)
   {
     try
@@ -342,7 +347,7 @@ public class cProvenanceData
       }
       else
       {
-        Node node = getRecordByNumber(m_iNumber-1);
+        Node node = getRecordByNumber(m_iNumber - 1);
         String sText = nodeToString(node);
 
         String SHA1 = "";//cBouncyCastle.SHA256_toString(sText);
@@ -376,22 +381,22 @@ public class cProvenanceData
       oJurisdiction.appendChild(m_oDocument.createTextNode(sJurisdiction));
 
       long sTimestamp = new GregorianCalendar().getTimeInMillis();
-      
+
       Element oTimestamp = m_oDocument.createElement("Timestamp");
       oRecord.appendChild(oTimestamp);
       oTimestamp.appendChild(m_oDocument.createTextNode(sTimestamp + ""));
 
       Element oHashCode = m_oDocument.createElement("HashCode");
       oRecord.appendChild(oHashCode);
-      
+
       String sFileContent = readFileContent(m_oPAYLOAD);
       String sHash = "";//cBouncyCastle.SHA256_toString(sFileContent);
-      
+
       oHashCode.appendChild(m_oDocument.createTextNode(sHash));
 
       String sRecordText = nodeToString(oHashCode.getParentNode());
       String signature = "";//m_oCrypto.sign(sRecordText);
-      
+
       Element oDigitalSignature = m_oDocument.createElement("DigitalSignature");
       oPR.appendChild(oDigitalSignature);
       oDigitalSignature.setTextContent(signature);
@@ -419,10 +424,10 @@ public class cProvenanceData
 
                 String SHA1 = "";//cBouncyCastle.SHA256_toString(sText);
                 oChild.setTextContent(SHA1);
-                
+
                 String sIndexText = nodeToString(oIndex);
                 String sIndexSigniture = "";//m_oCrypto.sign(sIndexText);
-                
+
                 for (int l = 0; l < elements.getLength(); l++)
                 {
                   Node oIndexSign = elements.item(l);
@@ -478,7 +483,7 @@ public class cProvenanceData
       Logger.getLogger(cProvenanceData.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
+
   public void saveToFile()
   {
     Writer outxml = null;

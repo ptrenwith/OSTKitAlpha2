@@ -1,4 +1,3 @@
-
 package org.digitalpassport.deserialize.json.transactiontypes;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -11,20 +10,21 @@ import static org.digitalpassport.api.IConstants.*;
  */
 public class cPricePoints
 {
+
   private cToken OST;
-  
+
   @JsonCreator
   public static cPricePoints of(@JsonProperty(g_sPARAM_OST) cToken OST)
   {
     return new cPricePoints(OST);
   }
-  
+
   @JsonProperty(g_sPARAM_OST)
   public cToken getOST()
   {
     return OST;
   }
-  
+
   public cPricePoints(cToken OST)
   {
     this.OST = OST;

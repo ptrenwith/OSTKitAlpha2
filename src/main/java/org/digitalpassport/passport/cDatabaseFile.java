@@ -1,4 +1,3 @@
-
 package org.digitalpassport.passport;
 
 /**
@@ -7,6 +6,7 @@ package org.digitalpassport.passport;
  */
 public class cDatabaseFile
 {
+
   public String m_sFileID = "";
   public String m_sFilename = "";
   public String m_sOwner = "";

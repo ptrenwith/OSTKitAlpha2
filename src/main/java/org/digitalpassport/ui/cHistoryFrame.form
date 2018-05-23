@@ -26,8 +26,12 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="lblFile" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jScrollPane7" alignment="0" pref="865" max="32767" attributes="0"/>
+                  <Component id="jScrollPane7" pref="865" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="lblFile" min="-2" pref="534" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="lblStatus" max="32767" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -37,7 +41,10 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="lblFile" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="lblFile" max="32767" attributes="0"/>
+                  <Component id="lblStatus" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane7" pref="453" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -81,6 +88,8 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="File:"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblStatus">
     </Component>
   </SubComponents>
 </Form>

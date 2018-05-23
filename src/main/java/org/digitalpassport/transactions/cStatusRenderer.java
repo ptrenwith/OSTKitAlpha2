@@ -13,7 +13,9 @@ import javax.swing.table.TableCellRenderer;
  */
 public class cStatusRenderer implements TableCellRenderer
 {
+
   private JLabel oLabel = new JLabel();
+
   public cStatusRenderer()
   {
     oLabel.setOpaque(true);

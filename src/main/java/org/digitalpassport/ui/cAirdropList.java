@@ -1,4 +1,3 @@
-
 package org.digitalpassport.ui;
 
 import java.io.Serializable;
@@ -10,9 +9,10 @@ import java.util.ArrayList;
  */
 public class cAirdropList implements Serializable
 {
+
   //
   public ArrayList<String> lsAirdropUUIDs = new ArrayList();
-  
+
   public ArrayList<String> getlsAirdropUUIDs()
   {
     return lsAirdropUUIDs;
