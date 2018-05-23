@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.digitalpassport.passport.cDatabaseFile;
@@ -547,6 +548,141 @@ public class cDatabaseHandler
         {
           m_oConnection.commit();
           oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    
+    return lsFiles;
+  }
+
+  public boolean addUserIfNotExists(String sName, String sUuid)
+  {
+    boolean bResult = false;
+    PreparedStatement oStatement = null;
+    try
+    {
+      String sUsername = sName.toLowerCase().replaceAll(" ", "");
+      oStatement = m_oConnection.prepareStatement("INSERT INTO dpt_users (Username, Password, DisplayName, DptUUID) VALUES ('" + 
+          sUsername + "', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '" + sName + "', '" + sUuid + "');");
+      oStatement.execute();
+      bResult = true;
+    }
+    catch (SQLException ex)
+    { }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return bResult;
+  }
+
+  public boolean addShareFileIfNotExists(String sFileId, String sDisplayName)
+  {
+    boolean bResult = false;
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM shared WHERE FileId='" + sFileId + "' AND DisplayName='" + sDisplayName + "';");
+      ResultSet executeQuery = oStatement.executeQuery();
+      if (!executeQuery.next())
+      {
+        oStatement = m_oConnection.prepareStatement("INSERT INTO shared (FileId, DisplayName) VALUES ('" + sFileId + "', '" + sDisplayName + "');");
+        oStatement.execute();
+        bResult = true;
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return bResult;
+  }
+
+  public ArrayList<cDatabaseFile> getSharedFiles(String sDisplayName)
+  {
+    ArrayList<cDatabaseFile> lsFiles = new ArrayList();
+    
+    PreparedStatement oStatement = null;
+    PreparedStatement oSharedStatement = null;
+    try
+    {
+      oSharedStatement = m_oConnection.prepareStatement("SELECT * FROM shared WHERE DisplayName='" + sDisplayName + "';");
+      ResultSet oSharedResultSet = oSharedStatement.executeQuery();
+      while (oSharedResultSet.next())
+      {
+        cDatabaseFile oDatabase = new cDatabaseFile();
+        oDatabase.m_sFileID = oSharedResultSet.getString("FileId");
+        
+        oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE ID='" + oDatabase.m_sFileID + "';");
+        ResultSet oResultSet = oStatement.executeQuery();
+        oResultSet.next();
+        String sOwner = oResultSet.getString("Owner");
+        oDatabase.m_sFilename = oResultSet.getString("Filename");
+        oResultSet.close();
+        
+        oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sOwner + "';");
+        oResultSet = oStatement.executeQuery();
+        oResultSet.next();
+        oDatabase.m_sOwner = oResultSet.getString("DisplayName") + " (shared)";
+        oResultSet.close();
+        
+        lsFiles.add(oDatabase);
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally 
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+      if (oSharedStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oSharedStatement.close();
         }
         catch (SQLException ex)
         {

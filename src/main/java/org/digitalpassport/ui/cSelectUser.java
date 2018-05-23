@@ -19,6 +19,8 @@ public class cSelectUser extends javax.swing.JFrame
   private String m_sTransactionName = "";
   private String m_sFromUUID = "";
   private String m_sToUUID = "";
+  private String m_sOperation = "";
+  private String m_sOwnerDisplayName = "";
   
   public cSelectUser(cTransactionManagement oTransactionManagement)
   {
@@ -104,6 +106,7 @@ public class cSelectUser extends javax.swing.JFrame
   {//GEN-HEADEREND:event_btnOKActionPerformed
     String sUser = cmbUsers.getSelectedItem()+"";//sUsernameFromUsers + " (" + cUserManagement.m_oUsers.get(sUsernameFromUsers) + ")";
     int iIndex = sUser.indexOf("(");
+    String sSelectedUserDisplayName = sUser.substring(0, iIndex).trim();
     m_sToUUID = sUser.substring(iIndex+1, sUser.length()-1);
     cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(m_sTransactionName);
     String sTransactionId = oTransaction.getid();
@@ -117,6 +120,23 @@ public class cSelectUser extends javax.swing.JFrame
       cTokenManagementPanel.showInfo("Transaction complete!");
       String transaction_uuid = oResponse.getdata().gettransaction().getid();
       cDatabaseHandler.instance().saveTransaction(transaction_uuid);
+      String[] sValues = m_sTransactionName.split(" ");
+      String sOperation = sValues[0];
+      String sFileId = sValues[1].trim();
+      if (m_sOperation.equalsIgnoreCase("share"))
+      {
+        if (cDatabaseHandler.instance().addShareFileIfNotExists(sFileId, sSelectedUserDisplayName))
+        {
+          System.out.println("Added non-existing file share: '" + sSelectedUserDisplayName + "' - " + sFileId);
+        }
+      }
+      else if (m_sOperation.equalsIgnoreCase("access"))
+      {
+        if (cDatabaseHandler.instance().addShareFileIfNotExists(sFileId, m_sOwnerDisplayName))
+        {
+          System.out.println("Added non-existing file access: '" + m_sOwnerDisplayName + "' - " + sFileId);
+        }
+      }
     }
     setVisible(false);
   }//GEN-LAST:event_btnOKActionPerformed
@@ -150,5 +170,11 @@ public class cSelectUser extends javax.swing.JFrame
   public void setTransactionName(String sName)
   {
     m_sTransactionName = sName;
+  }
+
+  public void setParameters(String sOriginal, String sDisplayName)
+  {
+    m_sOperation = sOriginal;
+    m_sOwnerDisplayName = sDisplayName;
   }
 }

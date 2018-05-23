@@ -16,6 +16,7 @@ import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.eCurrencyType;
 import org.digitalpassport.api.commands.eTransactionKind;
 import org.digitalpassport.cryptography.cHashing;
+import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.passport.cDatabaseFile;
@@ -152,6 +153,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
                   Float.parseFloat(oTransaction.getcommission_percent()));
         }
         m_oSelectUser.setTitle("Share");
+        m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
         m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
                 m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
@@ -165,20 +167,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         int iRow = tblYourFiles.getSelectedRow();
         int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0)+"");
         String sFile = tblYourFiles.getValueAt(iRow, 1)+"";
-        String sOriginal = "history";
-//        String sTransaction = sOriginal + " " + iID; 
-//        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
-//        {
-//          System.out.println("Transcation already exists! : " + sTransaction);
-//        }
-//        else
-//        {
-//          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
-//          System.out.println("Create Transaction: " + sTransaction);
-//          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()), 
-//              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
-//              Float.parseFloat(oTransaction.getcommission_percent()));
-//        }
+        
         m_oHistoryFrame.setTitle("History");
         m_oHistoryFrame.setBounds(getX()+50, getY()+150,  getWidth(), getHeight());
         m_oHistoryFrame.setFile(sFile);
@@ -193,11 +182,14 @@ public class cFileSharingPanel extends javax.swing.JPanel
       {
         int iRow = tblYourFiles.getSelectedRow();
         int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
+        String sOwner = tblYourFiles.getValueAt(iRow, 2)+"";
+        sOwner = sOwner.replaceAll("(shared)", "").trim();
+        
         String sOriginal = "like";
         String sTransaction = sOriginal + " " + iID;
         if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
         {
-          System.out.println("Transcation already exists! : " + sTransaction);
+          System.out.println("Transaction already exists! : " + sTransaction);
         }
         else
         {
@@ -207,12 +199,9 @@ public class cFileSharingPanel extends javax.swing.JPanel
                   eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
                   Float.parseFloat(oTransaction.getcommission_percent()));
         }
-        m_oSelectUser.setTitle("Like");
-        m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
-                m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-        m_oSelectUser.setUsersExcluding(m_sDisplayName);
-        m_oSelectUser.setTransactionName(sTransaction);
-        m_oSelectUser.setVisible(true);
+        String sFromUUID = cDatabaseHandler.instance().getUuid(m_sDisplayName);
+        String sToUUID = cDatabaseHandler.instance().getUuid(sOwner);
+        cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, sTransaction);
       }
     });
 
@@ -240,6 +229,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
                 m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
+        m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
         m_oSelectUser.setTransactionName(sTransaction);
         m_oSelectUser.setVisible(true);
       }
@@ -537,6 +527,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         if (m_bLogin)
         {
           lsYourFiles = oDatabase.getYourFiles(m_sUsername);
+          lsYourFiles.addAll(oDatabase.getSharedFiles(m_sDisplayName));
         }
         
         int iYourRowCount = tblYourFiles.getRowCount();

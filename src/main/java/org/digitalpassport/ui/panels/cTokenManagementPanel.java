@@ -1218,7 +1218,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
           cResponse oResponse = m_oTransactionManagement.getTransactionStatus(id);
 
           if (oResponse.getsuccess())
-          {            
+          {
             cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
             cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
             cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
@@ -1233,8 +1233,8 @@ public class cTokenManagementPanel extends javax.swing.JPanel
             oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Currency"));
             oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Value"));
             oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Commission Percent"));
-            oTransactionModel.setValueAt(fromUser.getName() + " (" + fromUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
-            oTransactionModel.setValueAt(toUser.getName() + " (" + toUser.getkind() + ")", iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
+            oTransactionModel.setValueAt(fromUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
+            oTransactionModel.setValueAt(toUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
             
             cTransaction transaction = oResponse.getdata().gettransaction();
             if (transaction != null)
@@ -1474,6 +1474,12 @@ public class cTokenManagementPanel extends javax.swing.JPanel
             oUserModel.setValueAt(oUser.getUuid(), iRowNumber, getUserTableColumnIndexByHeading("UUID"));
             
             cmbFromUser.addItem(oUser.getName() + " - " + oUser.getUuid());
+            
+            if (cDatabaseHandler.instance().addUserIfNotExists(oUser.getName(), oUser.getUuid()))
+            {
+              System.out.println("Added non-existing user: '" + oUser.getName() + "' - " + oUser.getUuid());
+            }
+            
             if (iItem++ != 0)
             {
               cmbToUser.addItem(oUser.getName() + " - " + oUser.getUuid());
