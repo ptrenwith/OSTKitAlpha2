@@ -118,8 +118,7 @@ public class cSelectUser extends javax.swing.JFrame
     else
     {
       cTokenManagementPanel.showInfo("Transaction complete!");
-      String transaction_uuid = oResponse.getdata().gettransaction().getid();
-      cDatabaseHandler.instance().saveTransaction(transaction_uuid);
+      
       String[] sValues = m_sTransactionName.split(" ");
       String sOperation = sValues[0];
       String sFileId = sValues[1].trim();

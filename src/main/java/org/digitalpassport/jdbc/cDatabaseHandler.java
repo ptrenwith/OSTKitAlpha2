@@ -483,6 +483,7 @@ public class cDatabaseHandler
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
 
     PreparedStatement oStatement = null;
+    PreparedStatement oOtherStatement = null;
     try
     {
       oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Owner='" + sUsername + "';");
@@ -493,6 +494,11 @@ public class cDatabaseHandler
         oDatabase.m_sFileID = oResultSet.getString("ID");
         oDatabase.m_sFilename = oResultSet.getString("Filename");
         oDatabase.m_sOwner = oResultSet.getString("Owner");
+        oOtherStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + oDatabase.m_sOwner + "';");
+        ResultSet oOtherResultSet = oOtherStatement.executeQuery();
+        oOtherResultSet.next();
+        oDatabase.m_sDisplayName = oOtherResultSet.getString("DisplayName");
+        oOtherStatement.close();
         lsFiles.add(oDatabase);
       }
     }
@@ -662,7 +668,7 @@ public class cDatabaseHandler
         oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sOwner + "';");
         oResultSet = oStatement.executeQuery();
         oResultSet.next();
-        oDatabase.m_sOwner = oResultSet.getString("DisplayName") + " (shared)";
+        oDatabase.m_sOwner = oDatabase.m_sDisplayName = oResultSet.getString("DisplayName") + " (shared)";
         oResultSet.close();
 
         lsFiles.add(oDatabase);

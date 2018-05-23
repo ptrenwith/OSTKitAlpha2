@@ -16,6 +16,7 @@ import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.transactiontypes.cClientTokens;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
+import org.digitalpassport.jdbc.cDatabaseHandler;
 
 /**
  *
@@ -175,6 +176,12 @@ public class cTransactionManagement
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
       System.out.println(oResponse.toString());
+      
+      if (oResponse.getdata() != null && oResponse.getdata().gettransaction() != null && oResponse.getsuccess())
+      {
+        String transaction_uuid = oResponse.getdata().gettransaction().getid();
+        cDatabaseHandler.instance().saveTransaction(transaction_uuid);
+      }
     }
     catch (IOException ex)
     {

@@ -251,6 +251,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
     m_oAccessMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         int iRow = tblOtherFiles.getSelectedRow();
@@ -268,7 +269,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         {
           cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
           System.out.println("Create Transaction: " + sTransaction);
-          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
+          m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
               eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
               Float.parseFloat(oTransaction.getcommission_percent()));
         }
@@ -303,7 +304,9 @@ public class cFileSharingPanel extends javax.swing.JPanel
         }
         else
         {
+          cDatabaseHandler.instance().addShareFileIfNotExists(iID+"", m_sDisplayName);
           showInfo("Access granted! :-) ");
+          loadFiles();
         }
       }
     });
