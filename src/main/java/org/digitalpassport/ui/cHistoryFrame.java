@@ -128,20 +128,20 @@ public class cHistoryFrame extends javax.swing.JFrame
     new Thread(()-> 
     {
       {
-        String sOriginal = "history";
-        String sTransaction = sOriginal + " " + iID; 
-        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
-        {
-          System.out.println("Transaction already exists! : " + sTransaction);
-        }
-        else
-        {
-          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
-          System.out.println("Create Transaction: " + sTransaction);
-          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()), 
-              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
-              Float.parseFloat(oTransaction.getcommission_percent()));
-        }
+//        String sOriginal = "history";
+//        String sTransaction = sOriginal + " " + iID; 
+//        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+//        {
+//          System.out.println("Transaction already exists! : " + sTransaction);
+//        }
+//        else
+//        {
+//          cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
+//          System.out.println("Create Transaction: " + sTransaction);
+//          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()), 
+//              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
+//              Float.parseFloat(oTransaction.getcommission_percent()));
+//        }
       }
         
       ArrayList<String> lsTransactions = m_oDatabase.getTransactions();
