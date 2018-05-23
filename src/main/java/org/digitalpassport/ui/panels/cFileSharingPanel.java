@@ -20,6 +20,7 @@ import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.passport.cDatabaseFile;
+import org.digitalpassport.ui.cFileSharingFrame;
 import org.digitalpassport.ui.cHistoryFrame;
 import org.digitalpassport.ui.cRegisterFrame;
 import org.digitalpassport.ui.cSelectUser;
@@ -120,7 +121,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
   /**
    * Creates new form cFileSharingPanel
    */
-  public cFileSharingPanel()
+  public cFileSharingPanel(cFileSharingFrame oParent)
   {
     initComponents();
 
@@ -154,7 +155,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         }
         m_oSelectUser.setTitle("Share");
         m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
-        m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
+        m_oSelectUser.setBounds(oParent.getX() + oParent.getWidth() / 2, oParent.getY() + oParent.getHeight() / 2,
                 m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
         m_oSelectUser.setTransactionName(sTransaction);
@@ -169,7 +170,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         String sFile = tblYourFiles.getValueAt(iRow, 1)+"";
         
         m_oHistoryFrame.setTitle("History");
-        m_oHistoryFrame.setBounds(getX()+50, getY()+150,  getWidth(), getHeight());
+        m_oHistoryFrame.setBounds(oParent.getX()+50, oParent.getY()+150, oParent.getWidth(), oParent.getHeight());
         m_oHistoryFrame.setFile(sFile);
         m_oHistoryFrame.getHistoryOfFile(iID);
         m_oHistoryFrame.setVisible(true);
@@ -180,9 +181,9 @@ public class cFileSharingPanel extends javax.swing.JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        int iRow = tblYourFiles.getSelectedRow();
-        int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
-        String sOwner = tblYourFiles.getValueAt(iRow, 2)+"";
+        int iRow = tblOtherFiles.getSelectedRow();
+        int iID = Integer.parseInt(tblOtherFiles.getValueAt(iRow, 0) + "");
+        String sOwner = tblOtherFiles.getValueAt(iRow, 2)+"";
         sOwner = sOwner.replaceAll("(shared)", "").trim();
         
         String sOriginal = "like";
@@ -195,7 +196,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         {
           cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
           System.out.println("Create Transaction: " + sTransaction);
-          m_oTransactionManagement.createTransaction(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
+          m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
                   eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
                   Float.parseFloat(oTransaction.getcommission_percent()));
         }
@@ -226,7 +227,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
                   Float.parseFloat(oTransaction.getcommission_percent()));
         }
         m_oSelectUser.setTitle("Access");
-        m_oSelectUser.setBounds(getX() + getWidth() / 2, getY() + getHeight() / 2,
+        m_oSelectUser.setBounds(oParent.getX() + oParent.getWidth() / 2, oParent.getY() + oParent.getHeight() / 2,
                 m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
         m_oSelectUser.setUsersExcluding(m_sDisplayName);
         m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
@@ -360,7 +361,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
     pnlYourFilesLayout.setVerticalGroup(
       pnlYourFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(pnlYourFilesLayout.createSequentialGroup()
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(btnUploadFile)
         .addContainerGap())
@@ -398,7 +399,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
         return canEdit [columnIndex];
       }
     });
-    tblOtherFiles.setEnabled(false);
+    tblOtherFiles.getTableHeader().setReorderingAllowed(false);
     jScrollPane2.setViewportView(tblOtherFiles);
 
     javax.swing.GroupLayout pnlOtherFilesLayout = new javax.swing.GroupLayout(pnlOtherFiles);
@@ -409,7 +410,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
     );
     pnlOtherFilesLayout.setVerticalGroup(
       pnlOtherFilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Other Files", pnlOtherFiles);
@@ -446,7 +447,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
           .addComponent(btnRegister)
           .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jTabbedPane1))
+        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -563,7 +564,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
           // Append a row 
           oOtherModel.addRow(new Object[]
           {
-            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sOwner
+            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sDisplayName
           });
         }
       }

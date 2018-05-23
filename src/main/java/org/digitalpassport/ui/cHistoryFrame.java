@@ -1,14 +1,14 @@
 
 package org.digitalpassport.ui;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import org.digitalpassport.api.commands.cTransactionManagement;
-import org.digitalpassport.api.commands.eCurrencyType;
-import org.digitalpassport.api.commands.eTransactionKind;
 import org.digitalpassport.deserialize.json.cError;
 import org.digitalpassport.deserialize.json.cErrorData;
 import org.digitalpassport.deserialize.json.cResponse;
@@ -35,6 +35,22 @@ public class cHistoryFrame extends javax.swing.JFrame
     initComponents();
     m_oDatabase = cDatabaseHandler.instance();
     m_oTransactionManagement = new cTransactionManagement();
+    
+    addWindowListener(new WindowAdapter()
+    {
+        @Override
+        public void windowClosing(WindowEvent e)
+        {
+          
+          e.getWindow().dispose();
+          DefaultTableModel oTransactionModel = (DefaultTableModel) tblFileHistory.getModel();
+          int iRowNumber = oTransactionModel.getRowCount();
+          for (int i=0; i<iRowNumber; i++)
+          {
+            oTransactionModel.removeRow(0);
+          }
+        }
+    });
   }
 
   /**
@@ -147,10 +163,10 @@ public class cHistoryFrame extends javax.swing.JFrame
       ArrayList<String> lsTransactions = m_oDatabase.getTransactions();
       DefaultTableModel oTransactionModel = (DefaultTableModel) tblFileHistory.getModel();
       int iRowNumber = oTransactionModel.getRowCount();
-      for (int i=0; i<iRowNumber; i++)
-      {
-        oTransactionModel.removeRow(0);
-      }
+//      for (int i=0; i<iRowNumber; i++)
+//      {
+//        oTransactionModel.removeRow(0);
+//      }
       
       for (String sTransaction: lsTransactions)
       {
@@ -179,47 +195,52 @@ public class cHistoryFrame extends javax.swing.JFrame
         else
         {
           cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
-          cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
-          cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
-
-          Vector<Object> vRow = new Vector<Object>();
-          iRowNumber = oTransactionModel.getRowCount();
-          oTransactionModel.addRow(vRow);
+          String[] sTransactionName = transaction_type.getname().split(" ");
           
-//          String sName = transaction_type.getname();
-//          String[] sValues = sName.split(" ");
-//          String sOperation = sValues[0];
-//          String sFileId = sValues[1];
-//          if (sOperation.equalsIgnoreCase("share"))
-//          {
-//            if (cDatabaseHandler.instance().addShareFileIfNotExists(sFileId, toUser.getName()))
-//            {
-//              System.out.println("Added non-existing file share: '" + toUser.getName() + "' - " + sFileId);
-//            }
-//          }
-//          else if (sOperation.equalsIgnoreCase("access"))
-//          {
-//            if (cDatabaseHandler.instance().addShareFileIfNotExists(sFileId, fromUser.getName()))
-//            {
-//              System.out.println("Added non-existing file share: '" + fromUser.getName() + "' - " + sFileId);
-//            }
-//          }
-          oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Name"));
-          oTransactionModel.setValueAt(transaction_type.getkind(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Kind"));
-          oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Currency"));
-          oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Value"));
-          oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Commission Percent"));
-          oTransactionModel.setValueAt(fromUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
-          oTransactionModel.setValueAt(toUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
-
-          cTransaction transaction = oResponse.getdata().gettransaction();
-          if (transaction != null)
+          if (sTransactionName.length > 1 && sTransactionName[1].equals(""+iID))
           {
-            String sDate = m_oSimpleDateFormat.format(new Date(transaction.gettransaction_timestamp()));
-            oTransactionModel.setValueAt(sDate, iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Time"));
-            oTransactionModel.setValueAt(transaction.getblock_number(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Block"));
-            oTransactionModel.setValueAt(transaction.gettransaction_hash(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Hash"));
-            oTransactionModel.setValueAt(transaction.gettransaction_fee(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Fee"));
+            cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
+            cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
+
+            Vector<Object> vRow = new Vector<Object>();
+            iRowNumber = oTransactionModel.getRowCount();
+            oTransactionModel.addRow(vRow);
+
+  //          String sName = transaction_type.getname();
+  //          String[] sValues = sName.split(" ");
+  //          String sOperation = sValues[0];
+  //          String sFileId = sValues[1];
+  //          if (sOperation.equalsIgnoreCase("share"))
+  //          {
+  //            if (cDatabaseHandler.instance().addShareFileIfNotExists(sFileId, toUser.getName()))
+  //            {
+  //              System.out.println("Added non-existing file share: '" + toUser.getName() + "' - " + sFileId);
+  //            }
+  //          }
+  //          else if (sOperation.equalsIgnoreCase("access"))
+  //          {
+  //            if (cDatabaseHandler.instance().addShareFileIfNotExists(sFileId, fromUser.getName()))
+  //            {
+  //              System.out.println("Added non-existing file share: '" + fromUser.getName() + "' - " + sFileId);
+  //            }
+  //          }
+            oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Name"));
+            oTransactionModel.setValueAt(transaction_type.getkind(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Kind"));
+            oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Currency"));
+            oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Value"));
+            oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Commission Percent"));
+            oTransactionModel.setValueAt(fromUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
+            oTransactionModel.setValueAt(toUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
+
+            cTransaction transaction = oResponse.getdata().gettransaction();
+            if (transaction != null)
+            {
+              String sDate = m_oSimpleDateFormat.format(new Date(transaction.gettransaction_timestamp()));
+              oTransactionModel.setValueAt(sDate, iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Time"));
+              oTransactionModel.setValueAt(transaction.getblock_number(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Block"));
+              oTransactionModel.setValueAt(transaction.gettransaction_hash(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Hash"));
+              oTransactionModel.setValueAt(transaction.gettransaction_fee(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Fee"));
+            }
           }
         }
       }

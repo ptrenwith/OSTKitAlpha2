@@ -22,7 +22,7 @@ public class cFileSharingFrame extends javax.swing.JFrame
     initComponents();    
     m_oTokenManagementPanel = oTokenManagementPanel;
     m_bManagement = bManagement;
-    m_oFileSharingPanel = new cFileSharingPanel();
+    m_oFileSharingPanel = new cFileSharingPanel(this);
     if (m_bManagement)
     {
       JTabbedPane oTabbedPane = new JTabbedPane();
