@@ -1292,15 +1292,26 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         String sStatus = oTransaction.getstatus();
 
         int iRowNumber = oTransactionModel.getRowCount();
-        oTransactionModel.addRow(new Object[] {
-          oTransaction.getid(), 
-          oTransaction.getclient_transaction_id(),
-          oTransaction.getname(),
-          oTransaction.getkind(),
-          oTransaction.getcurrency_type(),
-          oTransaction.getcurrency_value(),
-          oTransaction.getcommission_percent(),
-        });
+        Vector<Object> vRow = new Vector<Object>();
+        oTransactionModel.addRow(vRow);
+        
+        oTransactionModel.setValueAt(oTransaction.getid(), iRowNumber, 0);
+        oTransactionModel.setValueAt(oTransaction.getclient_transaction_id(), iRowNumber, 1);
+        oTransactionModel.setValueAt(oTransaction.getname(), iRowNumber, 2);
+        oTransactionModel.setValueAt(oTransaction.getkind(), iRowNumber, 3);
+        oTransactionModel.setValueAt(oTransaction.getcurrency_type(), iRowNumber, 4);
+        oTransactionModel.setValueAt(oTransaction.getcurrency_value(), iRowNumber, 5);
+        oTransactionModel.setValueAt(oTransaction.getcommission_percent(), iRowNumber, 6);
+        
+//        oTransactionModel.addRow(new Object[] {
+//          oTransaction.getid(), 
+//          oTransaction.getclient_transaction_id(),
+//          oTransaction.getname(),
+//          oTransaction.getkind(),
+//          oTransaction.getcurrency_type(),
+//          oTransaction.getcurrency_value(),
+//          oTransaction.getcommission_percent(),
+//        });
         if (sStatus != null)
         {
           oTransactionModel.setValueAt(eStatus.valueOf(sStatus), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));

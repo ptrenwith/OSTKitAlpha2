@@ -40,7 +40,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
   private cHistoryFrame m_oHistoryFrame = new cHistoryFrame();
   private static cSelectUser m_oSelectUser = null;
-  private static cTransactionManagement m_oTransactionManagement = null;
+  private static cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
   private cRegisterFrame m_oRegistrationFrame = null;
   private boolean m_bLogin = false;
   private static String m_sUsername = "";
@@ -145,8 +145,12 @@ public class cFileSharingPanel extends javax.swing.JPanel
       m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
               eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
               Float.parseFloat(oTransaction.getcommission_percent()));
-      oTransaction = cTransactionManagement.m_oTransactions.get(sTransaction);
     }
+    do
+    {
+      oTransaction = cTransactionManagement.m_oTransactions.get(sTransaction);
+      System.out.println("wait...");
+    } while(oTransaction == null);
     if (oToUser == null)
     {
       m_oSelectUser.setTitle("Share");
