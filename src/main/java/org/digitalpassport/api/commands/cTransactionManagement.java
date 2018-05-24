@@ -81,6 +81,12 @@ public class cTransactionManagement
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
       System.out.println(oResponse.toString());
+      
+      if (oResponse.getsuccess())
+      {
+        cTransactionTypes transaction_types = oResponse.getdata().getaction();
+        cTransactionManagement.m_oTransactions.put(sName, transaction_types);
+      }
     }
     catch (IOException ex)
     {
@@ -162,7 +168,7 @@ public class cTransactionManagement
   }
 
   public cResponse executeTransaction_sandbox(String from_uuid,
-      String to_uuid, String sActionId)
+      String to_uuid, cTransactionTypes oTransactionType)
   {
     cResponse oResponse = null;
     try
@@ -170,7 +176,7 @@ public class cTransactionManagement
       TreeMap oParameters = new TreeMap();
       oParameters.put("from_user_id", from_uuid);
       oParameters.put("to_user_id", to_uuid);
-      oParameters.put("action_id", sActionId);
+      oParameters.put("action_id", oTransactionType.getid());
 
       String sResponse = cAPIClient.post_sandbox("/transactions", oParameters);
       System.out.println(sResponse);
@@ -180,7 +186,13 @@ public class cTransactionManagement
       if (oResponse.getdata() != null && oResponse.getdata().gettransaction() != null && oResponse.getsuccess())
       {
         String transaction_uuid = oResponse.getdata().gettransaction().getid();
-        cDatabaseHandler.instance().saveTransaction(transaction_uuid);
+        String sKind = "-1";
+        String[] sTransactionName = oTransactionType.getname().split(" ");
+        if (sTransactionName.length>1)
+        {
+          sKind = sTransactionName[1].trim();
+        }
+        cDatabaseHandler.instance().saveTransaction(transaction_uuid, sKind);
       }
     }
     catch (IOException ex)

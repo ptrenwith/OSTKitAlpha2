@@ -7,10 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
+import org.digitalpassport.api.commands.cTransactionManagement;
+import org.digitalpassport.deserialize.json.cResponse;
+import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.passport.cDatabaseFile;
 import org.digitalpassport.passport.cDigitalPassport;
 
@@ -20,7 +22,7 @@ import org.digitalpassport.passport.cDigitalPassport;
  */
 public class cDatabaseHandler
 {
-
+  private cTransactionManagement m_oTransactionManagement = new cTransactionManagement();
   private Connection m_oConnection = null;
   private static cDatabaseHandler g_oInstance = null;
 
@@ -139,14 +141,14 @@ public class cDatabaseHandler
     return bResult;
   }
 
-  public boolean saveTransaction(String sTransactionUuid)
+  public boolean saveTransaction(String sTransactionUuid, String sFileId)
   {
     boolean bResult = false;
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("INSERT INTO transactions (transaction_uuid) values ('"
-          + sTransactionUuid + "');");
+      oStatement = m_oConnection.prepareStatement("INSERT INTO transactions (transaction_uuid, FileId) values ('"
+          + sTransactionUuid + "', '" + sFileId + "');");
       oStatement.execute();
       bResult = true;
     }
@@ -346,7 +348,7 @@ public class cDatabaseHandler
     return sResult;
   }
 
-  public boolean uploadPassport(String sFilename, String sOwner)
+  public boolean uploadPassport(String sFilename, String sOwner, String sDisplayName)
   {
     boolean bResult = false;
     PreparedStatement oStatement = null;
@@ -355,6 +357,11 @@ public class cDatabaseHandler
       oStatement = m_oConnection.prepareStatement("INSERT INTO passports (Filename, Owner) VALUES ('"
           + sFilename + "', '" + sOwner + "');");
       oStatement.execute();
+      
+      String sFromUUID = cDatabaseHandler.instance().getUuid(sDisplayName);
+      cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get("upload");
+      cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, "1ec0b428-1b27-4218-95ae-b116f14b0450", oTransaction);
+      
       bResult = true;
     }
     catch (SQLException ex)
@@ -479,16 +486,53 @@ public class cDatabaseHandler
 
     return lsFiles;
   }
+  
+  public ArrayList<String> getTransactions(int iID)
+  {
+    ArrayList<String> lsFiles = new ArrayList();
+
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM transactions where FileId='" + iID + "';");
+      ResultSet oResultSet = oStatement.executeQuery();
+      while (oResultSet.next())
+      {
+        lsFiles.add(oResultSet.getString("transaction_uuid"));
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+
+    return lsFiles;
+  }
 
   public ArrayList<cDatabaseFile> getYourFiles(String sUsername, DefaultTableModel oYourModel)
   {
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
 
     PreparedStatement oStatement = null;
-    PreparedStatement oOtherStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Owner='" + sUsername + "';");
+      oStatement = m_oConnection.prepareStatement("SELECT passports.ID, passports.Filename, passports.Owner, dpt_users.DisplayName "
+              + "FROM passports inner join dpt_users on passports.owner=dpt_users.Username WHERE Owner='" + sUsername + "';");
       ResultSet oResultSet = oStatement.executeQuery();
       while (oResultSet.next())
       {
@@ -496,11 +540,7 @@ public class cDatabaseHandler
         oDatabase.m_sFileID = oResultSet.getString("ID");
         oDatabase.m_sFilename = oResultSet.getString("Filename");
         oDatabase.m_sOwner = oResultSet.getString("Owner");
-        oOtherStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + oDatabase.m_sOwner + "';");
-        ResultSet oOtherResultSet = oOtherStatement.executeQuery();
-        oOtherResultSet.next();
-        oDatabase.m_sDisplayName = oOtherResultSet.getString("DisplayName");
-        oOtherStatement.close();
+        oDatabase.m_sDisplayName = oResultSet.getString("DisplayName");
         lsFiles.add(oDatabase);
         
         oYourModel.addRow(new Object[]
@@ -531,16 +571,51 @@ public class cDatabaseHandler
 
     return lsFiles;
   }
+  
+  public int countTransactions()
+  {
+    int iReturn = 0;
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT count(*) as c from transactions");
+      ResultSet oResultSet = oStatement.executeQuery();
+      oResultSet.next();
+
+      iReturn = Integer.parseInt(oResultSet.getString("c"));
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    
+    return iReturn;
+  }
 
   public ArrayList<cDatabaseFile> getOtherFiles(String sUsername)
   {
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
 
     PreparedStatement oStatement = null;
-    PreparedStatement oOtherStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE Owner!='" + sUsername + "';");
+      oStatement = m_oConnection.prepareStatement("SELECT passports.ID, passports.Filename, passports.Owner, dpt_users.DisplayName "
+              + "FROM passports inner join dpt_users on passports.owner=dpt_users.Username WHERE Owner!='" + sUsername + "';");
       ResultSet oResultSet = oStatement.executeQuery();
       while (oResultSet.next())
       {
@@ -548,12 +623,7 @@ public class cDatabaseHandler
         oDatabase.m_sFileID = oResultSet.getString("ID");
         oDatabase.m_sFilename = oResultSet.getString("Filename");
         oDatabase.m_sOwner = oResultSet.getString("Owner");
-
-        oOtherStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + oDatabase.m_sOwner + "';");
-        ResultSet oOtherResultSet = oOtherStatement.executeQuery();
-        oOtherResultSet.next();
-        oDatabase.m_sDisplayName = oOtherResultSet.getString("DisplayName");
-        oOtherStatement.close();
+        oDatabase.m_sDisplayName = oResultSet.getString("DisplayName");
         lsFiles.add(oDatabase);
       }
     }
@@ -655,31 +725,20 @@ public class cDatabaseHandler
     ArrayList<cDatabaseFile> lsFiles = new ArrayList();
 
     PreparedStatement oStatement = null;
-    PreparedStatement oSharedStatement = null;
     try
     {
-      oSharedStatement = m_oConnection.prepareStatement("SELECT * FROM shared WHERE DisplayName='" + sDisplayName + "';");
-      ResultSet oSharedResultSet = oSharedStatement.executeQuery();
-      while (oSharedResultSet.next())
+      oStatement = m_oConnection.prepareStatement("select shared.FileId, passports.Filename, passports.Owner, dpt_users.DisplayName "
+              + "from shared inner join passports on passports.ID=shared.FileId \n"
+              + "inner join dpt_users on dpt_users.Username=passports.Owner where shared.DisplayName='" + sDisplayName + "';");
+      ResultSet oResultSet = oStatement.executeQuery();
+      while (oResultSet.next())
       {
         cDatabaseFile oDatabase = new cDatabaseFile();
-        oDatabase.m_sFileID = oSharedResultSet.getString("FileId");
-
-        oStatement = m_oConnection.prepareStatement("SELECT * FROM passports WHERE ID='" + oDatabase.m_sFileID + "';");
-        ResultSet oResultSet = oStatement.executeQuery();
-        oResultSet.next();
-        String sOwner = oResultSet.getString("Owner");
+        oDatabase.m_sFileID = oResultSet.getString("FileId");
         oDatabase.m_sFilename = oResultSet.getString("Filename");
-        oResultSet.close();
-
-        oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE Username='" + sOwner + "';");
-        oResultSet = oStatement.executeQuery();
-        oResultSet.next();
         oDatabase.m_sOwner = oDatabase.m_sDisplayName = oResultSet.getString("DisplayName") + " (shared)";
-        oResultSet.close();
-
-        lsFiles.add(oDatabase);
         
+        lsFiles.add(oDatabase);
         oYourModel.addRow(new Object[]
         {
           oDatabase.m_sFileID, oDatabase.m_sFilename, oDatabase.m_sDisplayName
@@ -704,12 +763,31 @@ public class cDatabaseHandler
           Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
       }
-      if (oSharedStatement != null)
+    }
+
+    return lsFiles;
+  }
+
+  public void updateTransaction(String sTransaction, String sID)
+  {
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("update transactions set FileId='" + sID + "' where transaction_uuid='" + sTransaction + "';");
+      oStatement.execute();
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally
+    {
+      if (oStatement != null)
       {
         try
         {
           m_oConnection.commit();
-          oSharedStatement.close();
+          oStatement.close();
         }
         catch (SQLException ex)
         {
@@ -717,7 +795,5 @@ public class cDatabaseHandler
         }
       }
     }
-
-    return lsFiles;
   }
 }

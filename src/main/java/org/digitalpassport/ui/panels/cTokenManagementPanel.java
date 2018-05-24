@@ -166,8 +166,6 @@ public class cTokenManagementPanel extends javax.swing.JPanel
       }
     });
 
-    //JTable table = new JTable(m_oTransactionTableModel);
-    //table.setDefaultRenderer(Grade.class, new GradeRenderer());
     eTransactionKind[] oTransactionKinds = eTransactionKind.values();
     for (eTransactionKind oKind : oTransactionKinds)
     {
@@ -435,6 +433,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         return canEdit [columnIndex];
       }
     });
+    tblUsers.getTableHeader().setReorderingAllowed(false);
     jScrollPane2.setViewportView(tblUsers);
 
     jLabel4.setText("Name:");
@@ -1408,8 +1407,14 @@ public class cTokenManagementPanel extends javax.swing.JPanel
 //              m_oTransactions.addTransactionUuid(oResponse.getdata().gettransaction_uuid());
 //              cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
 
+            String sKind = "-1";
+            String[] sTransactionName = oResponse.getdata().gettransaction().getkind().split(" ");
+            if (sTransactionName.length>1)
+            {
+              sKind = sTransactionName[1].trim();
+            }
             String transaction_uuid = oResponse.getdata().gettransaction().getid();
-            cDatabaseHandler.instance().saveTransaction(transaction_uuid);
+            cDatabaseHandler.instance().saveTransaction(transaction_uuid, sKind);
             cmbTransactionHistory.addItem(oResponse.getdata().gettransaction_uuid());
 
             showInfo("Transaction Successfully executed! :-)");
@@ -1470,25 +1475,22 @@ public class cTokenManagementPanel extends javax.swing.JPanel
             cUserManagement.m_oUsers.put(oUser.getName(), oUser.getUuid());
             cDatabaseHandler.instance().setUUID(oUser.getName(), oUser.getUuid());
 
-            Vector<Object> vRow = new Vector<Object>();
-            int iRowNumber = oUserModel.getRowCount();
-            oUserModel.addRow(vRow);
-
-            oUserModel.setValueAt(oUser.getName(), iRowNumber, getUserTableColumnIndexByHeading("Name"));
-            oUserModel.setValueAt(oUser.getToken_balance(), iRowNumber, getUserTableColumnIndexByHeading("Tokens"));
-            oUserModel.setValueAt(oUser.getTotal_airdropped_tokens(), iRowNumber, getUserTableColumnIndexByHeading("Airdropped Tokens"));
-            oUserModel.setValueAt(oUser.getUuid(), iRowNumber, getUserTableColumnIndexByHeading("UUID"));
-
-            cmbFromUser.addItem(oUser.getName() + " - " + oUser.getUuid());
-
-            if (cDatabaseHandler.instance().addUserIfNotExists(oUser.getName(), oUser.getUuid()))
+            oUserModel.addRow(new Object[]
             {
-              System.out.println("Added non-existing user: '" + oUser.getName() + "' - " + oUser.getUuid());
-            }
-
+              oUser.getName(), oUser.getToken_balance(), oUser.getTotal_airdropped_tokens(), oUser.getUuid()
+            });
+          }
+          
+          for (cEconomyUser oUser : m_lsUsers)
+          {
+            cmbFromUser.addItem(oUser.getName() + " - " + oUser.getUuid());
             if (iItem++ != 0)
             {
               cmbToUser.addItem(oUser.getName() + " - " + oUser.getUuid());
+            }
+            if (cDatabaseHandler.instance().addUserIfNotExists(oUser.getName(), oUser.getUuid()))
+            {
+              System.out.println("Added non-existing user: '" + oUser.getName() + "' - " + oUser.getUuid());
             }
           }
         }

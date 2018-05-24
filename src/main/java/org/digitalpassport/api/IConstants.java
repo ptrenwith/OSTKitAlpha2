@@ -107,4 +107,5 @@ public interface IConstants
   public static final String g_sPARAM_AIRDROP_TOKENS_TRANSFERED = "tokens_transfered";
   public static final String g_sPARAM_AIRDROP_CONTRACT_APPORVED = "contract_approved";
   public static final String g_sPARAM_AIRDROP_ALOC_DONE = "allocation_done";
+  public static final String g_sPARAM_ACTION = "action";
 }

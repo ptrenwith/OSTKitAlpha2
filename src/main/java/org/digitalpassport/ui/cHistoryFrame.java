@@ -206,6 +206,10 @@ public class cHistoryFrame extends javax.swing.JFrame
           cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
           String[] lsTransactionName = transaction_type.getname().split(" ");
 
+//          String sID = lsTransactionName[1].trim();
+//          
+//          cDatabaseHandler.instance().updateTransaction(sTransaction, sID);
+          
           if (lsTransactionName.length > 1 && lsTransactionName[1].equals("" + iID))
           {
             cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
@@ -233,6 +237,78 @@ public class cHistoryFrame extends javax.swing.JFrame
             //              System.out.println("Added non-existing file share: '" + fromUser.getName() + "' - " + sFileId);
             //            }
             //          }
+            oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Name"));
+            oTransactionModel.setValueAt(transaction_type.getkind(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Kind"));
+            oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Currency"));
+            oTransactionModel.setValueAt(transaction_type.getcurrency_value(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Value"));
+            oTransactionModel.setValueAt(transaction_type.getcommission_percent(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Commission Percent"));
+            oTransactionModel.setValueAt(fromUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("From"));
+            oTransactionModel.setValueAt(toUser.getName(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("To"));
+
+            cTransaction transaction = oResponse.getdata().gettransaction();
+            if (transaction != null)
+            {
+              String sDate = m_oSimpleDateFormat.format(new Date(transaction.gettransaction_timestamp()));
+              oTransactionModel.setValueAt(sDate, iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Time"));
+              oTransactionModel.setValueAt(transaction.getblock_number(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Block"));
+              oTransactionModel.setValueAt(transaction.gettransaction_hash(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Hash"));
+              oTransactionModel.setValueAt(transaction.gettransaction_fee(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Tx Fee"));
+            }
+          }
+        }
+      }
+      lblStatus.setText("");
+    }).start();
+  }
+  
+  public void getHistoryOfFileFromDatabase(int iID)
+  {
+    new Thread(() ->
+    {
+      ArrayList<String> lsTransactions = m_oDatabase.getTransactions(iID);
+      int iTotalTransactions = m_oDatabase.countTransactions();
+      DefaultTableModel oTransactionModel = (DefaultTableModel) tblFileHistory.getModel();
+
+      for (int i = 0; i < lsTransactions.size(); i++)
+      {
+        String sTransaction = lsTransactions.get(i);
+        lblStatus.setText("Lookup transaction: " + (i + 1) + " of " + lsTransactions.size() + "(Total Transactions: " + iTotalTransactions + ")");
+        cResponse oResponse = m_oTransactionManagement.getTransactionStatus(sTransaction);
+        if (oResponse != null && !oResponse.getsuccess())
+        {
+          String sErrorMsg = "";
+          cError oError = oResponse.geterr();
+          if (oError != null)
+          {
+            cErrorData[] error_data = oError.geterror_data();
+            if (error_data != null)
+            {
+              for (cErrorData oErr : error_data)
+              {
+                sErrorMsg += oErr.getname() + "\n";
+              }
+            }
+            showError(oResponse.geterr(), "Failed to create user: " + sErrorMsg);
+          }
+          else
+          {
+            showError(oResponse.geterr(), "Failed to create user");
+          }
+        }
+        else
+        {
+          cTransactionTypes transaction_type = oResponse.getdata().gettransaction_types()[0];
+          String[] lsTransactionName = transaction_type.getname().split(" ");
+
+          if (lsTransactionName.length > 1 && lsTransactionName[1].equals("" + iID))
+          {
+            cEconomyUser fromUser = oResponse.getdata().geteconomy_users()[0];
+            cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
+
+            Vector<Object> vRow = new Vector<Object>();
+            int iRowNumber = oTransactionModel.getRowCount();
+            oTransactionModel.addRow(vRow);
+
             oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Name"));
             oTransactionModel.setValueAt(transaction_type.getkind(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Kind"));
             oTransactionModel.setValueAt(transaction_type.getcurrency_type(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Currency"));

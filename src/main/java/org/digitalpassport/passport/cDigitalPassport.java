@@ -86,7 +86,7 @@ public class cDigitalPassport
     else
     {
       // create a new passport
-      m_oDatabase.uploadPassport(oFile.getName(), sUsername);
+      //m_oDatabase.uploadPassport(oFile.getName(), sUsername);
       m_oPASSPORT_ID = Integer.parseInt(m_oDatabase.getPassportID(oFile.getName()));
       m_oPASSPORT_PAYLOAD = oFile;
       m_oPASSPORT_Provenance = new cProvenanceData(m_oPASSPORT_PAYLOAD);

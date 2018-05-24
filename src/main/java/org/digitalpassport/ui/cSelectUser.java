@@ -110,18 +110,9 @@ public class cSelectUser extends javax.swing.JFrame
     int iIndex = sUser.indexOf("(");
     String sSelectedUserDisplayName = sUser.substring(0, iIndex).trim();
     m_sToUUID = sUser.substring(iIndex + 1, sUser.length() - 1);
-//    String sOriginal = m_sTransactionName.split(" ")[0];
     cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(m_sTransactionName);
-//    if (!cTransactionManagement.m_oTransactions.containsKey(m_sTransactionName))
-//    {
-//      oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
-//      System.out.println("Create Transaction: " + m_sTransactionName);
-//      m_oTransactionManagement.createTransaction_sandbox(m_sTransactionName, eTransactionKind.valueOf(oTransaction.getkind()),
-//          eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
-//          Float.parseFloat(oTransaction.getcommission_percent()));
-//    }
-    String sTransactionId = oTransaction.getid();
-    cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(m_sFromUUID, m_sToUUID, sTransactionId);
+    
+    cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(m_sFromUUID, m_sToUUID, oTransaction);
     if (oResponse.geterr() != null && !oResponse.getsuccess())
     {
       cTokenManagementPanel.showError(oResponse.geterr(), "Transaction failed to execute!");

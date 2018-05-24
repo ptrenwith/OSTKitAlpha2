@@ -160,13 +160,14 @@ public class cFileSharingPanel extends javax.swing.JPanel
           {
             cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
             System.out.println("Create Transaction: " + sTransaction);
+            
             m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-                eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
-                Float.parseFloat(oTransaction.getcommission_percent()));
+                    eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+                    Float.parseFloat(oTransaction.getcommission_percent()));
           }
           m_oSelectUser.setTitle("Share");
           m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
-          m_oSelectUser.setBounds(oParent.getX() + oParent.getWidth() / 2, oParent.getY() + oParent.getHeight() / 2,
+          m_oSelectUser.setBounds(oParent.getX() + oParent.getWidth()/2, oParent.getY() + oParent.getHeight()/2,
               m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
           m_oSelectUser.setUsersExcluding(m_sDisplayName);
           m_oSelectUser.setTransactionName(sTransaction);
@@ -189,7 +190,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
           m_oHistoryFrame.setTitle("History");
           m_oHistoryFrame.setBounds(oParent.getX()+50, oParent.getY()+50, oParent.getWidth(), oParent.getHeight());
           m_oHistoryFrame.setFile(sFile);
-          m_oHistoryFrame.getHistoryOfFile(iID);
+          m_oHistoryFrame.getHistoryOfFileFromDatabase(iID);
           m_oHistoryFrame.setVisible(true);
         }
       }
@@ -230,7 +231,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
           
           if (oTransactionType != null)
           {
-            oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, oTransactionType.getid());
+            oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, oTransactionType);
           }
           if (oResponse != null && !oResponse.getsuccess())
           {
@@ -304,7 +305,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
           cResponse oResponse = null;
           if (oTransactionType != null)
           {
-            oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, oTransactionType.getid());
+            oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, sToUUID, oTransactionType);
           }
           if (oResponse != null && !oResponse.getsuccess())
           {
@@ -576,7 +577,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
       for (File oFile: lsFilesToUpload)
       {
         System.out.println("Uploading file: " + oFile.getAbsolutePath());
-        cDatabaseHandler.instance().uploadPassport(oFile.getName(), m_sUsername);
+        cDatabaseHandler.instance().uploadPassport(oFile.getName(), m_sUsername, m_sDisplayName);
       }
       loadFiles();
     }
