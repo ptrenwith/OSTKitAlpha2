@@ -277,13 +277,6 @@ public class cRegisterFrame extends javax.swing.JFrame
       System.err.println("Error registering: " + ex.getMessage());
       ex.printStackTrace();
     }
-    finally
-    {
-      if (oDatabase != null)
-      {
-        oDatabase.terminate();
-      }
-    }
   }
 
   public void close()

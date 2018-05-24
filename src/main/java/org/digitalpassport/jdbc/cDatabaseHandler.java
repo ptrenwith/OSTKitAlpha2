@@ -745,7 +745,10 @@ public class cDatabaseHandler
       {
         try
         {
-          m_oConnection.commit();
+          if (!m_oConnection.isClosed())
+          {
+            m_oConnection.commit();
+          }
           oStatement.close();
         }
         catch (SQLException ex)

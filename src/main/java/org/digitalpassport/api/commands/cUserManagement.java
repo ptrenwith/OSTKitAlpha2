@@ -41,7 +41,7 @@ public class cUserManagement
       String sResponse = cAPIClient.post(g_sPATH_USERS_EDIT, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
-      System.out.println(oResponse.toString());
+      //System.out.println(oResponse.toString());
     }
     catch (IOException ex)
     {
@@ -64,7 +64,7 @@ public class cUserManagement
       String sResponse = cAPIClient.get_sandbox("/users", oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
-      System.out.println(oResponse.toString());
+      //System.out.println(oResponse.toString());
     }
     catch (IOException ex)
     {
@@ -87,7 +87,7 @@ public class cUserManagement
       String sResponse = cAPIClient.get(g_sPATH_USERS_LIST, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
-      System.out.println(oResponse.toString());
+      //System.out.println(oResponse.toString());
     }
     catch (IOException ex)
     {
@@ -107,7 +107,7 @@ public class cUserManagement
       String sResponse = cAPIClient.post(g_sPATH_USERS_CREATE, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
-      System.out.println(oResponse.toString());
+      //System.out.println(oResponse.toString());
     }
     catch (IOException ex)
     {
@@ -128,7 +128,7 @@ public class cUserManagement
       String sResponse = cAPIClient.post(g_sPATH_USERS_AIRDROP_DROP, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
-      System.out.println(oResponse.toString());
+      //System.out.println(oResponse.toString());
     }
     catch (IOException ex)
     {
@@ -150,7 +150,7 @@ public class cUserManagement
       String sResponse = cAPIClient.post_sandbox("/airdrops", oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
-      System.out.println(oResponse.toString());
+      //System.out.println(oResponse.toString());
     }
     catch (IOException ex)
     {
@@ -170,7 +170,7 @@ public class cUserManagement
       String sResponse = cAPIClient.post(g_sPATH_USERS_AIRDROP_STATUS, oParameters);
       System.out.println(sResponse);
       oResponse = oMapper.readValue(sResponse, cResponse.class);
-      System.out.println(oResponse.toString());
+      //System.out.println(oResponse.toString());
     }
     catch (IOException ex)
     {

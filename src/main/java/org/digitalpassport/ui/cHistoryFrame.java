@@ -155,7 +155,13 @@ public class cHistoryFrame extends javax.swing.JFrame
   {
     new Thread(() ->
     {
+      DefaultTableModel oTransactionModel = (DefaultTableModel) tblFileHistory.getModel();
+      int iRowNumber = oTransactionModel.getRowCount();
+      for (int i = 0; i < iRowNumber; i++)
       {
+        oTransactionModel.removeRow(0);
+      }
+//      {
 //        String sOriginal = "history";
 //        String sTransaction = sOriginal + " " + iID; 
 //        if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
@@ -170,10 +176,9 @@ public class cHistoryFrame extends javax.swing.JFrame
 //              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()), 
 //              Float.parseFloat(oTransaction.getcommission_percent()));
 //        }
-      }
+//      }
 
       ArrayList<String> lsTransactions = m_oDatabase.getTransactions();
-      DefaultTableModel oTransactionModel = (DefaultTableModel) tblFileHistory.getModel();
 
       for (int i = 0; i < lsTransactions.size(); i++)
       {
@@ -216,7 +221,7 @@ public class cHistoryFrame extends javax.swing.JFrame
             cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
 
             Vector<Object> vRow = new Vector<Object>();
-            int iRowNumber = oTransactionModel.getRowCount();
+            iRowNumber = oTransactionModel.getRowCount();
             oTransactionModel.addRow(vRow);
 
             //          String sName = transaction_type.getname();
@@ -265,14 +270,20 @@ public class cHistoryFrame extends javax.swing.JFrame
   {
     new Thread(() ->
     {
+      DefaultTableModel oTransactionModel = (DefaultTableModel) tblFileHistory.getModel();
+      int iRowNumber = oTransactionModel.getRowCount();
+      for (int i = 0; i < iRowNumber; i++)
+      {
+        oTransactionModel.removeRow(0);
+      }
+      
       ArrayList<String> lsTransactions = m_oDatabase.getTransactions(iID);
       int iTotalTransactions = m_oDatabase.countTransactions();
-      DefaultTableModel oTransactionModel = (DefaultTableModel) tblFileHistory.getModel();
 
       for (int i = 0; i < lsTransactions.size(); i++)
       {
         String sTransaction = lsTransactions.get(i);
-        lblStatus.setText("Lookup transaction: " + (i + 1) + " of " + lsTransactions.size() + "(Total Transactions: " + iTotalTransactions + ")");
+        lblStatus.setText("Lookup transaction: " + (i + 1) + " of " + lsTransactions.size() + "  (Total Transactions: " + iTotalTransactions + ")");
         cResponse oResponse = m_oTransactionManagement.getTransactionStatus(sTransaction);
         if (oResponse != null && !oResponse.getsuccess())
         {
@@ -306,7 +317,7 @@ public class cHistoryFrame extends javax.swing.JFrame
             cEconomyUser toUser = oResponse.getdata().geteconomy_users()[1];
 
             Vector<Object> vRow = new Vector<Object>();
-            int iRowNumber = oTransactionModel.getRowCount();
+            iRowNumber = oTransactionModel.getRowCount();
             oTransactionModel.addRow(vRow);
 
             oTransactionModel.setValueAt(transaction_type.getname(), iRowNumber, getTransactionHistoryTableColumnIndexByHeading("Name"));

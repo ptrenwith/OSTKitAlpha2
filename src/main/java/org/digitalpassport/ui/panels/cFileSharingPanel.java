@@ -7,6 +7,7 @@ import static java.awt.event.MouseEvent.BUTTON3;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -53,6 +54,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
   private JMenuItem m_oLikeMenuItem = new JMenuItem("Like");
   private JMenuItem m_oAccessMenuItem = new JMenuItem("Access");
   private JMenuItem m_oHistoryMenuItem = new JMenuItem("History");
+  private JMenuItem m_oOtherHistoryMenuItem = new JMenuItem("History");
 
   class cYourPopupTriggerListener implements MouseListener
   {
@@ -143,7 +145,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
       System.out.println("Create Transaction: " + sTransaction);
 
       m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getamount()),
               Float.parseFloat(oTransaction.getcommission_percent()));
     }
     do
@@ -229,6 +231,26 @@ public class cFileSharingPanel extends javax.swing.JPanel
         }
       }
     });
+    
+    m_oOtherHistoryMenuItem.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        int[] iRows = tblOtherFiles.getSelectedRows();
+        for (int iRow: iRows)
+        {
+          int iID = Integer.parseInt(tblOtherFiles.getValueAt(iRow, 0) + "");
+          String sFile = tblOtherFiles.getValueAt(iRow, 1) + "";
+
+          m_oHistoryFrame.setTitle("History");
+          m_oHistoryFrame.setBounds(oParent.getX()+50, oParent.getY()+50, oParent.getWidth(), oParent.getHeight());
+          m_oHistoryFrame.setFile(sFile);
+          m_oHistoryFrame.getHistoryOfFileFromDatabase(iID);
+          m_oHistoryFrame.setVisible(true);
+        }
+      }
+    });
 
     m_oLikeMenuItem.addActionListener(new ActionListener()
     {
@@ -256,7 +278,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
             cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
             System.out.println("Create Transaction: " + sTransaction);
             m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-                eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+                eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getamount()),
                 Float.parseFloat(oTransaction.getcommission_percent()));
           }
           String sFromUUID = cDatabaseHandler.instance().getUuid(m_sDisplayName);
@@ -330,7 +352,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
             cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
             System.out.println("Create Transaction: " + sTransaction);
             m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-                eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+                eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getamount()),
                 Float.parseFloat(oTransaction.getcommission_percent()));
           }
           String sFromUUID = cDatabaseHandler.instance().getUuid(m_sDisplayName);
@@ -378,6 +400,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
     m_oOtherPopupMenu.add(m_oLikeMenuItem);
     m_oOtherPopupMenu.add(m_oAccessMenuItem);
+    m_oOtherPopupMenu.add(m_oOtherHistoryMenuItem);
     tblOtherFiles.addMouseListener(new cOtherPopupTriggerListener());
   }
 
@@ -424,7 +447,13 @@ public class cFileSharingPanel extends javax.swing.JPanel
 
     lblPassword.setText("Password:");
 
-    txtUsername.setText("philipt");
+    txtUsername.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        txtUsernameActionPerformed(evt);
+      }
+    });
 
     lblUsername.setText("Username:");
 
@@ -437,7 +466,6 @@ public class cFileSharingPanel extends javax.swing.JPanel
       }
     });
 
-    txtPassword.setText("1234");
     txtPassword.setToolTipText("");
 
     tblYourFiles.setModel(new javax.swing.table.DefaultTableModel(
@@ -669,6 +697,11 @@ public class cFileSharingPanel extends javax.swing.JPanel
     }
   }//GEN-LAST:event_btnLoginActionPerformed
 
+  private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtUsernameActionPerformed
+  {//GEN-HEADEREND:event_txtUsernameActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_txtUsernameActionPerformed
+
   private void setLogin()
   {
     if (m_bLogin)
@@ -737,10 +770,18 @@ public class cFileSharingPanel extends javax.swing.JPanel
         for (cDatabaseFile oFile : lsOtherFiles)
         {
           // Append a row 
-          oOtherModel.addRow(new Object[]
-          {
-            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sDisplayName
-          });
+//          oOtherModel.addRow(new Object[]
+//          {
+//            oFile.m_sFileID, oFile.m_sFilename, oFile.m_sDisplayName
+//          });
+          Vector<Object> vRow = new Vector<Object>();
+          int iRowNumber = oOtherModel.getRowCount();
+          oOtherModel.addRow(vRow);
+
+          oOtherModel.setValueAt(oFile.m_sFileID, iRowNumber, 0);
+          oOtherModel.setValueAt(oFile.m_sFilename, iRowNumber, 1);
+          oOtherModel.setValueAt(oFile.m_sDisplayName, iRowNumber, 2);
+
         }
       }
     }).start();

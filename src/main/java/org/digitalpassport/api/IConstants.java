@@ -37,7 +37,7 @@ public interface IConstants
   public static final String g_sPARAM_CLIENT_ID = "client_id";
   public static final String g_sPARAM_NAME = "name";
   public static final String g_sPARAM_KIND = "kind";
-  public static final String g_sPARAM_CURRENCY_TYPE = "currency_type";
+  public static final String g_sPARAM_CURRENCY_TYPE = "currency";
   public static final String g_sPARAM_CURRENCY_VALUE = "currency_value";
   public static final String g_sPARAM_COMMISSION_PERCENT = "commission_percent";
   public static final String g_sPARAM_STATUS = "status";
