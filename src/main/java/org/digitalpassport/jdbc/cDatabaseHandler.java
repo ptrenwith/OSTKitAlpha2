@@ -354,13 +354,15 @@ public class cDatabaseHandler
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("INSERT INTO passports (Filename, Owner) VALUES ('"
-          + sFilename + "', '" + sOwner + "');");
-      oStatement.execute();
+      
       
       String sFromUUID = cDatabaseHandler.instance().getUuid(sDisplayName);
       cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get("upload");
       cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUUID, "1ec0b428-1b27-4218-95ae-b116f14b0450", oTransaction);
+      
+      oStatement = m_oConnection.prepareStatement("INSERT INTO passports (Filename, Owner) VALUES ('"
+          + sFilename + "', '" + sOwner + "');");
+      oStatement.execute();
       
       bResult = true;
     }
@@ -415,17 +417,52 @@ public class cDatabaseHandler
     }
   }
 
-  public String getUuid(String sUsername)
+  public String getUuid(String sDisplayName)
   {
     String sResult = "";
     PreparedStatement oStatement = null;
     try
     {
-      oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE DisplayName='" + sUsername + "';");
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE DisplayName='" + sDisplayName + "';");
       ResultSet executeQuery = oStatement.executeQuery();
       if (executeQuery.next())
       {
         sResult = executeQuery.getString("DptUUID");
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    return sResult;
+  }
+  
+  public String getUsername(String sDisplayName)
+  {
+    String sResult = "";
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT * FROM dpt_users WHERE DisplayName='" + sDisplayName + "';");
+      ResultSet executeQuery = oStatement.executeQuery();
+      if (executeQuery.next())
+      {
+        sResult = executeQuery.getString("Username");
       }
     }
     catch (SQLException ex)
@@ -570,6 +607,43 @@ public class cDatabaseHandler
     }
 
     return lsFiles;
+  }
+  
+  public String getFileIdFromName(String sFilename)
+  {
+    String sReturn = "";
+
+    PreparedStatement oStatement = null;
+    try
+    {
+      oStatement = m_oConnection.prepareStatement("SELECT passports.ID FROM passports WHERE Filename='" + sFilename + "';");
+      ResultSet oResultSet = oStatement.executeQuery();
+      while (oResultSet.next())
+      {
+        sReturn = oResultSet.getString("ID");
+      }
+    }
+    catch (SQLException ex)
+    {
+      Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally
+    {
+      if (oStatement != null)
+      {
+        try
+        {
+          m_oConnection.commit();
+          oStatement.close();
+        }
+        catch (SQLException ex)
+        {
+          Logger.getLogger(cDatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+
+    return sReturn;
   }
   
   public int countTransactions()

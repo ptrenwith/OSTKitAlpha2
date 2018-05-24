@@ -13,7 +13,6 @@ import static org.digitalpassport.api.IConstants.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class cEconomyUser
 {
-
   private String id;
   private String uuid;
   private String name;

@@ -28,10 +28,20 @@ public class cAPIClient
   {
     return api_call(sEndpoint, oParameters, false);
   }
+  
+  public static String get_sandbox(String sEndpoint, TreeMap oParameters)
+  {
+    return api_call_sandbox(sEndpoint, oParameters, false);
+  }
 
   public static String post(String sEndpoint, TreeMap oParameters)
   {
     return api_call(sEndpoint, oParameters, true);
+  }
+  
+  public static String post_sandbox(String sEndpoint, TreeMap oParameters)
+  {
+    return api_call_sandbox(sEndpoint, oParameters, true);
   }
 
   private static String api_call(String sEndpoint, TreeMap oParameters, boolean POST)
@@ -133,11 +143,6 @@ public class cAPIClient
     return sParameters;
   }
 
-  public static String post_sandbox(String sEndpoint, TreeMap oParameters)
-  {
-    return api_call_sandbox(sEndpoint, oParameters, true);
-  }
-
   private static String api_call_sandbox(String sEndpoint, TreeMap oParameters, boolean POST)
   {
     String sResponse = "";
@@ -183,7 +188,7 @@ public class cAPIClient
       }
       else
       {
-        String sURL = m_sURL + sEndpoint + "?" + TreeMapToString(oParameters);
+        String sURL = m_sSANDBOX_URL + sEndpoint + "?" + TreeMapToString(oParameters);
         System.out.println("GET URL: " + sURL);
 
         WebResource webResource = oClient.resource(sURL);

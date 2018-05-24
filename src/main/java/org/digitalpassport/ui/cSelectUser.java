@@ -3,8 +3,6 @@ package org.digitalpassport.ui;
 import java.util.Iterator;
 import org.digitalpassport.api.commands.cTransactionManagement;
 import org.digitalpassport.api.commands.cUserManagement;
-import org.digitalpassport.api.commands.eCurrencyType;
-import org.digitalpassport.api.commands.eTransactionKind;
 import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.jdbc.cDatabaseHandler;

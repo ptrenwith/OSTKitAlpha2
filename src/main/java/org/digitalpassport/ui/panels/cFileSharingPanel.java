@@ -21,6 +21,7 @@ import org.digitalpassport.deserialize.json.cError;
 import org.digitalpassport.deserialize.json.cErrorData;
 import org.digitalpassport.deserialize.json.cResponse;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
+import org.digitalpassport.deserialize.json.users.lists.cUser;
 import org.digitalpassport.jdbc.cDatabaseHandler;
 import org.digitalpassport.passport.cDatabaseFile;
 import org.digitalpassport.ui.cFileSharingFrame;
@@ -38,12 +39,13 @@ public class cFileSharingPanel extends javax.swing.JPanel
 {
 
   private cHistoryFrame m_oHistoryFrame = new cHistoryFrame();
-  private cSelectUser m_oSelectUser = null;
-  private cTransactionManagement m_oTransactionManagement = null;
+  private static cSelectUser m_oSelectUser = null;
+  private static cTransactionManagement m_oTransactionManagement = null;
   private cRegisterFrame m_oRegistrationFrame = null;
   private boolean m_bLogin = false;
-  private String m_sUsername = "";
-  private String m_sDisplayName = "";
+  private static String m_sUsername = "";
+  private static String m_sDisplayName = "";
+  private static cFileSharingFrame m_oParent;
 
   private JPopupMenu m_oYourPopupMenu = new JPopupMenu("YourPopup");
   private JPopupMenu m_oOtherPopupMenu = new JPopupMenu("OtherPopup");
@@ -125,6 +127,54 @@ public class cFileSharingPanel extends javax.swing.JPanel
     {
     }
   }
+  
+  public static void share(int iID, String sFromUuid, cUser oToUser)
+  {
+    cTransactionTypes oTransaction = null;
+    String sOriginal = "share";
+    String sTransaction = sOriginal + " " + iID;
+    if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
+    {
+      System.out.println("Transaction already exists! : " + sTransaction);
+    }
+    else
+    {
+      oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
+      System.out.println("Create Transaction: " + sTransaction);
+
+      m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
+              eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
+              Float.parseFloat(oTransaction.getcommission_percent()));
+      oTransaction = cTransactionManagement.m_oTransactions.get(sTransaction);
+    }
+    if (oToUser == null)
+    {
+      m_oSelectUser.setTitle("Share");
+      m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
+      m_oSelectUser.setBounds(m_oParent.getX() + m_oParent.getWidth()/2, m_oParent.getY() + m_oParent.getHeight()/2,
+          m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
+      m_oSelectUser.setUsersExcluding(m_sDisplayName);
+      m_oSelectUser.setTransactionName(sTransaction);
+      m_oSelectUser.setVisible(true);
+    }
+    else
+    {
+      String sToUuid = oToUser.getId();
+      
+      cResponse oResponse = m_oTransactionManagement.executeTransaction_sandbox(sFromUuid, sToUuid, oTransaction);
+      if (oResponse.geterr() != null && !oResponse.getsuccess())
+      {
+        cTokenManagementPanel.showError(oResponse.geterr(), "Transaction failed to execute!");
+      }
+      else
+      {         
+        if (cDatabaseHandler.instance().addShareFileIfNotExists(iID+"", oToUser.getname()))
+        {
+          System.out.println("Added non-existing file share: '" + oToUser.getname() + "' - " + iID);
+        }
+      }
+    }
+  }
 
   /**
    * Creates new form cFileSharingPanel
@@ -132,7 +182,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
   public cFileSharingPanel(cFileSharingFrame oParent)
   {
     initComponents();
-
+    m_oParent = oParent;
     m_oHistoryFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
     btnLogin.setActionCommand("login");
@@ -150,28 +200,8 @@ public class cFileSharingPanel extends javax.swing.JPanel
         for (int iRow: iRows)
         {
           int iID = Integer.parseInt(tblYourFiles.getValueAt(iRow, 0) + "");
-          String sOriginal = "share";
-          String sTransaction = sOriginal + " " + iID;
-          if (cTransactionManagement.m_oTransactions.containsKey(sTransaction))
-          {
-            System.out.println("Transaction already exists! : " + sTransaction);
-          }
-          else
-          {
-            cTransactionTypes oTransaction = cTransactionManagement.m_oTransactions.get(sOriginal);
-            System.out.println("Create Transaction: " + sTransaction);
-            
-            m_oTransactionManagement.createTransaction_sandbox(sTransaction, eTransactionKind.valueOf(oTransaction.getkind()),
-                    eCurrencyType.valueOf(oTransaction.getcurrency_type()), Float.parseFloat(oTransaction.getcurrency_value()),
-                    Float.parseFloat(oTransaction.getcommission_percent()));
-          }
-          m_oSelectUser.setTitle("Share");
-          m_oSelectUser.setParameters(sOriginal, m_sDisplayName);
-          m_oSelectUser.setBounds(oParent.getX() + oParent.getWidth()/2, oParent.getY() + oParent.getHeight()/2,
-              m_oSelectUser.getWidth(), m_oSelectUser.getHeight());
-          m_oSelectUser.setUsersExcluding(m_sDisplayName);
-          m_oSelectUser.setTransactionName(sTransaction);
-          m_oSelectUser.setVisible(true);
+          String sFromUuid = cDatabaseHandler.instance().getUuid(m_sDisplayName);
+          share(iID, sFromUuid, null);
         }
       }
     });
@@ -437,6 +467,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
       }
     });
     tblYourFiles.setEnabled(false);
+    tblYourFiles.getTableHeader().setReorderingAllowed(false);
     jScrollPane1.setViewportView(tblYourFiles);
 
     btnUploadFile.setText("Upload");
@@ -548,7 +579,7 @@ public class cFileSharingPanel extends javax.swing.JPanel
           .addComponent(btnRegister)
           .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+        .addComponent(jTabbedPane1))
     );
   }// </editor-fold>//GEN-END:initComponents
 

@@ -20,7 +20,6 @@ import org.digitalpassport.deserialize.json.cResponse;
  */
 public class cUserManagement
 {
-
   private static final JsonFactory m_oJsonFactory = new MappingJsonFactory();
   private static final ObjectMapper oMapper = new ObjectMapper(m_oJsonFactory);
   public static final HashMap<String, String> m_oUsers = new HashMap();
@@ -51,6 +50,29 @@ public class cUserManagement
     return oResponse;
   }
 
+  public cResponse listUsers_sandbox(String sPage, String sOrderBy, String sOrder)
+  {
+    cResponse oResponse = null;
+    try
+    {
+      TreeMap oParameters = new TreeMap();
+      oParameters.put("page_no", sPage);
+      oParameters.put("limit", 100);
+//      oParameters.put("order_by", sOrderBy);
+//      oParameters.put(g_sPARAM_ORDER, sOrder);
+
+      String sResponse = cAPIClient.get_sandbox("/users", oParameters);
+      System.out.println(sResponse);
+      oResponse = oMapper.readValue(sResponse, cResponse.class);
+      System.out.println(oResponse.toString());
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(cUserManagement.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return oResponse;
+  }
+  
   public cResponse listUsers(String sPage, String sFilter, String sOrderBy, String sOrder)
   {
     cResponse oResponse = null;

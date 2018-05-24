@@ -12,6 +12,7 @@ import org.digitalpassport.deserialize.json.transactiontypes.cTransaction;
 import org.digitalpassport.deserialize.json.transactiontypes.cTransactionTypes;
 import org.digitalpassport.deserialize.json.users.lists.cEconomyUser;
 import org.digitalpassport.deserialize.json.users.lists.cMeta;
+import org.digitalpassport.deserialize.json.users.lists.cUser;
 
 /**
  *
@@ -36,6 +37,8 @@ public class cData
   private cTransactionTypes[] transaction_types;
   @JsonIgnore
   private cTransactionTypes action;
+  @JsonIgnore
+  private cUser[] users;
   @JsonIgnore
   private cPricePoints price_points;
   @JsonIgnore
@@ -75,12 +78,13 @@ public class cData
       @JsonProperty(g_sPARAM_CLIENT_TOKENS) cClientTokens client_tokens,
       @JsonProperty(g_sPARAM_ECONOMY_USERS) cEconomyUser[] economy_users,
       @JsonProperty(g_sPARAM_META) cMeta meta,
-      @JsonProperty(g_sPARAM_ACTION) cTransactionTypes action)
+      @JsonProperty(g_sPARAM_ACTION) cTransactionTypes action,
+      @JsonProperty("users") cUser[] users)
   {
     return new cData(client_id, airdrop_uuid, current_status, steps_complete,
         result_type, transaction, transaction_types, transaction_uuid,
         transaction_hash, from_uuid, to_uuid, transaction_kind,
-        price_points, client_tokens, economy_users, meta, action);
+        price_points, client_tokens, economy_users, meta, action, users);
   }
 
   @JsonProperty(g_sPARAM_CLIENT_ID)
@@ -184,13 +188,19 @@ public class cData
   {
     return meta;
   }
+  
+  @JsonProperty("users")
+  public cUser[] getusers()
+  {
+    return users;
+  }
 
   public cData(int client_id, String airdrop_uuid, String current_status,
       String[] steps_complete, String result_type, cTransaction transaction,
       cTransactionTypes[] transaction_types, String transaction_uuid,
       String transaction_hash, String from_uuid, String to_uuid,
       String transaction_kind, cPricePoints price_points, cClientTokens client_tokens,
-      cEconomyUser[] economy_users, cMeta meta, cTransactionTypes action)
+      cEconomyUser[] economy_users, cMeta meta, cTransactionTypes action, cUser[] users)
   {
     this.client_id = client_id;
     this.airdrop_uuid = airdrop_uuid;
@@ -209,6 +219,7 @@ public class cData
     this.price_points = price_points;
     this.meta = meta;
     this.action = action;
+    this.users = users;
   }
 
   @Override

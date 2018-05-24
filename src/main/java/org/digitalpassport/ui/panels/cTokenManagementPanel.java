@@ -674,6 +674,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         return canEdit [columnIndex];
       }
     });
+    tblTokens.getTableHeader().setReorderingAllowed(false);
     jScrollPane5.setViewportView(tblTokens);
 
     javax.swing.GroupLayout TokensLayout = new javax.swing.GroupLayout(Tokens);
@@ -686,7 +687,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
       TokensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(TokensLayout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE))
     );
 
     oMainTabPane.addTab("Tokens", Tokens);
@@ -831,7 +832,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
           .addComponent(cmbTransactionHistory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnTransactionStatus))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE))
+        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE))
     );
 
     jTabbedPane1.addTab("History", pnlTransactionHistory);
@@ -968,13 +969,13 @@ public class cTokenManagementPanel extends javax.swing.JPanel
       pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(pnlExistingTransactionsLayout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
           .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
             .addComponent(btnListTransactions)
             .addComponent(lblTransactionIDLabel))
-          .addComponent(lblTransactionId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addComponent(lblTransactionId, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addGap(12, 12, 12)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(btnSaveTransaction)
@@ -1004,8 +1005,7 @@ public class cTokenManagementPanel extends javax.swing.JPanel
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(pnlExistingTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(cmbToUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(lblToUser))
-        .addContainerGap())
+          .addComponent(lblToUser)))
     );
 
     jTabbedPane1.addTab("Existing", pnlExistingTransactions);
@@ -1263,60 +1263,67 @@ public class cTokenManagementPanel extends javax.swing.JPanel
 
   private void btnListTransactionsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnListTransactionsActionPerformed
   {//GEN-HEADEREND:event_btnListTransactionsActionPerformed
-    btnListTransactions.setText("Please wait...");
-    btnListTransactions.setEnabled(false);
     new Thread(new Runnable()
     {
       @Override
       public void run()
       {
-        clearTransactionTable();
-
-        cResponse oResponse = m_oTransactionManagement.listTransactions();
-        if (oResponse.getsuccess())
-        {
-          cTransactionTypes[] lsTransaction_types = oResponse.getdata().gettransaction_types();
-          DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactions.getModel();
-
-          for (cTransactionTypes oTransaction : lsTransaction_types)
-          {
-            cTransactionManagement.m_oTransactions.put(oTransaction.getname(), oTransaction);
-            String sStatus = oTransaction.getstatus();
-            Vector<Object> vRow = new Vector<Object>();
-            int iRowNumber = oTransactionModel.getRowCount();
-            oTransactionModel.addRow(vRow);
-            oTransactionModel.setValueAt(oTransaction.getid(), iRowNumber, getTransactionTableColumnIndexByHeading("ID"));
-            oTransactionModel.setValueAt(oTransaction.getclient_transaction_id(), iRowNumber, getTransactionTableColumnIndexByHeading("Client Transaction ID"));
-            oTransactionModel.setValueAt(oTransaction.getname(), iRowNumber, getTransactionTableColumnIndexByHeading("Name"));
-            oTransactionModel.setValueAt(oTransaction.getkind(), iRowNumber, getTransactionTableColumnIndexByHeading("Kind"));
-            oTransactionModel.setValueAt(oTransaction.getcurrency_type(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Type"));
-            oTransactionModel.setValueAt(oTransaction.getcurrency_value(), iRowNumber, getTransactionTableColumnIndexByHeading("Currency Value"));
-            oTransactionModel.setValueAt(oTransaction.getcommission_percent(), iRowNumber, getTransactionTableColumnIndexByHeading("Commission Percentage"));
-            if (sStatus != null)
-            {
-              oTransactionModel.setValueAt(eStatus.valueOf(sStatus), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));
-            }
-          }
-
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getclient_id(), 0, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getname(), 1, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol(), 2, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol_icon(), 3, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getconversion_factor(), 4, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().gettoken_erc20_address(), 5, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getairdrop_contract_addr(), 6, 1);
-          tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsimple_stake_contract_addr(), 7, 1);
-        }
-        else
-        {
-          showError(oResponse.geterr(), "List Transactions");
-        }
-        btnListTransactions.setText("List Transactions");
-        btnListTransactions.setEnabled(true);
+        loadTransactionsFromBlockchain();
       }
     }).start();
   }//GEN-LAST:event_btnListTransactionsActionPerformed
 
+  public void loadTransactionsFromBlockchain()
+  {
+    btnListTransactions.setText("Please wait...");
+    btnListTransactions.setEnabled(false);
+    
+    clearTransactionTable();
+
+    cResponse oResponse = m_oTransactionManagement.listTransactions();
+    if (oResponse.getsuccess())
+    {
+      cTransactionTypes[] lsTransaction_types = oResponse.getdata().gettransaction_types();
+      DefaultTableModel oTransactionModel = (DefaultTableModel) tblTransactions.getModel();
+
+      for (cTransactionTypes oTransaction : lsTransaction_types)
+      {
+        cTransactionManagement.m_oTransactions.put(oTransaction.getname(), oTransaction);
+        String sStatus = oTransaction.getstatus();
+
+        int iRowNumber = oTransactionModel.getRowCount();
+        oTransactionModel.addRow(new Object[] {
+          oTransaction.getid(), 
+          oTransaction.getclient_transaction_id(),
+          oTransaction.getname(),
+          oTransaction.getkind(),
+          oTransaction.getcurrency_type(),
+          oTransaction.getcurrency_value(),
+          oTransaction.getcommission_percent(),
+        });
+        if (sStatus != null)
+        {
+          oTransactionModel.setValueAt(eStatus.valueOf(sStatus), iRowNumber, getTransactionTableColumnIndexByHeading("Status"));
+        }
+      }
+
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getclient_id(), 0, 1);
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getname(), 1, 1);
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol(), 2, 1);
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsymbol_icon(), 3, 1);
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getconversion_factor(), 4, 1);
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().gettoken_erc20_address(), 5, 1);
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getairdrop_contract_addr(), 6, 1);
+      tblTokens.setValueAt(oResponse.getdata().getclient_tokens().getsimple_stake_contract_addr(), 7, 1);
+    }
+    else
+    {
+      showError(oResponse.geterr(), "List Transactions");
+    }
+    btnListTransactions.setText("List Transactions");
+    btnListTransactions.setEnabled(true);
+  }
+  
   private void btnSaveTransactionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSaveTransactionActionPerformed
   {//GEN-HEADEREND:event_btnSaveTransactionActionPerformed
     new Thread(new Runnable()
